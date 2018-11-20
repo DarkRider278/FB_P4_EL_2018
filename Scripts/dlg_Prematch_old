@@ -1,0 +1,79 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+Sub CloseDlg (Sender)
+    CC.SF.ActiveDialog.Hide
+End Sub
+
+Sub TV__ClearAll (Sender)
+    AllTV.TV__ClearAll
+end Sub
+
+Sub dlg_Prematch_Btn_ShowClick (Sender)
+    AllTV.TV__PreMatch
+end sub
+
+sub dlg_Prematch_btnHUpClick (Sender)
+    IF dlg_Prematch.clkCD.Hours < 24 THEN dlg_Prematch.clkCD.Hours = dlg_Prematch.clkCD.Hours + 1
+    AllTV.TV__PreMatchSet
+end sub
+
+sub dlg_Prematch_btnHDownClick (Sender)
+    IF dlg_Prematch.clkCD.Hours > 0 THEN dlg_Prematch.clkCD.Hours = dlg_Prematch.clkCD.Hours - 1
+    AllTV.TV__PreMatchSet
+end sub
+
+sub dlg_Prematch_btnMUpClick (Sender)
+    IF dlg_Prematch.clkCD.Minutes < 59 THEN
+        dlg_Prematch.clkCD.Minutes = dlg_Prematch.clkCD.Minutes + 1
+        AllTV.TV__PreMatchSet
+    ELSE
+        dlg_Prematch.clkCD.Minutes = 0
+        dlg_Prematch_btnHUpClick nothing
+    END IF
+    
+end sub
+
+sub dlg_Prematch_btnMDownClick (Sender)
+    IF dlg_Prematch.clkCD.Minutes > 0 THEN
+        dlg_Prematch.clkCD.Minutes = dlg_Prematch.clkCD.Minutes - 1
+        AllTV.TV__PreMatchSet
+    ELSE
+        dlg_Prematch.clkCD.Minutes = 59
+        dlg_Prematch_btnHDownClick nothing
+    END IF
+end sub
+
+sub dlg_Prematch_btnSUpClick (Sender)
+     IF dlg_Prematch.clkCD.Seconds < 59 THEN
+        dlg_Prematch.clkCD.Seconds = dlg_Prematch.clkCD.Seconds + 1
+        AllTV.TV__PreMatchSet
+    ELSE
+        dlg_Prematch.clkCD.Seconds = 0
+        dlg_Prematch_btnMUpClick nothing
+    END IF
+end sub
+
+sub dlg_Prematch_btnSDownClick (Sender)
+    IF dlg_Prematch.clkCD.Seconds > 0 THEN
+        dlg_Prematch.clkCD.Seconds = dlg_Prematch.clkCD.Seconds - 1
+        AllTV.TV__PreMatchSet
+    ELSE
+        dlg_Prematch.clkCD.Seconds = 59
+        dlg_Prematch_btnMDownClick nothing
+    END IF
+end sub
+
+sub dlg_Prematch_Button1Click (Sender)
+    dlg_Prematch.clkCD.Start
+    AllTV.TV__PreMatchSet
+end sub
+
+sub dlg_Prematch_Button2Click (Sender)
+    dlg_Prematch.clkCD.Stop
+    AllTV.TV__PreMatchSet
+end sub
+
+</script_body>
+</script>

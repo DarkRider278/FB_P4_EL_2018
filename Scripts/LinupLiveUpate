@@ -1,0 +1,12 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+Public Sub TV__FP_TactLineupUpdate()
+    IF pgLineup.chb_MoveOnAir.Checked THEN
+        AllTV.TV__FP_TactLineupUpdate
+    END IF
+End Sub
+
+</script_body>
+</script>

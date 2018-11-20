@@ -1,0 +1,14 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+Dim AllTV
+
+Set AllTV = Nothing
+Set oData = CreateObject("Scripting.Dictionary")
+
+
+DIM objNameTrans : SET objNameTrans = CreateObject("Scripting.Dictionary")
+
+</script_body>
+</script>

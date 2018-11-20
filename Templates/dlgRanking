@@ -1,0 +1,444 @@
+object dlgRanking: TccToolWindow
+  Tag = 3
+  FloatingBorderStyle = bsNone
+  Caption = 'Ranking'
+  Color = clBtnFace
+  ClientAreaHeight = 280
+  ClientAreaWidth = 683
+  DockableTo = []
+  LastDock = frmMain.dckTop
+  Resizable = False
+  TabOrder = 0
+  Visible = False
+  Floating = True
+  ParentColor = False
+  Float = True
+  SavedAtRunTime = True
+  object Label1: TptLabel
+    Left = 36
+    Top = 59
+    Width = 26
+    Height = 18
+    Caption = 'Titel'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clNavy
+    Font.Height = -13
+    Font.Name = 'Trebuchet MS'
+    Font.Style = []
+    ParentFont = False
+    Locked = False
+  end
+  object Label2: TptLabel
+    Left = 506
+    Top = 89
+    Width = 70
+    Height = 18
+    Caption = 'Transnames'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clNavy
+    Font.Height = -13
+    Font.Name = 'Trebuchet MS'
+    Font.Style = []
+    ParentFont = False
+    Locked = False
+  end
+  object ed_Titel1: TptEdit
+    Left = 81
+    Top = 59
+    Width = 300
+    Height = 19
+    Color = clInfoBk
+    Ctl3D = False
+    MaxLength = 0
+    ParentCtl3D = False
+    TabOrder = 0
+    Text = 'GROUP C'
+    Numeric = False
+    InputType = itAnything
+    Locked = False
+  end
+  object Grid_Tabelle1: TptGrid
+    Left = 15
+    Top = 88
+    Width = 486
+    Height = 113
+    ColCount = 13
+    Ctl3D = False
+    DefaultColWidth = 150
+    DefaultRowHeight = 17
+    FixedCols = 0
+    RowCount = 5
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goAlwaysShowEditor]
+    ParentCtl3D = False
+    TabOrder = 1
+    SelectedFont.Charset = DEFAULT_CHARSET
+    SelectedFont.Color = clWhite
+    SelectedFont.Height = -11
+    SelectedFont.Name = 'MS Sans Serif'
+    SelectedFont.Style = []
+    ColumnHeaders.WideStrings = (
+      'Rank'
+      'Logo'
+      'Teamname'
+      'G'
+      'W'
+      'D'
+      'L'
+      'GF'
+      'GA'
+      'Diff'
+      'Pts'
+      'HL'
+      'Show')
+    RowHeaders.WideStrings = (
+      'Rank'
+      '1'
+      '1'
+      '1'
+      '1')
+    FixedColWidth = -1
+    FixedRowHeight = 17
+    FixedFont.Charset = DEFAULT_CHARSET
+    FixedFont.Color = clWindowText
+    FixedFont.Height = -11
+    FixedFont.Name = 'MS Sans Serif'
+    FixedFont.Style = []
+    VAlignment = vtaCenter
+    HAlignment = taLeftJustify
+    HintShowCells = False
+    MultilineCells = False
+    SortFixedCols = False
+    AllowManualSort = False
+    ProtectFixedRows = False
+    ProtectFixedCols = False
+    DrawSortingArrow = True
+    DataString = 
+      'Rank,Logo,Teamname,G,W,D,L,GF,GA,Diff,Pts,HL,Show;1,DOR,"BORUSSI' +
+      'A DORTMUND",0,0,0,0,0,0,0:0,0,,;1,KRA,"FC KRASNODAR",0,0,0,0,0,0' +
+      ',0:0,0,,;1,PAOK,"PAOK FC",0,0,0,0,0,0,0:0,0,,;1,QAB,"QÄBÄLÄ FK",' +
+      '0,0,0,0,0,0,0:0,0,,;'
+    RowSizing = False
+    RowMoving = False
+    ColSizing = True
+    ColMoving = False
+    ReadOnly = False
+    DataSaveOption = dsoDataOnly
+    Locked = False
+    SuppressBuildInMenu = False
+    ColWidths = (
+      31
+      100
+      139
+      16
+      18
+      18
+      18
+      23
+      22
+      23
+      23
+      23
+      32)
+    RowHeights = (
+      17
+      17
+      17
+      17
+      17)
+    DataString_UTF7 = 
+      'Rank,Logo,Teamname,G,W,D,L,GF,GA,Diff,Pts,HL,Show;1,DOR,"BORUSSI' +
+      'A DORTMUND",0,0,0,0,0,0,0:0,0,,;1,KRA,"FC KRASNODAR",0,0,0,0,0,0' +
+      ',0:0,0,,;1,PAOK,"PAOK FC",0,0,0,0,0,0,0:0,0,,;1,QAB,"Q+AMQ-B+AMQ' +
+      '-L+AMQ FK",0,0,0,0,0,0,0:0,0,,;'
+  end
+  object GradientPanel1: TptGradientPanel
+    Left = 0
+    Top = 201
+    Width = 683
+    Height = 79
+    Align = alBottom
+    Locked = False
+    TabOrder = 2
+    VerticalAlignment = vaCenter
+    StoreUserData = False
+    GradientBitmap.ShapeType = stLeftTopLines
+    GradientBitmap.ShapeTypeOptions.BeginColor = clGray
+    GradientBitmap.ShapeTypeOptions.EndColor = clGray
+    GradientBitmap.ShapeTypeOptions.ColorFinish = cfMiddle
+    object Btn_Show1: TptButton
+      Left = 125
+      Top = 21
+      Width = 100
+      Height = 35
+      Caption = 'Anzeigen'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Trebuchet MS'
+      Font.Style = [fsBold]
+      ModalResult = mrNone
+      ParentFont = False
+      TabOrder = 0
+      ParentColor = False
+      Color = 15390165
+      ColorMouseOver = 14811135
+      ColorFocused = clLime
+      DrawFocusRect = False
+      MultiLineCaption = False
+      Alignment = alMiddleCenter
+      FontFocused.Charset = DEFAULT_CHARSET
+      FontFocused.Color = clWindowText
+      FontFocused.Height = -11
+      FontFocused.Name = 'MS Sans Serif'
+      FontFocused.Style = []
+      FontMouseOver.Charset = DEFAULT_CHARSET
+      FontMouseOver.Color = clWindowText
+      FontMouseOver.Height = -11
+      FontMouseOver.Name = 'MS Sans Serif'
+      FontMouseOver.Style = []
+      PreferFocused = False
+      FrameSize = 1
+      BackgroundTransparent = False
+      BackgroundStretch = True
+      BackgroundTransparentColor = 16744448
+      Down = False
+      DrawFocusBorder = True
+      Checkable = False
+      RightPressDown = False
+      StoreBackground = True
+      Hotkey.Shift = []
+      Hotkey.IsLong = False
+      Hotkey.Enabled = True
+      Locked = False
+      EventDataNames = 'OnClick=dlgRanking_Btn_Show1Click'
+    end
+    object Btn_ClearGrafik1: TptButton
+      Left = 237
+      Top = 21
+      Width = 100
+      Height = 35
+      Caption = 'Ausblenden'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Trebuchet MS'
+      Font.Style = [fsBold]
+      ModalResult = mrNone
+      ParentFont = False
+      TabOrder = 1
+      ParentColor = False
+      Color = 15390165
+      ColorMouseOver = 14811135
+      ColorFocused = clLime
+      DrawFocusRect = False
+      MultiLineCaption = False
+      Alignment = alMiddleCenter
+      FontFocused.Charset = DEFAULT_CHARSET
+      FontFocused.Color = clWindowText
+      FontFocused.Height = -11
+      FontFocused.Name = 'MS Sans Serif'
+      FontFocused.Style = []
+      FontMouseOver.Charset = DEFAULT_CHARSET
+      FontMouseOver.Color = clWindowText
+      FontMouseOver.Height = -11
+      FontMouseOver.Name = 'MS Sans Serif'
+      FontMouseOver.Style = []
+      PreferFocused = False
+      FrameSize = 1
+      BackgroundTransparent = False
+      BackgroundStretch = True
+      BackgroundTransparentColor = 16744448
+      Down = False
+      DrawFocusBorder = True
+      Checkable = False
+      RightPressDown = False
+      StoreBackground = True
+      Hotkey.Shift = []
+      Hotkey.IsLong = False
+      Hotkey.Enabled = True
+      Locked = False
+      EventDataNames = 'OnClick=TV__ClearAll'
+    end
+    object Btn_ReadTab: TptButton
+      Left = 13
+      Top = 9
+      Width = 80
+      Height = 30
+      Caption = 'Tabelle laden'
+      ModalResult = mrNone
+      TabOrder = 2
+      ParentColor = False
+      Color = 8454016
+      ColorMouseOver = clBtnFace
+      ColorFocused = 8454143
+      DrawFocusRect = False
+      MultiLineCaption = False
+      Alignment = alMiddleCenter
+      FontFocused.Charset = DEFAULT_CHARSET
+      FontFocused.Color = clWindowText
+      FontFocused.Height = -11
+      FontFocused.Name = 'MS Sans Serif'
+      FontFocused.Style = []
+      FontMouseOver.Charset = DEFAULT_CHARSET
+      FontMouseOver.Color = clWindowText
+      FontMouseOver.Height = -11
+      FontMouseOver.Name = 'MS Sans Serif'
+      FontMouseOver.Style = []
+      PreferFocused = False
+      FrameSize = 1
+      BackgroundTransparent = False
+      BackgroundStretch = True
+      BackgroundTransparentColor = clBlack
+      Down = False
+      DrawFocusBorder = True
+      Checkable = False
+      RightPressDown = False
+      StoreBackground = True
+      Hotkey.Shift = []
+      Hotkey.IsLong = False
+      Hotkey.Enabled = True
+      Locked = False
+      EventDataNames = 'OnClick=frm_Tabelle_LoadData'
+    end
+    object Btn_ClearCells: TptButton
+      Left = 13
+      Top = 44
+      Width = 80
+      Height = 30
+      Caption = 'Tabelle löschen'
+      ModalResult = mrNone
+      TabOrder = 3
+      ParentColor = False
+      Color = 8421631
+      ColorMouseOver = clInfoBk
+      ColorFocused = clInfoBk
+      DrawFocusRect = False
+      MultiLineCaption = False
+      Alignment = alMiddleCenter
+      FontFocused.Charset = DEFAULT_CHARSET
+      FontFocused.Color = clWindowText
+      FontFocused.Height = -11
+      FontFocused.Name = 'MS Sans Serif'
+      FontFocused.Style = []
+      FontMouseOver.Charset = DEFAULT_CHARSET
+      FontMouseOver.Color = clWindowText
+      FontMouseOver.Height = -11
+      FontMouseOver.Name = 'MS Sans Serif'
+      FontMouseOver.Style = []
+      PreferFocused = False
+      FrameSize = 1
+      BackgroundTransparent = False
+      BackgroundStretch = True
+      BackgroundTransparentColor = clBlack
+      Down = False
+      DrawFocusBorder = True
+      Checkable = False
+      RightPressDown = False
+      StoreBackground = True
+      Hotkey.Shift = []
+      Hotkey.IsLong = False
+      Hotkey.Enabled = True
+      Locked = False
+      Caption_UTF7 = 'Tabelle l+APY-schen'
+      EventDataNames = 'OnClick=frm_Tabelle_ClearGrid'
+    end
+    object opt_ShowRanking_6Col: TptCheckBox
+      Left = 120
+      Top = 60
+      Width = 136
+      Height = 17
+      Caption = 'Show 6Col_Ranking'
+      Color = clGray
+      ParentColor = False
+      TabOrder = 4
+      Locked = False
+      ColorFocused = clBtnFace
+      ColorMouseOver = clBtnFace
+    end
+  end
+  object DataBar1: TptDataBar
+    Left = 0
+    Top = 0
+    Width = 683
+    Height = 35
+    Align = alTop
+    Color = 13816530
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 3
+    DataGroupName = 'dlgRanking'
+    DataGroupStyle = dsLocal
+    DataComboBoxWidth = 180
+    ButtonStyle = bsImageOnly
+    BorderWidth = 4
+    VisibleDataCbx = True
+    VisibleSaveBtn = True
+    VisibleRefreshBtn = True
+    VisibleDeleteBtn = False
+    VisibleNextBtn = False
+    VisiblePreviousBtn = False
+    DataVisibility = kfNone
+    Locked = False
+  end
+  object edt_Team_4: TptEdit
+    Left = 503
+    Top = 160
+    Width = 148
+    Height = 19
+    Ctl3D = False
+    MaxLength = 0
+    ParentCtl3D = False
+    TabOrder = 4
+    Text = 'QÄBÄLÄ'
+    Numeric = False
+    InputType = itAnything
+    Locked = False
+    Text_UTF7 = 'Q+AMQ-B+AMQ-L+AMQ'
+  end
+  object edt_Team_3: TptEdit
+    Left = 503
+    Top = 142
+    Width = 148
+    Height = 19
+    Ctl3D = False
+    MaxLength = 0
+    ParentCtl3D = False
+    TabOrder = 5
+    Text = 'PAOK'
+    Numeric = False
+    InputType = itAnything
+    Locked = False
+  end
+  object edt_Team_2: TptEdit
+    Left = 503
+    Top = 124
+    Width = 148
+    Height = 19
+    Ctl3D = False
+    MaxLength = 0
+    ParentCtl3D = False
+    TabOrder = 6
+    Text = 'KRASNODAR'
+    Numeric = False
+    InputType = itAnything
+    Locked = False
+  end
+  object edt_Team_1: TptEdit
+    Left = 503
+    Top = 106
+    Width = 148
+    Height = 19
+    Ctl3D = False
+    MaxLength = 0
+    ParentCtl3D = False
+    TabOrder = 7
+    Text = 'DORTMUND'
+    Numeric = False
+    InputType = itAnything
+    Locked = False
+  end
+end

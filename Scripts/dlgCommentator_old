@@ -1,0 +1,24 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+Sub dlgCommentator_Btn_ShowClick (Sender)
+
+    oData.Item("TITLE") = dlgCommentator.ed_Titel.Text
+    For i = 1 to 4
+       oData.Item("NAME_" & i) = dlgCommentator.ComponentByName("ed_Name" & i).Text
+    Next
+
+    If dlgCommentator.opt_Use2Lines.Checked Then
+       oData.Item("LT_TYPE") = "COMM_2"
+    Else
+       oData.Item("LT_TYPE") = "COMM_1"
+       oData.Item("SHOW_NAME2") = dlgCommentator.opt_ShowName2.Checked
+    End If
+
+    AllTV.TV__LowerThird oData
+End Sub
+
+
+</script_body>
+</script>

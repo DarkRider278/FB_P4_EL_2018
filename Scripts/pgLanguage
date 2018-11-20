@@ -1,0 +1,41 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+Sub OpenLanguageDatabase()
+    strPath = CC.DEFS.AppPath & "\Data\" & cc.DEFS.ProjectName & "\Data\Database\"
+    strFile = "Language.dbf"
+
+    System.BDE_DS_Language.Active = False
+    If CC.Files.FileExists(strPath & strFile) Then
+       str__ConnString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & strPath & strFile & ";Persist Security Info=False"
+       System.BDE_DS_Language.DatabasePath = strPath
+       System.BDE_DS_Language.Active = True
+
+       Dbg "Language_DB succesfully loaded!"
+
+       SetGerFirstCol
+
+    Else
+       CC.SF.DebugText "File not found: " & strFile & " in Directory: " & strPath, clRed
+    End If
+End Sub
+
+'Set GER as First Language
+Sub SetGerFirstCol()
+  Dim strCmd
+    System.BDE_DS_Language.Active = False
+
+    If pgLanguage.CheckBox_Ger_firstRow.Checked then
+       strCmd = "SELECT ITEM, GER, ENG FROM LANGUAGE.DBF"
+    Else
+       strCmd = "SELECT ITEM, ENG, GER FROM LANGUAGE.DBF"
+    End if
+
+    System.BDE_DS_Language.SQL = strCmd
+    System.BDE_DS_Language.Active = True
+    pgLanguage.Ado_Language.ColumnsWidth.CommaText = "330,310,310"
+End Sub
+
+</script_body>
+</script>

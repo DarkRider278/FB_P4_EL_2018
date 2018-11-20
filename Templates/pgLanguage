@@ -1,0 +1,80 @@
+object pgLanguage: TccTabSheet
+  Caption = 'Language'
+  Visible = True
+  object Ado_Language: TptAdoGrid
+    Left = 5
+    Top = 35
+    Width = 1011
+    Height = 546
+    Hint = 
+      'Ist der Inhalt eines aktivierten Feldes nicht zu sehen, kann mit' +
+      ' einem zweiten Click in den Bearbeitungsmodus gewechselt werden'
+    DataSource = System.BDE_DS_Language
+    DefaultDrawing = False
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentColor = True
+    ParentFont = False
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'MS Sans Serif'
+    TitleFont.Style = [fsBold]
+    SelectionRowColor = 8421631
+    ColumnsWidth.WideStrings = (
+      '330'
+      '310'
+      '310')
+    ColumnsFiltered = False
+    SelectedFont.Charset = DEFAULT_CHARSET
+    SelectedFont.Color = clWindowText
+    SelectedFont.Height = -11
+    SelectedFont.Name = 'MS Sans Serif'
+    SelectedFont.Style = []
+    Locked = False
+    EventDataNames = 'OnCellClick=Page4_Ado_LanguageCellClick'
+  end
+  object Ado_Nav_Language: TptAdoNavigator
+    Left = 5
+    Top = 5
+    Width = 1010
+    Height = 26
+    DataSource = System.BDE_DS_Language
+    Flat = True
+    Hints.Strings = (
+      'Erster Eintrag'
+      'Vorheriger Eintrag'
+      'Nächster Eintrag'
+      'Letzter Eintrag'
+      'Eintrag hinzufügen'
+      'Eintrag löschen'
+      'Eintrag bearbeiten'
+      'Änderungen übernehmen'
+      'Änderungen verwerfen'
+      'Daten aktualisieren')
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 1
+    Locked = False
+  end
+  object CheckBox_Ger_firstRow: TptCheckBox
+    Left = 20
+    Top = 595
+    Width = 220
+    Height = 17
+    Caption = 'Deutsch als ersten Spracheintrag zeigen'
+    Color = clBtnFace
+    ParentColor = False
+    TabOrder = 2
+    Locked = False
+    ColorFocused = clBtnFace
+    ColorMouseOver = clBtnFace
+    EventDataNames = 'OnClick=SetGerFirstCol'
+  end
+end

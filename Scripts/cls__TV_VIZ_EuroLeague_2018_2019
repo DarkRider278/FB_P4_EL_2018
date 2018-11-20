@@ -1,0 +1,2901 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+Class cls__TV_VIZ_EuroLeague_2018_2019
+     Private s__VizPath
+     Private ActionList
+     Private s__LastAnim
+     Private s__FlagPath, s__LogoPath, s__SymbolPath, s__PhotoPath, s__BibPath,  s__WeatherPath, s__TeamKits
+     Public objNames(13), objID(13)
+     Private i__TVContent
+     Private obj__TV
+	 
+     Private i__TVLanguage
+     Private sLastDSSAnim
+     Private b__DSSVisible, b__DSSAddVisible, b__AGGSCOREVisible, b__PenaltiesVisible
+     Private str__DSSType
+     Private arr__Penalties (2,5), b__DSSAddPenaltiesVisible
+     Private bAddTimeOnAIR
+     Private bCoolingOnAir
+     Private sScene
+
+    Private Sub Class_Initialize
+        s__VizPath    = "UEFA_EL_2018/scene"
+        s__LastAnim   = ""
+        s__FlagPath   = ""
+        s__LogoPath   = "UEFA_EL_2018\image\TEAMLOGOS\"
+        s__WeatherPath  =  "UEFA_EL_2018\image\WEATHER\"
+        s__SymbolPath = "UEFA_EL_2018\image\SYMBOLS\"
+        s__BibPath    = "UEFA_EL_2018\image\NUMBERS\"
+        s__TeamKits   = "UEFA_EL_2018\image\TEAM_KITS\"
+        s__PhotoPath  = ""
+        sLastDSSAnim  = ""
+        b__DSSVisible = False
+        b__DSSAddVisible = False
+        b__PenaltiesVisible = False
+        b__DSSAddPenaltiesVisible = false
+        b__AGGSCOREVisible = false
+        str__DSSType  = "DEFAULT"
+        ResetPenalties
+        bAddTimeOnAIR = false
+        bCoolingOnAir = false
+        Set Obj__TV = Nothing
+    End Sub
+
+    Private Sub ResetPenalties
+        FOR i = 1 TO 2
+            FOR j = 1 TO 5
+                arr__Penalties (i,j) = 0
+            NEXT
+        NEXT
+    END SUB
+
+    Private Sub Class_Terminate()
+
+    End Sub
+
+    public Sub Kill_Bill()
+        CC.SF.DebugText "Terminating all animations", clRed
+        obj__TV.DoEffect elFrontLayer, "ALL", efReset
+        obj__TV.DoEffect elMainLayer,  "ALL", efReset
+        obj__TV.DoEffect elBackLayer,  "ALL", efReset
+        obj__TV.SendCommand "RENDERER PREVIEW CURRENT VIDEO ALL 0.0"
+        s__LastAnim = ""
+        ReDim ActionList(1, 0)
+        ActionList(0, 0) = ""
+        b__PenaltiesVisible = false
+    end sub
+
+
+    Public Sub Anzeigen()
+        If obj__TV is Nothing Then Exit Sub
+        If not IsArray(ActionList) Then Exit Sub
+
+        For i = 1 to UBound(ActionList, 2)
+            obj__TV.DoEffect elMainLayer, ActionList(1, i), ActionList(2, i)
+        Next
+
+        s__LastAnim = ActionList(1, 0)
+
+
+        If ActionList(0, 0) = "NUM_TAC_LINEUP" Then
+
+           CC.SF.Wait 2000
+           GetPreview Array("VT 3.0", "TAC_SP_1 0.2", "TAC_SP_2 0.2", "TAC_SP_3 0.2", "TAC_SP_4 0.2", "TAC_SP_5 0.2", "TAC_SP_6 0.2", "TAC_SP_7 0.2", "TAC_SP_8 0.2", "TAC_SP_9 0.2", "TAC_SP_10 0.2", "TAC_SP_11 0.2"), "", sScene
+           If Msgbox("Wechsel auf Taktische?", vbYesNo, Appname) = vbYes Then
+
+              Change_To_Tactical_Lineup
+           End If
+        End If
+    End Sub
+
+    Public Sub Init_Layouts()
+        Tmp = obj__TV.GetGroupItems(s__VizPath, gkScene)
+        If IsArray(Tmp) Then
+           obj__TV.RendererUpdate false
+           For i = 0 to UBound(Tmp)
+               CC.SF.ShowSplashForm "Lade Scene '" & Tmp(i) & "'", RGB(128,12,89)
+
+               LoadScene 2, Tmp(i)
+
+               'CC.SF.Wait 5000
+
+
+               'cc.SF.DebugText Tmp(i)
+           Next
+           cc.SF.HideSplashForm
+           obj__TV.RendererUpdate true
+        End If
+    End Sub
+
+
+    Public Sub OnAdditionalTime()
+       DIM strMainCont : strMainCont = "STAND"
+
+       SetScene "BX_STAND"
+       obj__TV.SendCommand "CLOCK1*TIME SET 0"
+       obj__TV.SendCommand "CLOCK1 START"
+
+       txtAddTime = trim(pgMain.edtAddTime.Text)
+       IF txtAddTime = "" THEN
+           SetText strMainCont & "$txt_addtime", ""
+       ELSE
+           txtAddTime = "+" & txtAddTime
+           SetText strMainCont & "$txt_addtime", txtAddTime
+       END IF
+
+        obj__TV.DoEffect elFrontLayer, "ADDTIME", efPlay : bAddTimeOnAIR = true
+
+    End Sub
+
+
+    Public Sub Show_Dss_Zusatz(ByRef Data)
+
+        InfoType = Data.Item("DSS_ZUSATZ")
+        'ShowDataObject Data
+'        If not b__DSSVisible Then
+ '           IF NOT(InfoType = "PENALTIES" AND frm_7MThrows.chb_AutoPenAdd.Checked) then EXIT SUB
+  '      END IF
+
+        'SELECT CASE InfoType
+        '    case "PENATLIES", "PENALTIES_UPDATE"
+        'SetScene "BX_PENALTY"
+        '    case else
+                SetScene "BX_STAND"
+        'END SELECT
+        
+
+        Select Case InfoType
+           CASE "ADD_IN"
+                iAddTime = Data.Item("INJURYTIME")
+                bAddTime = (iAddTime > -1)
+
+                If bAddTime Then
+                    txtAddTime = trim(pgMain.edtAddTime.Text)
+                    IF txtAddTime = "" THEN
+                       SetText strMainCont & "$txt_addtime", ""
+                    ELSE
+                        IF NOT Left(txtAddTime, 1) = "+" THEN txtAddTime = "+" & txtAddTime
+
+                        SetText strMainCont & "$txt_addtime", txtAddTime
+                    END IF
+                    IF NOT bAddTimeOnAIR THEN obj__TV.DoEffect elFrontLayer, "ADDTIME", efPlay : bAddTimeOnAIR = true
+                END IF
+
+                EXIT SUB
+           CASE "ADD_OUT"
+                IF bAddTimeOnAIR THEn
+                     obj__TV.DoEffect elFrontLayer, "ADDTIME", efContinue : bAddTimeOnAIR = false
+                END IF
+                EXIT SUB
+           Case "COOLING"
+
+                sDirector = "COOLING"
+           Case "CARD"
+              bCardChange = False
+
+              SubCont = "KARTE"
+              'obj__TV.ShowObject SubCont & "$ONOFF_KARTE_EINZELN"
+              'obj__TV.HideObject SubCont & "$ONOFF_WECHSEL"
+              obj__TV.SendCommand "RENDERER*FRONT_LAYER*TREE*$KARTE$img_logo*SCRIPT*INSTANCE*noc SET " & oData.Item("TEAMLOGO")
+              
+
+              Nr      = oData.Item("CURR_P_NR")
+              Name    = UCASE(oData.Item("CURR_P_LNAME"))
+              L_TName = UCASE(oData.Item("CURR_T_LNAME"))
+              S_TName = UCASE(" (" &oData.Item("CURR_T_SNAME")&")")
+              sCardInfo = Data.Item("CARD_INFO")
+
+                SetText SubCont & "$txt_bib", Nr
+                SetText SubCont & "$txt_name", Name
+                bCardChange = False
+                SELECT CASE Data.Item("CARD_TYPE")
+                    CASE 1 ' gelb
+                        'SetText SubCont & "$txt_team", "" 'S_TName
+                        'SetText SubCont & "$txt_sub", L_TName
+                        SetText SubCont & "$txt_sub", trim(UCASE(GetString(sCardInfo, i__TVLanguage)))
+                        obj__TV.ShowObject SubCont & "$ONOFF_SUB"
+                        SetImg  SubCont & "$ONOFF_KARTE_EINZELN$img_card", s__SymbolPath & "card_yellow"
+                        obj__TV.ShowObject SubCont & "$ONOFF_KARTE_EINZELN"
+                        obj__TV.HideObject SubCont & "$ONOFF_WECHSEL"
+                    CASE 2 ' gelb-rot
+                        'SetText SubCont & "$txt_team", "" 'S_TName
+                        'SetText SubCont & "$txt_sub", L_TName
+                        SetText SubCont & "$txt_sub", trim(UCASE(GetString(sCardInfo, i__TVLanguage)))
+                        obj__TV.ShowObject SubCont & "$ONOFF_SUB"
+                        bCardChange = True
+                        obj__TV.HideObject SubCont & "$ONOFF_KARTE_EINZELN"
+                        obj__TV.ShowObject SubCont & "$ONOFF_WECHSEL"
+                    CASE 3 ' rot
+                        'SetText SubCont & "$txt_team", "" 'S_TName
+                        'SetText SubCont & "$txt_sub", L_TName
+                        SetText SubCont & "$txt_sub", trim(UCASE(GetString(sCardInfo, i__TVLanguage)))
+                        obj__TV.ShowObject SubCont & "$ONOFF_SUB"
+                        SetImg  SubCont & "$ONOFF_KARTE_EINZELN$img_card", s__SymbolPath & "card_red"
+                        obj__TV.ShowObject SubCont & "$ONOFF_KARTE_EINZELN"
+                        obj__TV.HideObject SubCont & "$ONOFF_WECHSEL"
+
+                    CASE 4 ' gelb + misses next match
+                        'SetText SubCont & "$txt_team", S_TName
+                        SetText SubCont & "$txt_sub", trim(UCASE(GetString(sCardInfo, i__TVLanguage)))
+                        obj__TV.ShowObject SubCont & "$ONOFF_SUB"
+                        SetImg  SubCont & "$ONOFF_KARTE_EINZELN$img_card", s__SymbolPath & "card_yellow"
+                        obj__TV.ShowObject SubCont & "$ONOFF_KARTE_EINZELN"
+                        obj__TV.HideObject SubCont & "$ONOFF_WECHSEL"
+                END SELECT
+
+               sDirector = "KARTE"
+
+            Case "P_CHANGE"
+
+               ChangeType = Data.Item("CHANGE_TYPE")
+               obj__TV.DoEffect elFrontLayer, "WECHSEL_SPIELER", efReset
+               SubCont = "WECHSEL"
+               sDirector = "WECHSEL"
+
+               obj__TV.ShowObject SubCont & "$ONOFF_SINGLE"
+               'obj__TV.HideObject SubCont & "$ONOFF_DOPPEL"
+
+               NrIn    = oData.Item("P_NR_IN")
+               NameIn  = oData.Item("P_LNAME_IN")
+
+               NrOut   = oData.Item("P_NR_OUT")
+               NameOut = oData.Item("P_LNAME_OUT")
+
+               L_TName = oData.Item("T_LNAME")
+               S_TName = oData.Item("T_SNAME")
+
+
+               obj__TV.SendCommand "RENDERER*FRONT_LAYER*TREE*$WECHSEL$img_logo*SCRIPT*INSTANCE*noc SET " & oData.Item("TEAMLOGO")
+               obj__TV.ShowObject SubCont & "$ONOFF_LOGO"
+
+                obj__TV.ShowObject SubCont & "$SPIELER_2"
+                  SetText SubCont & "$SPIELER_1$txt_bib", NrOut
+                  SetText SubCont & "$SPIELER_1$txt_name_1_1", ""
+                  SetText SubCont & "$SPIELER_1$txt_name_1_2", UCASE(NameOut)
+                  ' Spieler out
+                  SetText SubCont & "$SPIELER_2$txt_bib", NrIn
+                  SetText SubCont & "$SPIELER_2$txt_name_1_1", ""
+                  SetText SubCont & "$SPIELER_2$txt_name_1_2", UCASE(NameIn)
+               If ChangeType = "BOTH" Then
+
+               ElseIf ChangeType = "IN" Then
+                      sDirector = "WECHSEL_PLAYER_ON"
+               ElseIf ChangeType = "OUT" Then
+                     sDirector = "WECHSEL_PLAYER_OFF"
+               End If
+
+            CASE "GOAL"
+               SubCont = "INFO"
+               sDirector = "INFO"
+               IF oData.Item("DSS_SHOWBALL") THEN
+                   obj__TV.ShowObject SubCont & "$ONOFF_BALL"
+               ELSE
+                   obj__TV.HideObject SubCont & "$ONOFF_BALL"
+               END IF
+
+               obj__TV.SendCommand "RENDERER*FRONT_LAYER*TREE*$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("TEAMLOGO")
+               obj__TV.ShowObject SubCont & "$ONOFF_LOGO"
+               
+               SetText SubCont & "$txt_name_1_1",""' UCASE(Data.Item("FNAME"))
+               SetText SubCont & "$txt_name_1_2", UCASE(Data.Item("NAME"))
+               SetText SubCont & "$txt_bib",  Data.Item("NR") ' NEU
+               'SetText SubCont & "$txt_titel", UCase(Data.Item("TEAM"))
+               obj__TV.HideObject SubCont & "$ONOFF_TITLE"
+
+          CASE "GOAL_FREETEXT"
+               SubCont = "INFO"
+               sDirector = "INFO"
+               obj__TV.ShowObject SubCont & "$ONOFF_BALL"
+               obj__TV.ShowObject SubCont & "$ONOFF_TITLE"
+               SetText SubCont & "$txt_bib", Data.Item("NR")
+               SetText SubCont & "$txt_name_1_1", ""
+               SetText SubCont & "$txt_name_1_2", UCASE(Data.Item("NAME"))
+               SetText SubCont & "$txt_titel",    UCase(Data.Item("INFO"))
+               obj__TV.SendCommand "RENDERER*FRONT_LAYER*TREE*$INFO$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("TEAMLOGO")
+            CASE "PLAYER_STAT"
+              SubCont = "INFO"
+              sDirector = "INFO"
+              'obj__TV.HideObject SubCont & "$ONOFF_KARTE_EINZEL"
+              'obj__TV.HideObject SubCont & "$ONOFF_WECHSEL"
+              obj__TV.HideObject SubCont & "$ONOFF_BALL"
+              obj__TV.ShowObject SubCont & "$ONOFF_TITLE"
+              SetText SubCont & "$txt_bib", Data.Item("NR")
+              SetText SubCont & "$txt_name_1_1", ""
+              SetText SubCont & "$txt_name_1_2", UCASE(Data.Item("NAME"))
+              SetText SubCont & "$txt_titel", oData.Item("INFO")
+              obj__TV.SendCommand "RENDERER*FRONT_LAYER*TREE*$INFO$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("TEAMLOGO")
+            CASE "COACH"
+               SubCont = "INFO"
+               sDirector = "INFO"
+               obj__TV.HideObject SubCont & "$ONOFF_BALL"
+               obj__TV.ShowObject SubCont & "$ONOFF_TITLE"
+
+               obj__TV.SendCommand "RENDERER*FRONT_LAYER*TREE*$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("TEAMLOGO")
+               obj__TV.ShowObject SubCont & "$ONOFF_LOGO"
+               
+               SetText SubCont & "$txt_name_1_1", UCASE(Data.Item("FNAME"))
+               SetText SubCont & "$txt_name_1_2", UCASE(Data.Item("LNAME"))
+               SetText SubCont & "$txt_team",  "" ' NEU
+               SetText SubCont & "$txt_bib",  "" ' NEU
+               SetText SubCont & "$txt_titel", UCase(Data.Item("COACH_FUNCTION"))
+               'oData.Item("COACH_DB_FUNCTION") = TSP.GetOfficialById(TSP.GetSTeam("coach_" & j & "_id"), TSP_text_1)
+
+            CASE "REFEREE"
+               SubCont = "INFO"
+               sDirector = "INFO"
+               obj__TV.HideObject SubCont & "$ONOFF_BALL"
+               SetText SubCont & "$txt_name_1_1", UCASE(Data.Item("FNAME"))
+               SetText SubCont & "$txt_name_1_2", UCASE(Data.Item("LNAME"))
+               SetText SubCont & "$txt_team",  "" ' NEU
+               SetText SubCont & "$txt_bib",  "" ' NEU
+               SetText SubCont & "$txt_titel", UCase(Data.Item("INFO"))
+
+            Case "TEAMSTATS"
+
+               SubCont = "TEAM_STAT"
+               sDirector = "TEAM_STAT"
+
+               SetText SubCont & "$txt_parameter", UCase(oData.Item("DSS_TEAMSTATS_PARAM"))
+               SetText SubCont & "$txt_wert_1", UCase(oData.Item("DSS_TEAMSTATS_VAL1"))
+               SetText SubCont & "$txt_wert_2", UCase(oData.Item("DSS_TEAMSTATS_VAL2"))
+               'SetText SubCont & "$txt_team_1", UCase(oData.Item("T_SNAME_1"))
+               'SetText SubCont & "$txt_team_2", UCase(oData.Item("T_SNAME_2"))
+               
+               obj__TV.SendCommand "RENDERER*FRONT_LAYER*TREE*$TEAM_STAT$img_logo_1*SCRIPT*INSTANCE*noc SET " & oData.Item("T_LOGO_1")
+               obj__TV.SendCommand "RENDERER*FRONT_LAYER*TREE*$TEAM_STAT$img_logo_2*SCRIPT*INSTANCE*noc SET " & oData.Item("T_LOGO_2")
+        End Select
+
+
+        Select Case InfoType
+
+            CASE "FREETEXT2", "PLAYER_STAT"
+                If CBool(Data.Item("DSS_SHOWBALL")) Then
+                   GetPreview sDirector, "1.8", "BX_STAND"
+                Else
+                   GetPreview sDirector, "1.8", "BX_STAND"
+                End if
+            CASE "CARD"
+                IF bCardChange then
+                    GetPreview Array("KARTE 1.8", "WECHSEL_KARTE 0.8", "ADDTIME 0.0"), "", "BX_STAND"
+                else
+                    GetPreview Array("KARTE 1.8", "ADDTIME 0.0"), "", "BX_STAND"
+                end if
+            CASE "GOAL", "COACH", "REFEREE"
+                GetPreview Array("INFO 1.8","ADDTIME 0.0"), "", "BX_STAND"
+            CASE "TEAMSTATS"
+                GetPreview Array("TEAMSTAT 1.8","ADDTIME 0.0"), "", "BX_STAND"
+            CASE "P_CHANGE"
+                GetPreview Array("WECHSEL 1.8","ADDTIME 0.0"), "", "BX_STAND"
+            CASE "TEAMSTATS"
+                GetPreview Array("TEAM_STAT 1.8","ADDTIME 0.0"), "", "BX_STAND"
+            CASE "COOLING"
+                GetPreview Array("COOLING 1.8"), "", "BX_STAND"
+
+            CASE ELSE
+                GetPreview Array(sDirector & " 1.8","ADDTIME 0.0"),"", "BX_STAND"
+        END SELECT
+
+        If Msgbox("DSS Zusatz anzeigen", vbYesNo, AppName) = vbYes Then
+            SELECT CASE InfoType
+                CASE "ADD_IN", "ADD_OUT"
+                CASE ELSE
+                    IF bAddTimeOnAIR THEN
+                        obj__TV.DoEffect elFrontLayer, "ADDTIME", efContinue : bAddTimeOnAIR = false
+                        cc.SF.Wait 450
+                    END IF
+            END SELECT
+            intPause = 1000
+            obj__TV.DoEffect elFrontLayer, sDirector, efPlay
+            sLastDSSAnim = sDirector
+
+            If bCardChange Then
+               'cc.SF.Wait 1000
+               'GetPreview "WECHSEL_KARTE", "1.3", "BX_STAND"
+               'If Msgbox("Kartenwechsel animieren?", vbYesNo, Appname) = vbYes Then
+'
+'                  obj__TV.DoEffect elFrontLayer, "WECHSEL_KARTE", efPlay
+'               End If
+            End If
+
+            If (InfoType = "P_CHANGE" And ChangeType = "BOTH") or (InfoType = "P_CHANGE_DOUBLE" And ChangeType = "BOTH") Then
+               cc.SF.Wait 1000
+               GetPreview "WECHSEL_SPIELER", "1.3", "BX_STAND"
+               If Msgbox("Spielerwechsel animieren?", vbYesNo, Appname) = vbYes Then
+                  obj__TV.DoEffect elFrontLayer, "WECHSEL_SPIELER", efPlay
+               End If
+            End If
+            b__DSSAddVisible = true
+            IF sDirector = "ELFMETER_INFO" OR sDirector = "ELFMETER_ALL"  THEN
+                b__DSSAddPenaltiesVisible = true
+                b__DSSVisible = true
+                intPause = 800
+            ELSE
+                b__DSSAddPenaltiesVisible = false
+            END IF
+            cc.SF.wait intPause
+        Else
+            GetPreview sDirector, "0.0", "BX_STAND"
+            b__DSSAddPenaltiesVisible = false
+        End If
+    End Sub
+
+
+    Public Sub Show_Penalties(ByRef oData)
+
+        'ShowDataObject oData
+        strMainCont = "STAND"
+        sScene = "BX_PENALTY"
+        obj__TV.SetScene sScene
+        
+        SELECT CASE oData.Item("PENALTIES_TYPE")
+            case "SHOW"
+                if not b__PenaltiesVisible then
+                    obj__TV.LoadScene elFrontLayer
+                    obj__TV.DoEffect elFrontLayer, "ALL", efReset
+                end if
+        END SELECT
+
+        SELECT CASE oData.Item("PENALTIES_TYPE")
+            CASE "HIDE"
+                If b__PenaltiesVisible then
+                   obj__TV.DoEffect elFrontLayer, "ELFMETER", efContinue : b__PenaltiesVisible = false
+                   exit sub
+                end if
+
+            CASE "SHOW"
+               sDirector = "ELFMETER_ALL"
+               SubCont = "ELFMETER"
+               SetText SubCont & "$txt_score_1", oData.Item("Score_A")
+               SetText SubCont & "$txt_score_2", oData.Item("Score_B")
+
+               SetText SubCont & "$txt_team_1", oData.Item("T_DSSNAME_1")
+               SetText SubCont & "$txt_team_2", oData.Item("T_DSSNAME_2")
+               
+               FOR k = 1 TO 2
+                   IF k = 1 THEN
+                    strTeam = "A"
+                   ELSE
+                    strTeam = "B"
+                   END IF
+                   intShotsMade = 0
+                   FOR i = 1 TO 5
+                        SELECT CASE oData.Item("ShootType_"&strTeam&"_" & CStr(i))
+                            CASE 0 ' noch nicht geschossen
+                                obj__TV.SendCommand "RENDERER*FRONT_LAYER*STAGE*DIRECTOR*ELFMETER_T"&CStr(k)&"_"&CStr(i)&" SHOW 0.0"
+                                arr__Penalties (k,i) = 0
+                            CASE 1 ' treffer
+                                intShotsMade = intShotsMade + 1
+                                IF intShotsMade = i THEN
+                                    SetImg SubCont & "$TREFFER$TEAM"&CStr(k)&"$img_treffer_" & CStr(i), s__SymbolPath & "penalty_clock_green"
+                                    obj__TV.SendCommand "RENDERER*FRONT_LAYER*STAGE*DIRECTOR*ELFMETER_T"&CStr(k)&"_"&CStr(i)&" SHOW 0.2"
+                                    arr__Penalties (k,i) = 1
+                                ELSE
+                                    obj__TV.SendCommand "RENDERER*FRONT_LAYER*STAGE*DIRECTOR*ELFMETER_T"&CStr(k)&"_"&CStr(i)&" SHOW 0.0"
+                                    arr__Penalties (k,i) = 0
+                                END IF
+
+                            CASE 2 ' vorbei gehauen ... looser!
+                                intShotsMade = intShotsMade + 1
+                                IF intShotsMade = i THEN
+                                    SetImg SubCont & "$TREFFER$TEAM"&CStr(k)&"$img_treffer_" & CStr(i), s__SymbolPath & "penalty_clock_red"
+                                    obj__TV.SendCommand "RENDERER*FRONT_LAYER*STAGE*DIRECTOR*ELFMETER_T"&CStr(k)&"_"&CStr(i)&" SHOW 0.2"
+                                    arr__Penalties (k,i) = 2
+                                ELSE
+                                    obj__TV.SendCommand "RENDERER*FRONT_LAYER*STAGE*DIRECTOR*ELFMETER_T"&CStr(k)&"_"&CStr(i)&" SHOW 0.0"
+                                    arr__Penalties (k,i) = 0
+                                END IF
+                        END SELECT
+                        'cc.SF.DebugText "Team: " & strTeam & " : " & arr__Penalties (k,i)
+                   NEXT
+                   'cc.SF.DebugText "--UPDATE-------------------------------------------------------"
+                   SetText SubCont & "$txt_score_" & CStr(k), oData.Item("Score_"& strTeam)
+               NEXT
+               
+               for i = 0 to 4
+                SetText SubCont & "$txt_shot_" & CStr(i+1), oData.Item("Score_Shift") + i
+               next
+               If not b__PenaltiesVisible then
+                   obj__TV.DoEffect elFrontLayer, "ELFMETER", efPlay : b__PenaltiesVisible = true
+               end if
+           CASE "UPDATE"
+                if b__PenaltiesVisible THEN
+                   SetText SubCont & "$txt_score_1", oData.Item("Score_A")
+                   SetText SubCont & "$txt_score_2", oData.Item("Score_B")
+                   for i = 0 to 4
+                        SetText SubCont & "$txt_shot_" & CStr(i+1), oData.Item("Score_Shift") + i
+                   next
+                   FOR k = 1 TO 2
+                       IF k = 1 THEN
+                        strTeam = "A"
+                       ELSE
+                        strTeam = "B"
+                       END IF
+                       intShotsMade = 0
+                       FOR i = 1 TO 5
+                            SELECT CASE oData.Item("ShootType_"&strTeam&"_" & CStr(i))
+                                CASE 0 ' noch nicht geschossen
+                                    IF NOT arr__Penalties (k,i) = 0 THEN
+                                        obj__TV.DoEffect elFrontLayer, "ELFMETER_T"&CStr(k)&"_"&CStr(i), efContinue
+                                    ELSE
+                                        obj__TV.SendCommand "RENDERER*FRONT_LAYER*STAGE*DIRECTOR*ELFMETER_T"&CStr(k)&"_"&CStr(i)&" SHOW 0.0"
+                                    END IF
+                                    arr__Penalties (k,i) = 0
+                                CASE 1 ' treffer
+                                    intShotsMade = intShotsMade + 1
+                                    IF intShotsMade = i THEN
+                                        SetImg SubCont & "$TREFFER$TEAM"&CStr(k)&"$img_treffer_" & CStr(i), s__SymbolPath & "penalty_clock_green"
+                                        SELECT CASE arr__Penalties (k,i)
+                                            CASE 0
+                                                obj__TV.DoEffect elFrontLayer, "ELFMETER_T"&CStr(k)&"_"&CStr(i), efPlay
+                                        END SELECT
+                                        arr__Penalties (k,i) = 1
+                                    ELSE
+                                        obj__TV.SendCommand "RENDERER*FRONT_LAYER*STAGE*DIRECTOR*ELFMETER_T"&CStr(k)&"_"&CStr(i)&" SHOW 0.0"
+                                        arr__Penalties (k,i) = 0
+                                    END IF
+                                CASE 2 ' vorbei gehauen ... looser!
+                                    intShotsMade = intShotsMade + 1
+                                    IF intShotsMade = i THEN
+                                        SetImg SubCont & "$TREFFER$TEAM"&CStr(k)&"$img_treffer_" & CStr(i), s__SymbolPath & "penalty_clock_red"
+                                        SELECT CASE arr__Penalties (k,i)
+                                            CASE 0
+                                                obj__TV.DoEffect elFrontLayer, "ELFMETER_T"&CStr(k)&"_"&CStr(i), efPlay
+                                        END SELECT
+                                        arr__Penalties (k,i) = 2
+                                    ELSE
+                                        obj__TV.SendCommand "RENDERER*FRONT_LAYER*STAGE*DIRECTOR*ELFMETER_T"&CStr(k)&"_"&CStr(i)&" SHOW 0.0"
+                                        arr__Penalties (k,i) = 0
+                                    END IF
+                            END SELECT
+                            'cc.SF.DebugText "Team: " & strTeam & " : " & arr__Penalties (k,i)
+                       NEXT
+                       SetText SubCont & "$txt_score_" & CStr(k), oData.Item("Score_"& strTeam)
+                   NEXT
+                END IF
+                
+            end select
+
+    End Sub
+    
+    
+    Public Sub Show_ReplayReverse(sType)
+        If sType = "REPLAY" Then
+           sScene = "BX_REPLAY"
+        Elseif sType = "REVERSE" Then
+           sScene = "BX_REVERSE"
+        End If
+
+        LoadScene 2, sScene
+        'Prepare_Layer elMainLayer
+
+        sDirector = "BX"
+
+        GetPreview sDirector, "0.4", sScene
+
+        Redim ActionList(2, 1)
+        ActionList(1, 0) = sDirector
+        ActionList(1, 1) = sDirector
+        ActionList(2, 1) = efPlay
+
+    End Sub
+
+    Public Sub FP_Ranking(ByRef data)
+
+        sScene = "VT_TAB"
+
+        LoadScene 2, sScene
+        'Prepare_Layer elMainLayer
+
+        sDirector = "VT"
+
+        iLines = Data.Item("RANKING_LINES")
+
+
+        SetText "txt_titel", UCase(Data.Item("RANKING_TITLE"))
+        'For i = 1 to 7
+        '    SetText "ANI_TITEL$txt_col_" & i, UCase(Data.Item("RANKING_TITLE_" & i))
+        'Next
+
+
+        For i = 1 to 4
+            obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$ANI_ZEILE_" & i & "$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("RANKING_LOGO" & i)
+            SetText "ANI_ZEILE_" & i & "$txt_team", UCase(Data.Item("RANKING_TNAME" & i))
+
+            SetText "ANI_ZEILE_" & i & "$txt_col_7", UCase(Data.Item("RANKING_PTS" & i))
+            SetText "ANI_ZEILE_" & i & "$txt_wert_1", UCase(Data.Item("RANKING_GAMES" & i))
+            SetText "ANI_ZEILE_" & i & "$txt_col_2", UCase(Data.Item("RANKING_WON" & i))
+            SetText "ANI_ZEILE_" & i & "$txt_col_3", UCase(Data.Item("RANKING_DRAW" & i))
+            SetText "ANI_ZEILE_" & i & "$txt_col_4", UCase(Data.Item("RANKING_LOST" & i))
+            SetText "ANI_ZEILE_" & i & "$txt_col_5", UCase(Data.Item("RANKING_GOALSFOR" & i))
+            SetText "ANI_ZEILE_" & i & "$txt_col_6", UCase(Data.Item("RANKING_GOALSAGAINST" & i))
+
+        Next
+
+
+        GetPreview sDirector, "1.8", sScene
+
+        Redim ActionList(2, 1)
+        ActionList(1, 0) = sDirector
+        ActionList(1, 1) = sDirector
+        ActionList(2, 1) = efPlay
+
+    End Sub
+
+
+    Public Sub Hide_DSS_Zusatz()
+      Dim PrevData(3)
+
+        obj__TV.SetScene "BX_STAND"
+        IF b__DSSVisible THEN
+            IF NOT trim(sLastDSSAnim) = "" THEN
+
+                obj__TV.DoEffect elFrontLayer, sLastDSSAnim, efContinue
+                cc.SF.Wait 2200
+
+                IF sLastDSSAnim = "ELFMETER_ALL" THEN
+                    GetPreview "Default", "1.8", "BX_STAND"
+                    b__DSSVisible = false
+                ELSE
+                    PrevData(0) = "BX_STAND"
+                    PrevData(1) = "1.8"
+                    PrevData(2) = sLastDSSAnim
+                    PrevData(3) = "0.0"
+                    GetPreview PrevData, "1.8", "BX_STAND"
+                END IF
+            END IF
+        END IF
+        b__DSSAddVisible = false
+        b__DSSAddPenaltiesVisible = false
+        sLastDSSAnim = ""
+        ResetPenalties
+    End Sub
+
+    'Global Script for all Types of Lower Third
+    Public Sub Lowerthird(ByRef Data)
+       Dim sFrame
+
+        Select Case Data.Item("LT_TYPE")
+           Case "COMM_1"
+               sScene = "BB_COMM_1"
+               sFrame = "0.4"
+
+           Case "COMM_2"
+               sScene = "BB_COMM_2"
+               sFrame = "0.4"
+
+           Case "LT_COACH"
+               sScene = "BB_COACH"
+               sFrame = "0.76"
+
+           Case "LT_1_LINE"
+               sScene = "BB_ID_0"
+               sFrame = "0.4"
+
+           Case "LT_2_LINE"
+               sScene = "BB_ID_1"
+               sFrame = "0.4"
+
+           Case "LT_3_LINE"
+               sScene = "BB_ID_2"
+               sFrame = "0.4"
+
+           Case "LT_PLAYER_1_LINE"
+               sScene = "BB_SPIELER_1"
+               sFrame = "0.4"
+
+           Case "LT_PLAYER_2_LINE"
+               sScene = "BB_SPIELER_2"
+               sFrame = "0.4"
+
+           Case "LT_PLAYER_3_LINE"
+               sScene = "BB_SPIELER_3"
+               sFrame = "0.4"
+           CASE "LT_PLAYERSTAT"
+               sScene = "BB_SPIELER_3_1"
+               sFrame = "1.0"
+
+        End Select
+
+
+        LoadScene elMainLayer, sScene
+
+        'Prepare_Layer elMainLayer
+
+        sDirector = "BB"
+
+        Select Case Data.Item("LT_TYPE")
+          Case "LT_COACH"
+             SetText "DATA$txt_titel", UCASE(Data.Item("LT_INFO1"))
+             SetText "DATA$txt_name_1_1", UCASE(Data.Item("LT_NAME_1"))
+             SetText "DATA$txt_name_1_2", UCASE(Data.Item("LT_NAME_2"))
+
+             SetImg "DATA$img_logo", s__LogoPath & "SMALL\" & Data.Item("LT_LOGO")
+
+          Case "LT_1_LINE"
+             SetText "DATA$txt_info", UCASE(Data.Item("LT_INFO1"))
+
+          Case "LT_2_LINE"
+             SetText "DATA$txt_info", UCASE(Data.Item("LT_INFO1"))
+             SetText "DATA$txt_sub",  UCASE(Data.Item("LT_INFO2"))
+
+          Case "LT_3_LINE"
+             SetText "DATA$txt_info", UCASE(Data.Item("LT_INFO1"))
+             SetText "DATA$txt_sub",  UCASE(Data.Item("LT_INFO2")) & vbcrlf & UCASE(Data.Item("LT_INFO3"))
+
+          Case "COMM_1"
+             SetText "DATA$txt_titel", UCASE(Data.Item("TITLE"))
+
+             SetText "DATA$txt_name_1_1", UCASE(Data.Item("NAME_1"))
+             SetText "DATA$txt_name_1_2", UCASE(Data.Item("NAME_2"))
+
+             If CBool(Data.Item("SHOW_NAME2")) Then
+                SetText "DATA$txt_name_2_1", UCASE(Data.Item("NAME_3"))
+                SetText "DATA$txt_name_2_2", UCASE(Data.Item("NAME_4"))
+                SetText "DATA$txt_trenner", "&"
+             Else
+                SetText "DATA$txt_name_2_1", ""
+                SetText "DATA$txt_name_2_2", ""
+                SetText "DATA$txt_trenner", ""
+             End If
+
+
+          Case "COMM_2"
+             SetText "DATA$txt_name_1_1", UCASE(Data.Item("NAME_1"))
+             SetText "DATA$txt_name_1_2", UCASE(Data.Item("NAME_2"))
+             SetText "DATA$txt_name_2_1", UCASE(Data.Item("NAME_3"))
+             SetText "DATA$txt_name_2_2", UCASE(Data.Item("NAME_4"))
+
+             SetText "DATA$txt_titel", UCASE(Data.Item("TITLE"))
+
+          Case "LT_PLAYER_1_LINE"
+             SetImg "DATA$img_logo", s__LogoPath & "s_" & Data.Item("LT_LOGO")
+             SetText "DATA$txt_bib", Data.Item("DRESSNR")
+             SetText "DATA$txt_name_1_1", UCASE(Data.Item("LT_NAME_1"))
+             SetText "DATA$txt_name_1_2", UCASE(Data.Item("LT_NAME_2"))
+
+          Case "LT_PLAYER_2_LINE"
+             SetImg "DATA$img_logo", s__LogoPath & "s_" & Data.Item("LT_LOGO")
+             SetText "DATA$txt_bib", Data.Item("DRESSNR")
+             SetText "DATA$txt_name_1_1", UCASE(Data.Item("LT_NAME_1"))
+             SetText "DATA$txt_name_1_2", UCASE(Data.Item("LT_NAME_2"))
+             SetText "DATA$txt_sub", UCASE(Data.Item("LT_LINE1"))
+
+          Case "LT_PLAYER_3_LINE"
+             SetImg "DATA$img_logo", s__LogoPath & "s_" & Data.Item("LT_LOGO")
+             SetText "DATA$txt_bib", Data.Item("DRESSNR")
+             SetText "DATA$txt_name_1_1", UCASE(Data.Item("LT_NAME_1"))
+             SetText "DATA$txt_name_1_2", UCASE(Data.Item("LT_NAME_2"))
+             SetText "DATA$txt_sub", UCASE(Data.Item("LT_LINE1") & vbcrlf & Data.Item("LT_LINE2"))
+          CASE "LT_PLAYERSTAT"
+             SetImg  "DATA$img_logo", s__LogoPath & "SMALL\" & Data.Item("LT_LOGO")
+             SetText "DATA$txt_bib", Data.Item("DRESSNR")
+             SetText "DATA$txt_name_1_1", UCASE(Data.Item("LT_NAME_1"))
+             SetText "DATA$txt_name_1_2", UCASE(Data.Item("LT_NAME_2"))
+             SetText "DATA$txt_sub", UCASE(Data.Item("LT_LINE1") & vbcrlf & Data.Item("LT_LINE2"))
+             SetText "DATA$txt_sub_data", UCASE(Data.Item("LT_DATA1") & vbcrlf & Data.Item("LT_DATA2"))
+
+        End Select
+
+        GetPreview sDirector, sFrame, sScene
+
+        Redim ActionList(2, 1)
+        ActionList(1, 0) = sDirector
+        ActionList(1, 1) = sDirector
+        ActionList(2, 1) = efPlay
+    End Sub
+
+    Public Sub BX_E2E(ByRef Data)
+
+
+        sScene = "BX_END2END"
+
+        LoadScene elMainLayer, sScene
+        sDirector = "BB"
+        SetText "txt_info2", UCase(Data.Item("VENUE"))
+        SetText "txt_titel", UCase(Data.Item("INFO"))
+        SetText "txt_info1", UCase(Data.Item("CLOCKADD"))
+
+
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_1*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_1")
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_2*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_2")
+
+        GetPreview sDirector, "1.8", sScene
+
+        Redim ActionList(2, 1)
+        ActionList(1, 0) = sDirector
+        ActionList(1, 1) = sDirector
+        ActionList(2, 1) = efPlay
+
+    End Sub
+    
+    Public Sub BB_FREE(ByRef Data)
+        sScene = "BB_INFO_1"
+
+        LoadScene elMainLayer, sScene
+        sDirector = "BB"
+
+        SetText "txt_info", Data.Item("INFO")
+
+        'obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_1*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_1")
+        'obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_2*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_2")
+
+        GetPreview sDirector, "1.8", sScene
+
+        Redim ActionList(2, 1)
+        ActionList(1, 0) = sDirector
+        ActionList(1, 1) = sDirector
+        ActionList(2, 1) = efPlay
+    end sub
+    
+    Public Sub LT_Weather(ByRef Data)
+        sScene = "BB_WEATHER"
+        if Data.Item("ISPC") =true then
+            sScene="BB_PITCH_CONDITION"
+        end if
+
+        LoadScene elMainLayer, sScene
+        sDirector = "BB"
+        SetText "VALUE2$txt_value2", Data.item("TEMP") & "°C"
+
+        IF CNumType(oData.item("TEMP"), vbInteger, null, null,0) <= 4 THEN
+             SetImg "VALUE2$img_value2", s__WeatherPath & "TemperatureCold"
+        ELSE
+             SetImg "VALUE2$img_value2", s__WeatherPath & "TemperatureHot"
+        END IF
+
+        SetImg "VALUE1$img_value1", s__WeatherPath &  Left(oData.item("ICON"), 3)
+        SetText "VALUE3$txt_value3", Data.Item("HUM") & "%"
+        SetText "VALUE4$txt_value4", Data.Item("WIND") & " km/h"
+
+        SetText "DATA$txt_team_1", UCase(Data.Item("T_SNAME_1"))
+        SetText "DATA$txt_team_2", UCase(Data.Item("T_SNAME_2"))
+        
+        SetText "txt_info", Data.Item("GAME_PLACE")
+        
+        SetText "txt_titel", Data.Item("GAME_PC")
+
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_1*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_1")
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_2*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_2")
+
+        GetPreview sDirector, "1.8", sScene
+
+        Redim ActionList(2, 1)
+        ActionList(1, 0) = sDirector
+        ActionList(1, 1) = sDirector
+        ActionList(2, 1) = efPlay
+    End Sub
+    
+    'Lower Third PreMatch
+    Public Sub LT_PreMatch(ByRef Data)
+        IF Data.item("SETTIME") THEN
+             obj__TV.SendCommand "CLOCK2*LIMIT SET 0"
+             obj__TV.SendCommand "CLOCK2*DIRECTION SET DOWN"
+             IF oData.item("SETTIMERUNNING") THEN
+                obj__TV.SendCommand "CLOCK2*TIME SET " & Data.Item("SETTIMEVALUE")
+                obj__TV.SendCommand "CLOCK2 START"
+             ELSE
+                obj__TV.SendCommand "CLOCK2 STOP"
+                obj__TV.SendCommand "CLOCK2*TIME SET " & Data.Item("SETTIMEVALUE")
+             END IF
+        ELSE
+            IF Data.Item("PREMATCH_3") = "" THEN
+                sScene = "BB_PRE_MATCH"
+            ELSE
+                sScene = "BB_PRE_MATCH_2"
+            END IF
+            LoadScene elMainLayer, sScene
+
+            'Prepare_Layer elMainLayer
+
+            sDirector = "BB"
+
+            If CBool(Data.Item("PREMATCH_COUNTDOWN")) Then
+               obj__TV.HideObject "ONOFF_HEADER$ONOFF_TEXT"
+               obj__TV.ShowObject "ONOFF_HEADER$ONOFF_CLOCK"
+
+               obj__TV.SendCommand "CLOCK2*LIMIT SET 0"
+               obj__TV.SendCommand "CLOCK2*DIRECTION SET DOWN"
+       '        obj__TV.SendCommand "CLOCK2*TIME SET " & Data.Item("PRETIME") / 1000
+
+            Else
+               obj__TV.ShowObject "ONOFF_HEADER$ONOFF_TEXT"
+               obj__TV.HideObject "ONOFF_HEADER$ONOFF_CLOCK"
+               SetText "DATA$ONOFF_TEXT$txt_titel", Data.Item("PREMATCH_1")
+
+            End If
+
+            IF Data.Item("PREMATCH_3") = "" THEN
+                SetText "DATA$txt_info", Data.Item("PREMATCH_2")
+            ELSE
+                SetText "DATA$txt_info1", Data.Item("PREMATCH_2")
+                SetText "DATA$txt_info2", Data.Item("PREMATCH_3")
+            END IF
+
+            SetText "DATA$txt_score", ""
+
+            SetText "DATA$txt_team_1", UCase(Data.Item("T_SNAME_1"))
+            SetText "DATA$txt_team_2", UCase(Data.Item("T_SNAME_2"))
+
+            obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_1*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_1")
+            obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_2*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_2")
+
+
+            GetPreview sDirector, "1.8", sScene
+
+            Redim ActionList(2, 1)
+            ActionList(1, 0) = sDirector
+            ActionList(1, 1) = sDirector
+            ActionList(2, 1) = efPlay
+        END IF
+    End Sub
+
+
+    Public Sub LT_KickOff(ByRef Data)
+       DIM bInfo, strINFO
+       IF Data.Item("INFO") = "" THEN
+            sScene = "BB_STAND_KICKOFF"
+            bInfo = false
+        ELSE
+            sScene = "BB_STAND_KICKOFF_PLUS"
+            bInfo = true
+            strINFO = UCASE(GetString("AGGREGATE_SCORE", i__TVLanguage))
+            strINFO = AutoText(Data, strINFO)
+        END IF
+
+
+        LoadScene elMainLayer, sScene
+
+        'Prepare_Layer elMainLayer
+
+        sDirector = "BB"
+
+        iPeriod = Data.Item("PERIOD")
+
+        SetText "txt_team_1", UCase(Data.Item("T_SNAME_1"))
+        SetText "txt_team_2", UCase(Data.Item("T_SNAME_2"))
+
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_1*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_1")
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_2*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_2")
+
+        If iPeriod = 1 Then
+           obj__TV.ShowObject "ONOFF_BUTTON_1"
+           obj__TV.HideObject "ONOFF_BUTTON_2"
+        Else
+           obj__TV.HideObject "ONOFF_BUTTON_1"
+           obj__TV.ShowObject "ONOFF_BUTTON_2"
+           'SetText "ONOFF_BUTTON_2$txt_score", Data.Item("T_SCORE_1") & " - " & Data.Item("T_SCORE_2")
+           SetText "SCORE$txt_score_team1", Data.Item("T_SCORE_1")
+            SetText "SCORE$txt_score_team2", Data.Item("T_SCORE_2")
+        End If
+
+        obj__TV.SendCommand "SCENE*" & s__VizPath & "/" & sScene & "*TREE*$clk_main*GEOM*CLOCK*FORMAT SET m:ss"
+
+'        obj__TV.SendCommand "CLOCK0*LIMIT SET " & Data.Item("MAINTIME_LIMIT")
+'        obj__TV.SendCommand "CLOCK0*DIRECTION SET UP"
+'
+'        obj__TV.SendCommand "CLOCK0*TIME SET " & Data.Item("MAINTIME") / 1000
+'        IF TSP.GetTime(TSP_Status, 0) THEN
+'            obj__TV.SetClock 0, clStart, 1
+'        ELSE
+'            obj__TV.SendCommand "CLOCK0 STOP " & Data.Item("MAINTIME") / 1000
+'        END IF
+
+        IF bInfo THEN SetText "DATA$txt_summary", UCase(strINFO)
+
+        GetPreview sDirector, "1.8", sScene
+
+        Redim ActionList(2, 1)
+        ActionList(1, 0) = sDirector
+        ActionList(1, 1) = sDirector
+        ActionList(2, 1) = efPlay
+    End Sub
+
+    Public Sub LT_Score_Scorer(ByRef Data)
+        DIM strInfo
+        ScoreCount = Data.Item("SCORER_COUNT")
+        If ScoreCount > 4 Then iCount = 0 else iCount = ScoreCount
+        SELECT CASE Data.Item("SCORE_TYPE")
+            CASE 1
+                sScene = "BB_STAND_" & ScoreCount
+            CASE ELSE
+                IF Data.Item("INFO") = "" THEN
+                    sScene = "BB_STAND_" & ScoreCount
+                ELSE
+                    strINFO = UCASE(AutoText(Data, Data.Item("INFO")))
+                    sScene = "BB_STAND_PLUS_" & ScoreCount
+                END IF
+        END SELECT
+
+        LoadScene elMainLayer, sScene
+
+        'Prepare_Layer elMainLayer
+
+        sDirector = "BB"
+
+        iPeriod = Data.Item("PERIOD")
+
+        SetText "DATA$txt_team_1", UCase(Data.Item("T_SNAME_1"))
+        SetText "DATA$txt_team_2", UCase(Data.Item("T_SNAME_2"))
+
+        'SetImg "DATA$img_logo_1", s__LogoPath & "SMALL\" & Data.Item("T_LOGO_1")
+        'SetImg "DATA$img_logo_2", s__LogoPath & "SMALL\" & Data.Item("T_LOGO_2")
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_1*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_1")
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_2*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_2")
+        
+        SELECT CASE Data.Item("SCORE_TYPE")
+            CASE 2
+                SetText "DATA$txt_summary", UCase(strINFO)
+            CASE ELSE
+                ' nix zu tun
+        END SELECT
+
+        'ShowDataObject Data
+
+        For i = 1 to iCount
+           PNameA = GetData("A" & pgMain.Grd_Scorer.Cells(i, 1))
+           MinA   = Trim(pgMain.Grd_Scorer.Cells(i, 0))
+           ZusatzA = (Trim(pgMain.Grd_Scorer.Cells(i, 2)))  'Ucase weg
+           'IF NOT Right(MinA,1) = "'" AND NOT MinA = "" THEN MinA = MinA & "'"
+
+           IF NOT MinA = "" THEN
+               If UCase(ZusatzA) = "ET" Then  'UCase drum
+                  strZusatzA = GetString("SHORT_EIGENTOR", i__TVLanguage)
+                  PNameA = GetData("B" & pgMain.Grd_Scorer.Cells(i, 1))
+               Elseif UCase(ZusatzA) = "FE" Then  'UCase drum
+                  strZusatzA = GetString("SHORT_ELFMETER", i__TVLanguage)
+               Else
+                  strZusatzA = ""
+               End If
+               MinA = MinA & " " & strZusatzA
+           END IF
+
+           SetText "DATA$ANI_LINE_" & i & "$txt_name_1_1", UCase(PNameA)
+           SetText "DATA$ANI_LINE_" & i & "$txt_min_1_1", MinA  'UCase weg
+
+           PNameB = GetData("B" & pgMain.Grd_Scorer.Cells(i, 5))
+           MinB   = pgMain.Grd_Scorer.Cells(i, 4)
+           ZusatzB = Trim(pgMain.Grd_Scorer.Cells(i, 6))
+
+           'IF NOT Right(MinB,1) = "'" AND NOT MinB = "" THEN MinB = MinB & "'"
+
+           IF NOT MinB = "" THEN
+               If UCase(ZusatzB) = "ET" Then  'UCase drum
+                  strZusatzB = GetString("SHORT_EIGENTOR", i__TVLanguage)
+                  PNameB = GetData("A" & pgMain.Grd_Scorer.Cells(i, 5))
+               Elseif UCase(ZusatzB) = "FE" Then  'UCase drum
+                  strZusatzB = GetString("SHORT_ELFMETER", i__TVLanguage)
+               Else
+                  strZusatzB = ""
+               End If
+               MinB = MinB & " " & strZusatzB
+           END IF
+
+           SetText "DATA$ANI_LINE_" & i & "$txt_name_1_2", UCase(PNameB)
+           SetText "DATA$ANI_LINE_" & i & "$txt_min_1_2", MinB  'UCase weg
+        Next
+
+       SELECT CASE Data.Item("INT_PERIOD")
+            CASE 2, 4, 6, 8, 10
+                obj__TV.HideObject "ONOFF_HEADER$ONOFF_CLOCK"
+                obj__TV.ShowObject "ONOFF_HEADER$ONOFF_TEXT"
+            CASE ELSE
+                obj__TV.ShowObject "ONOFF_HEADER$ONOFF_CLOCK"
+                obj__TV.HideObject "ONOFF_HEADER$ONOFF_TEXT"
+        END SELECT
+
+        SetText "ONOFF_HEADER$ONOFF_TEXT$txt_titel", UCase(Data.Item("TXT_PERIOD"))
+
+        'SetText "DATA$txt_score", Data.Item("T_SCORE_1") & " - " & Data.Item("T_SCORE_2")
+        SetText "SCORE$txt_score_team1", Data.Item("T_SCORE_1")
+        SetText "SCORE$txt_score_team2", Data.Item("T_SCORE_2")
+
+        GetPreview sDirector, "1.0", sScene
+
+        Redim ActionList(2, 1)
+        ActionList(1, 0) = sDirector
+        ActionList(1, 1) = sDirector
+        ActionList(2, 1) = efPlay
+    End Sub
+
+    Public Sub LT_Score(ByRef Data)
+        'ShowDataObject Data
+        DIM strINFO, bInfo
+        ScoreCount = Data.Item("SCORER_COUNT")
+
+        If ScoreCount > 4 Then
+            iCount = 0
+        else
+            iCount = ScoreCount
+        end if
+
+        IF Data.Item("INFO") = "" THEN
+            sScene = "BB_STAND_0"
+            bInfo = false
+        ELSE
+            sScene = "BB_STAND_PLUS_0"
+            bInfo = true
+            strINFO = UCASE(GetString("AGGREGATE_SCORE", i__TVLanguage))
+            strINFO = AutoText(Data, strINFO)
+        END IF
+
+        LoadScene elMainLayer, sScene
+
+        'Prepare_Layer elMainLayer
+
+        sDirector = "BB"
+
+        iPeriod = Data.Item("PERIOD")
+
+        SetText "DATA$txt_team_1", UCase(Data.Item("T_SNAME_1"))
+        SetText "DATA$txt_team_2", UCase(Data.Item("T_SNAME_2"))
+
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_1*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_1")
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_2*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_2")
+
+        IF bInfo THEN SetText "DATA$txt_summary", strINFO
+
+        SELECT CASE Data.Item("INT_PERIOD")
+            CASE 2, 4, 6, 8, 10
+                obj__TV.HideObject "ONOFF_HEADER$ONOFF_CLOCK"
+                obj__TV.ShowObject "ONOFF_HEADER$ONOFF_TEXT"
+            CASE ELSE
+                obj__TV.ShowObject "ONOFF_HEADER$ONOFF_CLOCK"
+                obj__TV.HideObject "ONOFF_HEADER$ONOFF_TEXT"
+        END SELECT
+
+
+        SetText "ONOFF_HEADER$ONOFF_TEXT$txt_titel", UCase(Data.Item("TXT_PERIOD"))
+
+        'SetText "DATA$txt_score", Data.Item("T_SCORE_1") & " - " & Data.Item("T_SCORE_2")
+         SetText "SCORE$txt_score_team1", Data.Item("T_SCORE_1")
+        SetText "SCORE$txt_score_team2", Data.Item("T_SCORE_2")
+        'obj__TV.SetClock 0, clLimit, none
+        'obj__TV.SendCommand "CLOCK0*TIME SET " &  TSP.GetTime(TSP_Time, 0) / 1000
+        'obj__TV.SetClock 0, clDirection, 1
+
+        'IF  TSP.GetTime(TSP_Status, 0) THEN
+        '    obj__TV.SendCommand "CLOCK0 START"
+        'ELSE
+        '    obj__TV.SendCommand "CLOCK0 STOP"
+        'END IF
+
+        'ShowDataObject Data
+
+        GetPreview sDirector, "1.8", sScene
+
+        Redim ActionList(2, 1)
+        ActionList(1, 0) = sDirector
+        ActionList(1, 1) = sDirector
+        ActionList(2, 1) = efPlay
+    End Sub
+
+    'Lower Third PreMatch
+    Public Sub LT_Referees(ByRef Data)
+      Dim a
+
+        If CBool(Data.Item("REF_SHOWALL")) Then
+           sScene = "BB_OFFICIALS"
+           If Data.Item("REF_COUNT") = 4 Then
+              SubCont = "ONOFF_4_NAMES"
+              a = 5
+           Else
+              a = 3
+              SubCont = "ONOFF_2_NAMES"
+           End If
+        Else
+           sScene = "BB_REFEREE"
+        End If
+
+        LoadScene elMainLayer, sScene
+        'Prepare_Layer elMainLayer
+
+        sDirector = "BB"
+
+        If CBool(Data.Item("REF_SHOWALL")) Then
+           obj__TV.HideObject "ONOFF_2_NAMES"
+           obj__TV.HideObject "ONOFF_4_NAMES"
+           obj__TV.ShowObject SubCont
+
+           SetText SubCont & "$DATA$txt_titel", Data.Item("REF_TITLE1")
+           SetText SubCont & "$DATA$txt_subtitel_1", Data.Item("REF_TITLE2")
+           SetText SubCont & "$DATA$txt_subtitel_2", Data.Item("REF_TITLE3")
+           SetText SubCont & "$DATA$txt_ioc", Data.Item("REFNOC")
+
+           For i = 1 to a
+               SetText SubCont & "$DATA$txt_name_" & i & "_1", Data.Item("REFNAME" & i & "1")
+               SetText SubCont & "$DATA$txt_name_" & i & "_2", Data.Item("REFNAME" & i & "2")
+           Next
+        Else
+            SetText "DATA$txt_titel", Data.Item("REF_TITLE2")
+
+            SetText "DATA$txt_name_1_1", Data.Item("REFNAME11")
+            SetText "DATA$txt_name_1_2", Data.Item("REFNAME12")
+            SetText "DATA$txt_ioc", Data.Item("REFNOC")
+        End If
+
+        'SetText "DATA$txt_info", Data.Item("PREMATCH_2")
+        '
+        'SetText "DATA$txt_team_1", UCase(Data.Item("T_LNAME_1"))
+        'SetText "DATA$txt_team_2", UCase(Data.Item("T_LNAME_2"))
+
+        GetPreview sDirector, "1.0", sScene
+
+        Redim ActionList(2, 1)
+        ActionList(1, 0) = sDirector
+        ActionList(1, 1) = sDirector
+        ActionList(2, 1) = efPlay
+    End Sub
+
+
+    'FP Reserve
+    Public Sub FP_ReservePlayer(ByRef Data)
+
+        TC = Data.Item("RESERVE_TYP")
+
+        If Data.Item("RESERVE_TYP") = 3 Then
+           bBoth = True
+           sScene = "VT_RESERVE_2"
+        Else
+           sScene = "VT_RESERVE_1"
+           bBoth = False
+        End If
+
+        LoadScene elMainLayer, sScene', 24, 0
+        'Prepare_Layer elMainLayer
+
+        sDirector = "VT"
+        intGKPos =  GetIniOption("SUBSTITUTES_SORT_GK", 0)
+
+        'ShowDataObject Data
+        
+        If bBoth Then
+           SetText "DATA$txt_subtitel", UCase(Data.Item("RESERVE_TITEL1"))
+           'SetText "DATA$txt_sub", UCase(Data.Item("RESERVE_TITEL2"))
+           intIndex = 1
+           bGKOK = false
+           For k = 1 to 2
+             bReserveGK = CBool(Data.Item("RESERVE_GOALIE_EXIST_" & k))
+
+             SetText "DATA$txt_team_" & k, UCase(Data.Item("T_SNAME_" & k))
+             if Data.item("ONLYSURENAME")=true then
+                SetText "DATA$txt_coach_" & k&"_1",""
+                eve.SendCommandEx("RENDERER*TREE*$"&"DATA$txt_coach_" & k&"_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 0.0")
+             else
+                SetText "DATA$txt_coach_" & k&"_1", UCase(Data.Item("COACH" & k & "_FNAME"))
+                eve.SendCommandEx("RENDERER*TREE*$"&"DATA$txt_coach_" & k&"_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 4.5")
+             end if
+             SetText "DATA$txt_coach_" & k&"_2", UCase(Data.Item("COACH" & k & "_LNAME"))
+             SetText "DATA$txt_sub_" & k, UCase( oData.item("COACH" & k & "_FUNCTION"))
+             'SetImg  "DATA$img_logo_" & k, s__LogoPath & "MEDIUM\" & Data.Item("T_LOGO_" & k)
+             obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$DATA$img_logo_" & k & "*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_" & k)
+             intIndex = 1
+             If k = 1 Then Team = "A" else Team = "B"
+             bGKOK = false
+
+               For i = 1 to 6
+                    SELECT CASE intGKPos
+                        CASE 1 ' GK in 1. Zeile
+                             IF i = 1 THEN
+                                 intIndex = 1
+                                 POS    = UCASE(Data.Item("P_POS_RES_" & k & "_GK"))
+                                 BIB    = UCASE(Data.Item("P_DRESS_RES_" & k & "_GK"))
+                                 LName  = UCASE(Data.Item("P_LNAME_RES_"  & k & "_GK"))
+                                 FName  = UCASE(Data.Item("P_FNAME_RES_"  & k & "_GK"))
+                                 
+                                 P_Name = GetData(Team & BIB)
+                                 strPlayerString = Team &":LASTNAME_COUNT:" & P_Name
+
+                                 IF Data.Exists(strPlayerString) then
+                                     if  Data.Item(strPlayerString) > 1 then
+                                         P_Name = UCASE(GetDataEx(Team & BIB))
+                                     end if
+                                 end if
+                                 P_Name = UCASE(P_Name)
+
+                                 bCARD   = Data.Item("CARD_RES_" & k & "_GK")
+
+                                 SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_bib", BIB
+                                 if Data.item("ONLYSURENAME")=true then
+                                    eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 0.0")
+                                    obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                 else
+                                    eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 4.5")
+                                    obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                    SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                end if
+                                 SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
+                                 SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos", POS
+                                 IF trim(POS) = "" THEN
+                                    obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos"
+                                 ELSE
+                                    obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos"
+                                 END IF
+
+                                 IF bCARD THEN
+                                    obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$ONOFF_CARD"
+                                 ELSE
+                                    obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$ONOFF_CARD"
+                                 END IF
+
+
+                                 If bReserveGK Then intIndex = 2 else intIndex = 1
+
+                                 LName   = UCase(Data.Item("P_LNAME_RES_" & k & "_" & i))
+                                 FName   = UCase(Data.Item("P_FNAME_RES_" & k & "_" & i))
+                                 BIB     = UCase(Data.Item("P_DRESS_RES_" & k & "_" & i))
+                                 POS     = UCase(Data.Item("P_POS_RES_" & k & "_" & i))
+                                 bCARD   = Data.Item("CARD_RES_" & k & "_" & i)
+                                 
+                                 P_Name = GetData(Team & BIB)
+                                 strPlayerString = Team &":LASTNAME_COUNT:" & P_Name
+
+                                 IF Data.Exists(strPlayerString) then
+                                     if  Data.Item(strPlayerString) > 1 then
+                                         P_Name = UCASE(GetDataEx(Team & BIB))
+                                     end if
+                                 end if
+                                 P_Name = UCASE(P_Name)
+                                 
+
+                                 SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_bib", BIB
+                                if Data.item("ONLYSURENAME")=true then
+                                    eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 0.0")
+                                    obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                 else
+                                    eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 4.5")
+                                    obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                    SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                end if
+                                 SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
+                                 SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos", POS
+
+                                 IF bCARD THEN
+                                    obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$ONOFF_CARD"
+                                 ELSE
+                                    obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$ONOFF_CARD"
+                                 END IF
+
+                                 obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos"
+                             ELSE
+
+                                 intIndex = intIndex + 1
+                                 LName   = UCase(Data.Item("P_LNAME_RES_" & k & "_" & i))
+                                 FName   = UCase(Data.Item("P_FNAME_RES_" & k & "_" & i))
+                                 BIB     = UCase(Data.Item("P_DRESS_RES_" & k & "_" & i))
+                                 POS     = UCase(Data.Item("P_POS_RES_" & k & "_" & i))
+                                 bCARD   = Data.Item("CARD_RES_" & k &  "_" & i)
+                                 
+                                 P_Name = GetData(Team & BIB)
+                                 strPlayerString = Team &":LASTNAME_COUNT:" & P_Name
+
+                                 IF Data.Exists(strPlayerString) then
+                                     if  Data.Item(strPlayerString) > 1 then
+                                         P_Name = UCASE(GetDataEx(Team & BIB))
+                                     end if
+                                 end if
+                                 P_Name = UCASE(P_Name)
+
+                                 SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_bib", BIB
+                                if Data.item("ONLYSURENAME")=true then
+                                    eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 0.0")
+                                    obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                 else
+                                    eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 4.5")
+                                    obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                    SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                end if
+                                 SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
+                                 SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos", POS
+
+                                 IF bCARD THEN
+                                    obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$ONOFF_CARD"
+                                 ELSE
+                                    obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$ONOFF_CARD"
+                                 END IF
+
+                                 obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos"
+                             END IF
+
+                             'Ersatzgoalie nicht vorhnden..
+                             If not bReserveGK Then
+                                SetText "DATA$TEAM_" & k & "$ANI_ZEILE_7$txt_bib", ""
+                                SetText "DATA$TEAM_" & k & "$ANI_ZEILE_7$txt_name_1", ""
+                                SetText "DATA$TEAM_" & k & "$ANI_ZEILE_7$txt_name_2", ""
+                                SetText "DATA$TEAM_" & k & "$ANI_ZEILE_7$txt_pos", ""
+                             End If
+
+                        CASE 2
+                             intBIB_GK       = MakeNumber(Data.Item("P_DRESS_RES_" & k & "_GK")  ,1,1,"",-1)
+                             intBIB_CURR     = MakeNumber(Data.Item("P_DRESS_RES_" & k & "_" & i),1,1,"",-1)
+                             IF (intBIB_CURR > intBIB_GK AND NOT bGKOK AND i<6) THEN
+                                 POS    = UCASE(Data.Item("P_POS_RES_" & k & "_GK"))
+                                 BIB    = UCASE(Data.Item("P_DRESS_RES_" & k & "_GK"))
+                                 LName  = UCASE(Data.Item("P_LNAME_RES_"  & k & "_GK"))
+                                 FName  = UCASE(Data.Item("P_FNAME_RES_"  & k & "_GK"))
+
+                                 P_Name = GetData(Team & BIB)
+                                 strPlayerString = Team &":LASTNAME_COUNT:" & P_Name
+
+                                 IF Data.Exists(strPlayerString) then
+                                     if  Data.Item(strPlayerString) > 1 then
+                                         P_Name = UCASE(GetDataEx(Team & BIB))
+                                     end if
+                                 end if
+                                 P_Name = UCASE(P_Name)
+                                 
+                                 SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_bib", BIB
+                                if Data.item("ONLYSURENAME")=true then
+                                    eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 0.0")
+                                    obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                 else
+                                    eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 4.5")
+                                    obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                    SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                end if
+                                 SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
+                                 SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos", POS
+                                 IF trim(POS) = "" THEN
+                                    obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos"
+                                 ELSE
+                                    obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos"
+                                 END IF
+                                 intIndex = intIndex + 1
+                                 bGKOK = true
+                             END IF
+                             LName   = UCase(Data.Item("P_LNAME_RES_" & k & "_" & i))
+                             FName   = UCase(Data.Item("P_FNAME_RES_" & k & "_" & i))
+                             BIB     = UCase(Data.Item("P_DRESS_RES_" & k & "_" & i))
+                             POS     = UCase(Data.Item("P_POS_RES_" & k & "_" & i))
+                             
+                             P_Name = GetData(Team & BIB)
+                             strPlayerString = Team &":LASTNAME_COUNT:" & P_Name
+
+                             IF Data.Exists(strPlayerString) then
+                                 if  Data.Item(strPlayerString) > 1 then
+                                     P_Name = UCASE(GetDataEx(Team & BIB))
+                                 end if
+                             end if
+                             P_Name = UCASE(P_Name)
+                                 
+                             SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_bib", BIB
+                            if Data.item("ONLYSURENAME")=true then
+                                    eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 0.0")
+                                    obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                 else
+                                    eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 4.5")
+                                    obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                    SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                end if
+                            SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
+                             SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos", POS
+                             obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos"
+                             intIndex = intIndex + 1
+                             IF (NOT bGKOK AND i=6) THEN
+                                 POS    = UCASE(Data.Item("P_POS_RES_" & k & "_GK"))
+                                 BIB    = UCASE(Data.Item("P_DRESS_RES_" & k & "_GK"))
+                                 LName  = UCASE(Data.Item("P_LNAME_RES_"  & k & "_GK"))
+                                 FName  = UCASE(Data.Item("P_FNAME_RES_"  & k & "_GK"))
+
+                                 P_Name = GetData(Team & BIB)
+                                 strPlayerString = Team &":LASTNAME_COUNT:" & P_Name
+
+                                 IF Data.Exists(strPlayerString) then
+                                     if  Data.Item(strPlayerString) > 1 then
+                                         P_Name = UCASE(GetDataEx(Team & BIB))
+                                     end if
+                                 end if
+                                 P_Name = UCASE(P_Name)
+
+                                 SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_bib", BIB
+                                 if Data.item("ONLYSURENAME")=true then
+                                    eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 0.0")
+                                    obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                 else
+                                    eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 4.5")
+                                    obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                    SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                end if
+                                 SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
+                                 SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos", POS
+                                 IF trim(POS) = "" THEN
+                                    obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos"
+                                 ELSE
+                                    obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos"
+                                 END IF
+                                 intIndex = intIndex + 1
+                                 bGKOK = true
+                             END IF
+
+                         CASE ELSE
+                             LName   = UCase(Data.Item("P_LNAME_RES_" & k & "_" & i))
+                             FName   = UCase(Data.Item("P_FNAME_RES_" & k & "_" & i))
+                             BIB     = UCase(Data.Item("P_DRESS_RES_" & k & "_" & i))
+                             POS     = UCase(Data.Item("P_POS_RES_" & k & "_" & i))
+
+                             P_Name = GetData(Team & BIB)
+                             strPlayerString = Team &":LASTNAME_COUNT:" & P_Name
+
+                             IF Data.Exists(strPlayerString) then
+                                 if  Data.Item(strPlayerString) > 1 then
+                                     P_Name = UCASE(GetDataEx(Team & BIB))
+                                 end if
+                             end if
+                             P_Name = UCASE(P_Name)
+                             
+                             SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_bib", BIB
+                            if Data.item("ONLYSURENAME")=true then
+                                    eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 0.0")
+                                    obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                 else
+                                    eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 4.5")
+                                    obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                    SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                end if
+                            SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
+                             SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos", POS
+                             obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos"
+                             
+                             IF i = 6 THEN
+                                 intIndex = 7
+                                 POS    = UCASE(Data.Item("P_POS_RES_" & k & "_GK"))
+                                 BIB    = UCASE(Data.Item("P_DRESS_RES_" & k & "_GK"))
+                                 LName  = UCASE(Data.Item("P_LNAME_RES_"  & k & "_GK"))
+                                 FName  = UCASE(Data.Item("P_FNAME_RES_"  & k & "_GK"))
+                                 P_Name = GetData(Team & BIB)
+                                 strPlayerString = Team &":LASTNAME_COUNT:" & P_Name
+
+                                 IF Data.Exists(strPlayerString) then
+                                     if  Data.Item(strPlayerString) > 1 then
+                                         P_Name = UCASE(GetDataEx(Team & BIB))
+                                     end if
+                                 end if
+                                 P_Name = UCASE(P_Name)
+
+                                 SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_bib", BIB
+                                if Data.item("ONLYSURENAME")=true then
+                                    eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 0.0")
+                                    obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                 else
+                                    eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 4.5")
+                                    obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                    SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                end if
+                                 SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
+                                 SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos", POS
+                                 IF trim(POS) = "" THEN
+                                    obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos"
+                                 ELSE
+                                    obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos"
+                                 END IF
+                             END IF
+                             intIndex = intIndex + 1
+                    END SELECT
+               Next ' i
+           NEXT 'k
+        Else
+           SetText "DATA$txt_subtitel", UCase(Data.Item("RESERVE_TITEL1"))
+           SetText "DATA$txt_sub", UCase(Data.Item("RESERVE_TITEL2"))
+
+           SetText "DATA$txt_team", UCase(Data.Item("T_LNAME_" & TC))
+           SetText "DATA$txt_coach_1" & k, UCase("COACH:")
+           if Data.item("ONLYSURENAME")=true then
+                                    SetText "DATA$txt_coach_2" & k, ""
+                                 else
+                                    SetText "DATA$txt_coach_2" & k, UCase(Data.Item("COACH" & TC & "_FNAME"))
+                                 end if
+
+           SetText "DATA$txt_coach_3" & k, UCase(Data.Item("COACH" & TC & "_LNAME"))
+
+           SetImg "DATA$img_logo", s__LogoPath & "m_" & Data.Item("T_LOGO_" & TC)
+           intIndex = 1
+           bGKOK = false
+           For i = 1 to 6
+
+
+                SELECT CASE intGKPos
+                    CASE 1 ' GK in 1. Zeile
+                         IF i = 1 THEN
+                             intIndex = 1
+                             POS    = UCASE(Data.Item("P_POS_RES_" & TC & "_GK"))
+                             BIB    = UCASE(Data.Item("P_DRESS_RES_" & TC & "_GK"))
+                             LName  = UCASE(Data.Item("P_LNAME_RES_"  & TC & "_GK"))
+                             FName  = UCASE(Data.Item("P_FNAME_RES_"  & TC & "_GK"))
+                             If Trim(FName) = "" Then
+                                obj__TV.HideObject "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                             Else
+                                obj__TV.ShowObject "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                             End If
+                             SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_bib", BIB
+                             if Data.item("ONLYSURENAME")=true then
+                                    SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1", ""
+                                 else
+                                    SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                 end if
+                             SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
+                             SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_pos", POS
+
+                             intIndex = 2
+                             FName   = UCase(Data.Item("P_FNAME_RES_" & TC & "_" & i))
+                             LName   = UCase(Data.Item("P_LNAME_RES_" & TC & "_" & i))
+                             BIB     = UCase(Data.Item("P_DRESS_RES_" & TC & "_" & i))
+                             POS     = UCase(Data.Item("P_POS_RES_" & TC & "_" & i))
+
+                             If Trim(FName) = "" Then
+                                 obj__TV.HideObject "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                             Else
+                                 obj__TV.ShowObject "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                             End If
+                             SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_bib", BIB
+                              if Data.item("ONLYSURENAME")=true then
+                                    SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1", ""
+                                 else
+                                    SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                 end if
+                             SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
+                             SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_pos", POS
+                         ELSE
+
+                             intIndex = intIndex + 1
+                             FName   = UCase(Data.Item("P_FNAME_RES_" & TC & "_" & i))
+                             LName   = UCase(Data.Item("P_LNAME_RES_" & TC & "_" & i))
+                             BIB     = UCase(Data.Item("P_DRESS_RES_" & TC & "_" & i))
+                             POS     = UCase(Data.Item("P_POS_RES_" & TC & "_" & i))
+
+                             If Trim(FName) = "" Then
+                                 obj__TV.HideObject "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                             Else
+                                 obj__TV.ShowObject "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                             End If
+                             SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_bib", BIB
+                              if Data.item("ONLYSURENAME")=true then
+                                    SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1", ""
+                                 else
+                                    SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                 end if
+                             SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
+                             SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_pos", POS
+                         END IF
+                    CASE 2
+                         intBIB_GK       = MakeNumber(Data.Item("P_DRESS_RES_" & TC & "_GK")  ,1,1,"",-1)
+                         intBIB_CURR     = MakeNumber(Data.Item("P_DRESS_RES_" & TC & "_" & i),1,1,"",-1)
+                         IF (intBIB_CURR > intBIB_GK AND NOT bGKOK AND i<6) THEN
+                             POS    = UCASE(Data.Item("P_POS_RES_" & TC & "_GK"))
+                             BIB    = UCASE(Data.Item("P_DRESS_RES_" & TC & "_GK"))
+                             LName  = UCASE(Data.Item("P_LNAME_RES_"  & TC & "_GK"))
+                             FName  = UCASE(Data.Item("P_FNAME_RES_"  & TC & "_GK"))
+                             If Trim(FName) = "" Then
+                                obj__TV.HideObject "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                             Else
+                                obj__TV.ShowObject "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                             End If
+                             SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_bib", BIB
+                              if Data.item("ONLYSURENAME")=true then
+                                    SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1", ""
+                                 else
+                                    SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                 end if
+                             SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
+                             SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_pos", POS
+                             intIndex = intIndex + 1
+                             bGKOK = true
+                         END IF
+                         FName   = UCase(Data.Item("P_FNAME_RES_" & TC & "_" & i))
+                         LName   = UCase(Data.Item("P_LNAME_RES_" & TC & "_" & i))
+                         BIB     = UCase(Data.Item("P_DRESS_RES_" & TC & "_" & i))
+                         POS     = UCase(Data.Item("P_POS_RES_" & TC & "_" & i))
+
+                         If Trim(FName) = "" Then
+                             obj__TV.HideObject "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                         Else
+                             obj__TV.ShowObject "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                         End If
+                         SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_bib", BIB
+                          if Data.item("ONLYSURENAME")=true then
+                                    SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1", ""
+                                 else
+                                    SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                 end if
+                         SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
+                         SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_pos", POS
+                         intIndex = intIndex + 1
+                         IF (NOT bGKOK AND i=6) THEN
+                             POS    = UCASE(Data.Item("P_POS_RES_" & TC & "_GK"))
+                             BIB    = UCASE(Data.Item("P_DRESS_RES_" & TC & "_GK"))
+                             LName  = UCASE(Data.Item("P_LNAME_RES_"  & TC & "_GK"))
+                             FName  = UCASE(Data.Item("P_FNAME_RES_"  & TC & "_GK"))
+                             If Trim(FName) = "" Then
+                                obj__TV.HideObject "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                             Else
+                                obj__TV.ShowObject "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                             End If
+                             SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_bib", BIB
+                              if Data.item("ONLYSURENAME")=true then
+                                    SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1", ""
+                                 else
+                                    SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                 end if
+                             SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
+                             SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_pos", POS
+                             intIndex = intIndex + 1
+                             bGKOK = true
+                         END IF
+
+                     CASE ELSE
+                         FName   = UCase(Data.Item("P_FNAME_RES_" & TC & "_" & i))
+                         LName   = UCase(Data.Item("P_LNAME_RES_" & TC & "_" & i))
+                         BIB     = UCase(Data.Item("P_DRESS_RES_" & TC & "_" & i))
+                         POS     = UCase(Data.Item("P_POS_RES_" & TC & "_" & i))
+
+
+
+
+                         If Trim(FName) = "" Then
+                             obj__TV.HideObject "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                         Else
+                             obj__TV.ShowObject "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                         End If
+                         SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_bib", BIB
+                          if Data.item("ONLYSURENAME")=true then
+                                    SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1", ""
+                                 else
+                                    SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                 end if
+                         SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
+                         SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_pos", POS
+                         IF i = 6 THEN
+                             intIndex = 7
+                             POS    = UCASE(Data.Item("P_POS_RES_" & TC & "_GK"))
+                             BIB    = UCASE(Data.Item("P_DRESS_RES_" & TC & "_GK"))
+                             LName  = UCASE(Data.Item("P_LNAME_RES_"  & TC & "_GK"))
+                             FName  = UCASE(Data.Item("P_FNAME_RES_"  & TC & "_GK"))
+                             If Trim(FName) = "" Then
+                                obj__TV.HideObject "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                             Else
+                                obj__TV.ShowObject "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                             End If
+                             SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_bib", BIB
+                              if Data.item("ONLYSURENAME")=true then
+                                    SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1", ""
+                                 else
+                                    SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                 end if
+                             SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
+                             SetText "DATA$TEAM$ANI_ZEILE_" & intIndex & "$txt_pos", POS
+                         END IF
+                         intIndex = intIndex + 1
+                END SELECT
+
+
+
+           Next
+        End If
+
+        GetPreview sDirector, "1.8", sScene
+
+        Redim ActionList(2, 1)
+        ActionList(1, 0) = sDirector
+        ActionList(1, 1) = sDirector
+        ActionList(2, 1) = efPlay
+    End Sub
+
+
+    'FP Numeric Lineup
+    Public Sub FP_NumericLineup(ByRef Data)
+        'ShowDataObject Data
+        TC = Data.Item("NUM_LINEUP_TYP")
+
+        sScene = "VT_LINEUP_NUM"
+        LoadScene elMainLayer, sScene
+
+        'Prepare_Layer elMainLayer
+
+        sDirector = "VT"
+
+        SetText "DATA$txt_subtitel", UCase(Data.Item("RESERVE_TITEL1"))
+        SetText "DATA$txt_sub", UCase(Data.Item("RESERVE_TITEL2"))
+
+        SetText "DATA$txt_team", Data.Item("T_LNAME_" & TC)
+        SetText "DATA$txt_coach_1", UCase(Data.Item("COACH" & TC & "_FUNCTION"))
+        SetText "DATA$txt_coach_2", UCase(Data.Item("COACH" & TC & "_FNAME"))
+        SetText "DATA$txt_coach_3", UCase(Data.Item("COACH" & TC & "_LNAME"))
+
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo*SCRIPT*INSTANCE*noc SET " &  Data.Item("T_LOGO_" & TC)
+
+
+        For i = 1 to 11
+            FName = trim(UCase(Data.Item("P_FNAME_" & TC & "_" & i)))
+            LName = UCase(Data.Item("P_LNAME_" & TC & "_" & i))
+
+            IF Left(LName,2) = "MC" then
+                LName = Replace(LName, "MC", "Mc")
+            elseif Left(LName,2) = "MAC" then
+                LName = Replace(LName, "Mac", "Mac")
+            else
+
+            end if
+            
+            NOC =   UCase(Data.Item("NOC_" & TC & "_" & i))
+            
+            SetText "ANI_ZEILE_" & i & "$txt_pos", UCase(Data.Item("P_POS_" & TC & "_" & i))
+            SetText "ANI_ZEILE_" & i & "$txt_bib", UCase(Data.Item("P_DRESS_" & TC & "_" & i))
+
+
+
+            IF Data.Item("CARD_"  & TC & "_" & i) THEN
+                obj__TV.ShowObject "ANI_ZEILE_" & i & "$ONOFF_CARD"
+            ELSE
+                obj__TV.HideObject "ANI_ZEILE_" & i & "$ONOFF_CARD"
+            END IF
+
+            SELECT CASE NOC
+                CASE "TUR"
+                    obj__TV.HideObject "ANI_ZEILE_" & i & "$ONOFF_NAME_1"
+                    SetText "ANI_ZEILE_" & i & "$txt_name_2", FName & " " & LName
+                CASE "KOR"
+                    obj__TV.HideObject "ANI_ZEILE_" & i & "$ONOFF_NAME_1"
+                    SetText "ANI_ZEILE_" & i & "$txt_name_2", LName & " " & FName
+                CASE ELSE
+                    IF FName = "" THEN
+                        obj__TV.HideObject "ANI_ZEILE_" & i & "$ONOFF_NAME_1"
+                    ELSE
+                        obj__TV.ShowObject "ANI_ZEILE_" & i & "$ONOFF_NAME_1"
+                        SetText "ANI_ZEILE_" & i & "$txt_name_1", FName
+                    END IF
+                    SetText "ANI_ZEILE_" & i & "$txt_name_2", LName
+            END SELECT
+        Next
+
+        GetPreview sDirector, "1.8", sScene
+
+        Redim ActionList(2, 1)
+        ActionList(1, 0) = sDirector
+        ActionList(1, 1) = sDirector
+        ActionList(2, 1) = efPlay
+    End Sub
+
+    'FP Numeric Lineup
+
+    Public Sub FP_Num_TAC_Lineup(ByRef Data)
+
+        TC = Data.Item("NUM_LINEUP_TYP")
+        sScene = "VT_LINEUP_NUM_TAC"
+        LoadScene elMainLayer, sScene
+        Team = "A"
+
+        IF TC = 2 THEN Team = "B"
+        'Prepare_Layer elMainLayer
+
+        sDirector = "VT"
+
+        If Team = "A" Then TeamId = 1 else TeamId = 2
+
+        SetText "DATA$txt_subtitel", UCase(Data.Item("RESERVE_TITEL1"))
+        SetText "DATA$txt_sub", UCase(Data.Item("RESERVE_TITEL2"))
+
+        SetText "DATA$txt_team", Data.Item("T_LNAME_" & TC)
+        
+        'ShowDataObject Data
+        
+        SetText "DATA$txt_coach_1", UCase(Data.Item("COACH" & TC & "_FUNCTION"))
+
+        SetText "DATA$txt_coach_2", UCase(Data.Item("COACH" & TC & "_FNAME"))
+        SetText "DATA$txt_coach_3", UCase(Data.Item("COACH" & TC & "_LNAME"))
+
+
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$TEAM_NUM$img_logo*SCRIPT*INSTANCE*noc SET " &Data.Item("T_LOGO_" & TeamId)
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$TEAM_TAC$img_logo*SCRIPT*INSTANCE*noc SET " &Data.Item("T_LOGO_" & TeamId)
+
+
+        For i = 1 to 11
+
+            FName = trim(UCase(Data.Item("P_FNAME_" & TC & "_" & i)))
+            LName = UCase(Data.Item("P_LNAME_" & TC & "_" & i))
+
+            IF Left(LName,2) = "MC" then
+                LName = Replace(LName, "MC", "Mc")
+            elseif Left(LName,2) = "MAC" then
+                LName = Replace(LName, "Mac", "Mac")
+            else
+
+            end if
+
+            NOC =   UCase(Data.Item("NOC_" & TC & "_" & i))
+
+
+            SetText "ANI_ZEILE_" & i & "$txt_pos", UCase(Data.Item("P_POS_" & TC & "_" & i))
+            SetText "ANI_ZEILE_" & i & "$txt_bib", UCase(Data.Item("P_DRESS_" & TC & "_" & i))
+
+
+
+            IF Data.Item("CARD_"  & TC & "_" & i) THEN
+                obj__TV.ShowObject "ANI_ZEILE_" & i & "$ONOFF_CARD"
+            ELSE
+                obj__TV.HideObject "ANI_ZEILE_" & i & "$ONOFF_CARD"
+            END IF
+
+            SELECT CASE NOC
+                CASE "TUR"
+                    obj__TV.HideObject "ANI_ZEILE_" & i & "$ONOFF_NAME_1"
+                    SetText "ANI_ZEILE_" & i & "$txt_name_2", FName & " " & LName
+                CASE "KOR"
+                    obj__TV.HideObject "ANI_ZEILE_" & i & "$ONOFF_NAME_1"
+                    SetText "ANI_ZEILE_" & i & "$txt_name_2", LName & " " & FName
+                CASE ELSE
+                    IF FName = "" THEN
+                        obj__TV.HideObject "ANI_ZEILE_" & i & "$ONOFF_NAME_1"
+                    ELSE
+                        obj__TV.ShowObject "ANI_ZEILE_" & i & "$ONOFF_NAME_1"
+                        SetText "ANI_ZEILE_" & i & "$txt_name_1", FName
+                    END IF
+                    SetText "ANI_ZEILE_" & i & "$txt_name_2", LName
+            END SELECT
+            
+        Next
+        
+        'Ende Numeric Lineup
+
+        'Start Tactical Lineup
+
+        LineupWidth  = 960
+        LineupHeight = 576
+        SceneWidth   = 706
+        SceneHeight  = 380
+        
+        SetText "DATA$txt_team", Data.Item("T_LNAME_" & TeamId)
+        'obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$TEAM_NUM$img_logo*SCRIPT*INSTANCE*noc SET " &Data.Item("T_LOGO_" & TeamId)
+
+
+        Anz = 0
+        For i = 1 to 11
+            P_Nr = Trim(Lineup.GetPlayer(Lineup_Nr, i))
+            'P_Name = Trim(Lineup.GetPlayer(Lineup_Name, i))
+            'P_Name = UCASE(GetData(Team & P_Nr))
+            
+            P_Name = GetData(Team & P_Nr)
+            strPlayerString = Team &":LASTNAME_COUNT:" & P_Name
+            'cc.sf.DebugText strPlayerString
+            IF Data.Exists(strPlayerString) then
+                if  Data.Item(strPlayerString) > 1 then
+                    P_Name = UCASE(GetDataEx(Team & P_Nr))
+                end if
+            end if
+            P_Name = UCASE(P_Name)
+            
+            
+            
+            
+            
+            'P_Name = Data.Item("PNAME_"  & TeamId & "_" & i)
+            x_Pos = Trim(Lineup.GetPlayer(Lineup_Name_X, i))
+            y_Pos = Trim(Lineup.GetPlayer(Lineup_Name_Y, i))
+
+            IF Team = "A" THEN
+                IF oData.Item("T_GK_BIB_1") = P_Nr THEN
+                    SetImg "ANI_SPIELER_" & i & "$img_shirt", s__TeamKits & oData.Item("T_DSSNAME_1") & "\" & pgLineUp.edtGKA.Text
+                    SetImg "ANI_SPIELER_" & i & "$txt_bib", s__TeamKits & oData.Item("T_DSSNAME_1") & "\" & pgLineUp.edtGKA.Text & "NUM"
+                ELSE
+                    SetImg "ANI_SPIELER_" & i & "$img_shirt", s__TeamKits & oData.Item("T_DSSNAME_1") & "\" & pgLineUp.edtPLA.Text
+                    SetImg "ANI_SPIELER_" & i & "$txt_bib", s__TeamKits & oData.Item("T_DSSNAME_1") & "\" & pgLineUp.edtPLA.Text & "NUM"
+                END IF
+                ' Karte
+                If  Data.Item("CARD_1_" & i) then
+                    obj__TV.ShowObject  "ANI_SPIELER_" & i & "$ONOFF_CARD"
+                else
+                    obj__TV.HideObject  "ANI_SPIELER_" & i & "$ONOFF_CARD"
+                end if
+
+                intOffset = CNumType(pgLineup.edtOffset.Text, vbInteger,0,null,0)/1000
+                FOR j = 1 TO 11
+                    IF P_Nr = pgLineUp.GridTeams.Cells(j, 0) THEN
+                        intGroup = CNUmType(pgLineUp.GridTeams.Cells(j, 2), vbInteger, 1, null,1)
+                        obj__TV.SendCommand "RENDERER*MAIN_LAYER*STAGE*DIRECTOR*TAC_SP_" & i & "*OFFSET SET " & Replace(intOffset * intGroup,",",".")
+                    END IF
+                NEXT
+
+            ELSE  ' Team B
+                IF oData.Item("T_GK_BIB_2") = P_Nr THEN
+                    SetImg "ANI_SPIELER_" & i & "$img_shirt", s__TeamKits  & oData.Item("T_DSSNAME_2") & "\" & pgLineUp.edtGKB.Text
+                    SetImg "ANI_SPIELER_" & i & "$txt_bib", s__TeamKits & oData.Item("T_DSSNAME_2") & "\" & pgLineUp.edtGKB.Text &"NUM"
+                ELSE
+                    SetImg "ANI_SPIELER_" & i & "$img_shirt", s__TeamKits  & oData.Item("T_DSSNAME_2") & "\" & pgLineUp.edtPLB.Text
+                    SetImg "ANI_SPIELER_" & i & "$txt_bib", s__TeamKits & oData.Item("T_DSSNAME_2") & "\" & pgLineUp.edtPLB.Text &"NUM"
+                END IF
+                ' Karte
+                If  Data.Item("CARD_2_" & i) then
+                    obj__TV.ShowObject  "ANI_SPIELER_" & i & "$ONOFF_CARD"
+                else
+                    obj__TV.HideObject  "ANI_SPIELER_" & i & "$ONOFF_CARD"
+                end if
+                intOffset = CNumType(pgLineup.edtOffset.Text, vbInteger,0,null,0)/1000
+                FOR j = 1 TO 11
+                    IF P_Nr = pgLineUp.GridTeams.Cells(j, 3) THEN
+                        intGroup = CNUmType(pgLineUp.GridTeams.Cells(j, 5), vbInteger, 1, null,1)
+                        obj__TV.SendCommand "RENDERER*MAIN_LAYER*STAGE*DIRECTOR*TAC_SP_" & i & "*OFFSET SET " & Replace(intOffset * intGroup,",",".")
+                    END IF
+                NEXT
+            END IF
+
+
+
+            ScenePosX  = Formatnumber((x_Pos - 450) / (LineupWidth / SceneWidth), 1)
+            ScenePosY  = Formatnumber((y_Pos - 300) / (LineupHeight / SceneHeight), 1)
+
+            obj__TV.SetGeometry "ANI_SPIELER_" & i & "$SET_POS", gmPosition, ScenePosX, ScenePosY, "0.0"
+
+            SetText "ANI_SPIELER_" & i & "$txt_bib", P_nr
+
+            SetText "ANI_SPIELER_" & i & "$txt_name", P_Name
+        Next
+        'obj__TV.SendCommand "RENDERER*MAIN_LAYER*STAGE*DIRECTOR*CHANGE*OFFSET SET 0.0"' & Replace(CNumType(pgLineUp.edtOffsetRot.Text, vbInteger, 0, null, 0)/1000,",",".")
+
+        'End Tactical Lineup
+
+
+        GetPreview sDirector, "1.8", sScene
+
+        Redim ActionList(2, 1)
+        ActionList(0, 0) = "NUM_TAC_LINEUP"
+        ActionList(1, 0) = sDirector
+        ActionList(1, 1) = sDirector
+        ActionList(2, 1) = efPlay
+    End Sub
+
+    Public Sub Change_To_Tactical_Lineup()
+        SetScene "VT_LINEUP_NUM_TAC"
+        obj__TV.DoEffect elMainLayer, "VT", efContinue
+    End Sub
+
+
+    'FP Title
+    Public Sub FP_Title(ByRef Data)
+        'ShowDataObject Data
+        
+        sScene = "VT_TITEL"
+        LoadScene elMainLayer, sScene', 24, 0
+
+        'Prepare_Layer elMainLayer
+
+        sDirector = "VT"
+
+        SetText "DATA$txt_sub", Data.Item("GAME_PLACE")
+
+        if pgMain.chbShortNameL.Checked then
+            SetText "DATA$txt_team_1", UCase(Data.Item("T_SNAME_1"))
+        else
+            SetText "DATA$txt_team_1", UCase(Data.Item("T_LNAME_1"))
+        end if
+
+        if pgMain.chbShortNameR.Checked then
+            SetText "DATA$txt_team_2", UCase(Data.Item("T_SNAME_2"))
+        else
+            SetText "DATA$txt_team_2", UCase(Data.Item("T_LNAME_2"))
+        end if
+
+         
+        'SetImg "DATA$img_logo_1", s__LogoPath & "LARGE\" & Data.Item("T_LOGO_1")
+        'SetImg "DATA$img_logo_2", s__LogoPath & "LARGE\" & Data.Item("T_LOGO_2")
+
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_1*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_1")
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_2*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_2")
+        '"SCENE*UEFA_EL_2012/scene/" & sScene &"*TREE*$clip_in*FUNCTION*imageClip*animPos SET 24"
+        '"SCENE*UEFA_EL_2012/scene/" & sScene &"*TREE*$clip_out*FUNCTION*imageClip*animPos SET 0"
+
+        GetPreview sDirector, "1.8", sScene
+
+        Redim ActionList(2, 1)
+        ActionList(1, 0) = sDirector
+        ActionList(1, 1) = sDirector
+        ActionList(2, 1) = efPlay
+    End Sub
+
+
+    Public Sub FP_PreMatch(ByRef Data)
+
+        sScene = "VT_MATCH_POST"
+        LoadScene elMainLayer, sScene', 24, 0
+
+        sDirector = "VT"
+
+        SetText "DATA$txt_sub", Data.Item("TEXT")
+
+        SetText "DATA$txt_team_1", UCase(Data.Item("T_SNAME_1"))
+        SetText "DATA$txt_team_2", UCase(Data.Item("T_SNAME_2"))
+
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_1*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_1")
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_2*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_2")
+
+        GetPreview sDirector, "1.0", sScene
+
+        Redim ActionList(2, 1)
+        ActionList(1, 0) = sDirector
+        ActionList(1, 1) = sDirector
+        ActionList(2, 1) = efPlay
+    End Sub
+
+    PUBLIC SUB VT_Statistics (ByRef Data)
+
+        if Data.Item("FREETEXT_FOOTER") <> "" then
+            sScene = "VT_STAT2"
+        else
+            sScene = "VT_STAT"
+        end if
+        LoadScene elMainLayer, sScene
+        sDirector = "VT"
+
+        oData.Item("ITEM_COUNT") = 0
+        FOR i = 1 To 9
+            SetText "$ZEILEN$ANI_ZEILE_" & CStr(i) & "$txt_parameter", UCASE(Data.Item("ITEM_PARA_" & CStr(i)))
+            SetText "$ZEILEN$ANI_ZEILE_" & CStr(i) & "$txt_wert_1", Replace(frmStats.grdData.Cells(i,5), "#", UCASE(Data.Item("ITEM_VAL_A_" & CStr(i))))
+            SetText "$ZEILEN$ANI_ZEILE_" & CStr(i) & "$txt_wert_2", Replace(frmStats.grdData.Cells(i,5), "#", UCASE(Data.Item("ITEM_VAL_B_" & CStr(i))))
+        NEXT
+
+        'SetImg "img_logo_1", s__LogoPath & "MEDIUM\" & Data.Item("T_LOGO_1")
+        'SetImg "img_logo_2", s__LogoPath & "MEDIUM\" & Data.Item("T_LOGO_2")
+
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_1*SCRIPT*INSTANCE*noc SET " & oData.Item("T_LOGO_1")
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_2*SCRIPT*INSTANCE*noc SET " & oData.Item("T_LOGO_2")
+
+        SetText SubCont & "$txt_team_1", UCase(Data.Item("T_SNAME_1"))
+        SetText SubCont & "$txt_team_2", UCase(Data.Item("T_SNAME_2"))
+        SetText SubCont & "$txt_title", UCase(GetString("STATISTICS_TITLE_" & Data.Item("TXT_PERIOD"), i__TVLanguage))
+        SetText SubCont & "$txt_score_1", UCase(oData.Item("T_SCORE_1"))
+        SetText SubCont & "$txt_score_2", UCase(oData.Item("T_SCORE_2"))
+        SetText SubCont & "$txt_summary", UCase(oData.Item("FREETEXT_FOOTER"))
+
+        GetPreview sDirector, "1.8", sScene
+
+        Redim ActionList(2, 1)
+        ActionList(1, 0) = sDirector
+        ActionList(1, 1) = sDirector
+        ActionList(2, 1) = efPlay
+    END SUB
+
+    PUBLIC SUB VT_KnockOutTree (ByRef Data)
+
+        DIM bShowFinal : bShowFinal = false
+        DIM bShowSemiFinal : bShowSemiFinal = false
+
+        'ShowDataObject Data
+
+        IF Data.Item("ITEM_MATCH_7_1") = "" AND Data.Item("ITEM_MATCH_7_2") = "" THEN ' Finale leer ?
+            IF Data.Item("ITEM_MATCH_5_1") = "" AND Data.Item("ITEM_MATCH_5_2") = "" AND Data.Item("ITEM_MATCH_5_1") = "" AND Data.Item("ITEM_MATCH_5_1") = "" THEN ' Halbfinale leer ?
+                 sScene = "VT_RTF_1"
+
+            ELSE ' Halbfinale anzeigen
+                 sScene = "VT_RTF_2"
+                 bShowSemiFinal = true
+            END IF
+
+        ELSE ' Finale anzeigen
+            sScene = "VT_RTF_3" ' eigentlich VT_RTF3, aber der Clip ist falsch
+            bShowSemiFinal = true
+            bShowFinal = true
+        END IF
+
+
+        LoadScene elMainLayer, sScene
+        'Prepare_Layer elMainLayer
+        sDirector = "VT"
+
+        ' MATCH 1 - TEAM A
+        strTeamID       = Data.Item("ITEM_MATCH_1_1")
+        strTeamName     = UCase(Data.Item("ITEM_TEAMNAME_" & strTeamID))
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$TEAMS$ANI_TEAM_1_1_1$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("ITEM_TEAMLOGO_" & strTeamID)
+        SetText "TEAMS$ANI_TEAM_1_1_1$txt_team", strTeamName
+        
+        ' MATCH 1 - TEAM B
+        strTeamID       = Data.Item("ITEM_MATCH_1_2")
+        strTeamName     = UCase(Data.Item("ITEM_TEAMNAME_" & strTeamID))
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$TEAMS$ANI_TEAM_1_1_2$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("ITEM_TEAMLOGO_" & strTeamID)
+        SetText "TEAMS$ANI_TEAM_1_1_2$txt_team", strTeamName
+        
+        ' MATCH 2 - TEAM C
+        strTeamID       = Data.Item("ITEM_MATCH_2_1")
+        strTeamName     = UCase(Data.Item("ITEM_TEAMNAME_" & strTeamID))
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$TEAMS$ANI_TEAM_1_1_3$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("ITEM_TEAMLOGO_" & strTeamID)
+        SetText "TEAMS$ANI_TEAM_1_1_3$txt_team", strTeamName
+        
+        ' MATCH 2 - TEAM D
+        strTeamID       = Data.Item("ITEM_MATCH_2_2")
+        strTeamName     = UCase(Data.Item("ITEM_TEAMNAME_" & strTeamID))
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$TEAMS$ANI_TEAM_1_1_4$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("ITEM_TEAMLOGO_" & strTeamID)
+        SetText "TEAMS$ANI_TEAM_1_1_4$txt_team", strTeamName
+
+        ' MATCH 3 - TEAM A
+        strTeamID       = Data.Item("ITEM_MATCH_3_1")
+        strTeamName     = UCase(Data.Item("ITEM_TEAMNAME_" & strTeamID))
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$TEAMS$ANI_TEAM_2_1_1$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("ITEM_TEAMLOGO_" & strTeamID)
+        SetText "TEAMS$ANI_TEAM_2_1_1$txt_team", strTeamName
+
+        ' MATCH 3 - TEAM B
+        strTeamID       = Data.Item("ITEM_MATCH_3_2")
+        strTeamName     = UCase(Data.Item("ITEM_TEAMNAME_" & strTeamID))
+        strTeamLogo     = s__LogoPath & "SMALL\" & Data.Item("ITEM_TEAMLOGO_" & strTeamID)
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$TEAMS$ANI_TEAM_2_1_2$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("ITEM_TEAMLOGO_" & strTeamID)
+        SetText "TEAMS$ANI_TEAM_2_1_2$txt_team", strTeamName
+
+        ' MATCH 4 - TEAM C
+        strTeamID       = Data.Item("ITEM_MATCH_4_1")
+        strTeamName     = UCase(Data.Item("ITEM_TEAMNAME_" & strTeamID))
+        strTeamLogo     = s__LogoPath & "SMALL\" & Data.Item("ITEM_TEAMLOGO_" & strTeamID)
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$TEAMS$ANI_TEAM_2_1_3$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("ITEM_TEAMLOGO_" & strTeamID)
+        SetText "TEAMS$ANI_TEAM_2_1_3$txt_team", strTeamName
+        ' MATCH 4 - TEAM D
+        strTeamID       = Data.Item("ITEM_MATCH_4_2")
+        strTeamName     = UCase(Data.Item("ITEM_TEAMNAME_" & strTeamID))
+        strTeamLogo     = s__LogoPath & "SMALL\" & Data.Item("ITEM_TEAMLOGO_" & strTeamID)
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$TEAMS$ANI_TEAM_2_1_4$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("ITEM_TEAMLOGO_" & strTeamID)
+        SetText "TEAMS$ANI_TEAM_2_1_4$txt_team", strTeamName
+
+        'ShowDataObject Data
+        IF bShowSemiFinal THEN
+            ' MATCH 5 - TEAM 1
+            strTeamID       = Data.Item("ITEM_MATCH_5_1")
+            strTeamName     = UCase(Data.Item("ITEM_TEAMSHORT_" & strTeamID))
+            obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$TEAMS$ANI_TEAM_1_2_1$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("ITEM_TEAMLOGO_" & strTeamID)
+            SetText "TEAMS$ANI_TEAM_1_2_1$txt_team", strTeamName
+            ' MATCH 5 - TEAM 2
+            strTeamID       = Data.Item("ITEM_MATCH_5_2")
+            strTeamName     = UCase(Data.Item("ITEM_TEAMSHORT_" & strTeamID))
+            obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$TEAMS$ANI_TEAM_1_2_2$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("ITEM_TEAMLOGO_" & strTeamID)
+            SetText "TEAMS$ANI_TEAM_1_2_2$txt_team", strTeamName
+
+            ' MATCH 6 - TEAM 1
+            strTeamID       = Data.Item("ITEM_MATCH_6_1")
+            strTeamName     = UCase(Data.Item("ITEM_TEAMSHORT_" & strTeamID))
+            obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$TEAMS$ANI_TEAM_2_2_1$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("ITEM_TEAMLOGO_" & strTeamID)
+            SetText "TEAMS$ANI_TEAM_2_2_1$txt_team", strTeamName
+
+            ' MATCH 6 - TEAM 2
+            strTeamID       = Data.Item("ITEM_MATCH_6_2")
+            strTeamName     = UCase(Data.Item("ITEM_TEAMSHORT_" & strTeamID))
+            obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$TEAMS$ANI_TEAM_2_2_2$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("ITEM_TEAMLOGO_" & strTeamID)
+            SetText "TEAMS$ANI_TEAM_2_2_2$txt_team", strTeamName
+
+            IF bShowFinal THEN
+                ' FINAL - TEAM 1
+                strTeamID       = Data.Item("ITEM_MATCH_7_1")
+                obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$TEAMS$ANI_TEAM_1_3_1$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("ITEM_TEAMLOGO_" & strTeamID)
+                obj__TV.ShowObject  "TEAMS$ANI_TEAM_1_3_1$img_logo"
+                ' FINAL - TEAM 2
+                strTeamID       = Data.Item("ITEM_MATCH_7_2")
+                obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$TEAMS$ANI_TEAM_2_3_1$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("ITEM_TEAMLOGO_" & strTeamID)
+                obj__TV.ShowObject   "TEAMS$ANI_TEAM_2_3_1$img_logo"
+            ELSE
+                obj__TV.HideObject  "TEAMS$ANI_TEAM_1_3_1$img_logo"
+                obj__TV.HideObject  "TEAMS$ANI_TEAM_2_3_1$img_logo"
+            END IF
+
+        END IF
+
+        SetText "txt_titel", trim(UCASE(GetString("TITLE_KNOCKOUT_TREE", i__TVLanguage)))
+
+
+
+        GetPreview sDirector, "1.0", sScene
+
+        Redim ActionList(2, 1)
+        ActionList(1, 0) = sDirector
+        ActionList(1, 1) = sDirector
+        ActionList(2, 1) = efPlay
+    END SUB
+
+
+    Public Sub LT_Substitution(ByRef Data)
+
+        sScene = "BB_WECHSEL"
+        LoadScene elMainLayer, sScene
+
+        'Prepare_Layer elMainLayer
+
+        sDirector = "BB"
+
+        NrIn        = oData.Item("P_NR_IN")
+        NameIn      = trim(oData.Item("P_LNAME_IN"))
+        GNameIn     = trim(oData.Item("P_GNAME_IN"))
+
+        NrOut       = oData.Item("P_NR_OUT")
+        NameOut     = trim(oData.Item("P_LNAME_OUT"))
+        GNameOut    = trim(oData.Item("P_GNAME_OUT"))
+        L_TName     = oData.Item("T_LNAME")
+        S_TName     = oData.Item("T_SNAME")
+
+
+        'SetText SubCont & "$DATA$txt_bib_1", UCase(NrOut)
+        SetText SubCont & "$DATA$txt_name_1_2", UCase(NameIn)
+        SetText SubCont & "$DATA$txt_name_1_1", UCase(GNameIn)
+        SetText SubCont & "$DATA$txt_bib_1", UCase(NrIn)
+
+        IF GNameOut = "" THEN
+            obj__TV.HideObject SubCont & "$DATA$txt_name_1_1"
+            obj__TV.HideObject SubCont & "$DATA$txt_name_1_1_TL"
+        ELSE
+            obj__TV.ShowObject SubCont & "$DATA$txt_name_1_1"
+            obj__TV.ShowObject SubCont & "$DATA$txt_name_1_1_TL"
+        END IF
+
+        'SetText SubCont & "$DATA$txt_bib_2", UCase(NrIn)
+        SetText SubCont & "$DATA$txt_name_2_1", UCase(GNameOut)
+        SetText SubCont & "$DATA$txt_name_2_2", UCase(NameOut)
+        SetText SubCont & "$DATA$txt_bib_2", UCase(NrOut)
+
+        IF GNameIn = "" THEN
+            obj__TV.HideObject SubCont & "$DATA$txt_name_2_1"
+            obj__TV.HideObject SubCont & "$DATA$txt_name_2_1_TL"
+        ELSE
+            obj__TV.ShowObject SubCont & "$DATA$txt_name_2_1"
+            obj__TV.ShowObject SubCont & "$DATA$txt_name_2_1_TL"
+        END IF
+
+        obj__TV.ShowObject "ONOFF_HEAD_1"
+
+        SetText SubCont & "$ONOFF_HEAD_1$txt_titel", UCASE(GetString("HALBZEITSPIELERWECHEL", i__TVLanguage))
+
+        'SetImg "DATA$img_logo", s__LogoPath & "SMALL\" &
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO")
+        
+        GetPreview sDirector, "1.8", sScene
+
+        Redim ActionList(2, 1)
+        ActionList(1, 0) = sDirector
+        ActionList(1, 1) = sDirector
+        ActionList(2, 1) = efPlay
+
+    End Sub
+
+    Public Sub LT_SubstitutionChange(ByRef Data)
+        sDirector = "BB"
+        Redim ActionList(2, 1)
+        ActionList(1, 0) = sDirector
+        ActionList(1, 1) = "WECHSEL"
+        ActionList(2, 1) = efPlay
+
+    End Sub
+
+
+
+    'FP Studio Background
+    Public Sub Show_StudioBG()
+
+        sScene = "VT_STUDIO_BG"
+        LoadScene elMainLayer, sScene
+
+        'Prepare_Layer elMainLayer
+
+        sDirector = "BG_STUDIO"
+
+        GetPreview sDirector, "0.1", sScene
+
+        Redim ActionList(2, 1)
+        ActionList(1, 0) = sDirector
+        ActionList(1, 1) = sDirector
+        ActionList(2, 1) = efPlay
+    End Sub
+
+
+    Public Sub ClearAll()
+        If obj__TV is Nothing Then Exit Sub
+
+        if s__LastAnim <> "" Then
+            obj__TV.DoEffect elMainLayer, s__LastAnim, efContinue
+            CC.SF.ShowSplashForm "Waiting for animation to finish...", clGreen
+            CC.SF.Wait 2000
+            CC.SF.HideSplashForm
+'            ClearPreview
+        end if
+        s__LastAnim = ""
+
+        ReDim ActionList(1, 0)
+        ActionList(0, 0) = ""
+    End Sub
+
+    Public Sub Update_MainScore(ByRef Data)
+        SetScene "BX_STAND"
+        Trenner = "-"
+        'SetText "STAND$txt_score", Data.Item("T_SCORE_1") & Trenner & Data.Item("T_SCORE_2")
+        SetText strMainCont & "$txt_score_team1", Data.Item("T_SCORE_1")
+        SetText strMainCont & "$txt_score_team2", Data.Item("T_SCORE_2")
+        'SetText "ELFMETER$STAND$txt_score", Data.Item("T_SCORE_1") & Trenner & Data.Item("T_SCORE_2")
+        strAggScore = trim(GetString("INFO_AGG_SCORE", i__TVLanguage))
+        strAggScore = Replace(strAggScore, "%1", Data.Item("T_AGGSCORE_1"))
+        strAggScore = Replace(strAggScore, "%2", Data.Item("T_AGGSCORE_2"))
+        SetText "STAND$txt_add",  strAggScore
+
+    End Sub
+
+
+    Public Sub Show_PermScore(ByRef Data)
+        DIM strMainCont
+        IF NOT b__DSSVisible THEN
+            obj__TV.OpenProject s__VizPath
+
+
+
+            str__DSSType = Data.Item("DSS_TYPE")
+
+
+          '  SELECT CASE str__DSSType
+'                CASE "PENALTIES"
+'
+'
+'                CASE ELSE
+                    sScene = "BX_STAND"
+                    obj__TV.SetScene sScene
+                    obj__TV.LoadScene elFrontLayer
+                    obj__TV.DoEffect elFrontLayer, "ALL", efReset : bAddTimeOnAIR = false
+                    strMainCont = "STAND"
+                    sDirector = "STAND"
+
+            'END SELECT
+
+            Trenner = "-"
+            iAddTime = Data.Item("INJURYTIME")
+            bAddTime = (iAddTime > -1)
+
+            SetText strMainCont & "$txt_team_1", Data.Item("T_DSSNAME_1")
+            SetText strMainCont & "$txt_team_2", Data.Item("T_DSSNAME_2")
+
+            SetImg strMainCont & "$img_dss_1", s__TeamKits & Data.Item("T_DSSNAME_1") & "\" & pgLineUp.edtDSSA.Text
+            SetImg strMainCont & "$img_dss_2", s__TeamKits & Data.Item("T_DSSNAME_2") & "\" & pgLineUp.edtDSSB.Text
+            
+            obj__TV.SendCommand "RENDERER*FRONT_LAYER*TREE*$ANI_RED_CARDS$ANI_RED_CARDS_TEAM_1*FUNCTION*Omo*vis_con SET " & Data.Item("RED1")
+            obj__TV.SendCommand "RENDERER*FRONT_LAYER*TREE*$ANI_RED_CARDS$ANI_RED_CARDS_TEAM_2*FUNCTION*Omo*vis_con SET " & Data.Item("RED2")
+
+            'SetText strMainCont & "$txt_score", Data.Item("T_SCORE_1") & Trenner & Data.Item("T_SCORE_2")
+            SetText strMainCont & "$txt_score_team1", Data.Item("T_SCORE_1")
+            SetText strMainCont & "$txt_score_team2", Data.Item("T_SCORE_2")
+
+            obj__TV.SetClock 0, clLimit, Data.Item("MAINTIME_LIMIT")
+            obj__TV.SendCommand "CLOCK0*DIRECTION SET UP"
+
+            If Data.Item("TIME_ISRUNNING") Then
+'               If bAddTime Then
+'                  obj__TV.SendCommand "CLOCK1*TIME SET " & (iAddTime / 1000)
+'                  obj__TV.SendCommand "CLOCK1 START"
+'                  obj__TV.SendCommand "CLOCK0 STOP" & ( TSP.GetTime(TSP_Time, 0) / 1000)
+'                  obj__TV.SendCommand "CLOCK0*TIME SET " & ( TSP.GetTime(TSP_Time, 0) / 1000)
+'               Else
+'                  obj__TV.SendCommand "CLOCK0*TIME SET " & ( TSP.GetTime(TSP_Time, 0) / 1000)
+'                  obj__TV.SendCommand "CLOCK0 START"
+'                  obj__TV.SendCommand "CLOCK1 STOP"
+'                  obj__TV.SendCommand "CLOCK1*TIME SET 0"
+'               End If
+'
+            Else
+               obj__TV.SendCommand "CLOCK0 STOP"
+               obj__TV.SendCommand "CLOCK0*TIME SET " & (TSP.GetTime(TSP_Time, 0) / 1000)
+               obj__TV.SendCommand "CLOCK1 STOP"
+               obj__TV.SendCommand "CLOCK1*TIME SET " & (iAddTime / 1000)
+            End If
+
+            GetPreview Array(sDirector & " 1.80", "ALL_INOUT 0.5"), "", sScene
+            'GetPreview sDirector, "1.08", sScene
+
+
+            obj__TV.SendCommand "RENDERER*FRONT_LAYER*STAGE*DIRECTOR*ALL_INOUT SHOW 0.5"
+            obj__TV.DoEffect elFrontLayer, sDirector, efPlay
+            If bAddTime Then
+               'IF b__AGGSCOREVisible THEN Hide_AggScore
+               txtAddTime = trim(pgMain.edtAddTime.Text)
+               IF txtAddTime = "" THEN
+                   SetText strMainCont & "$txt_addtime", ""
+               ELSE
+                   txtAddTime = "+" & txtAddTime
+                   SetText strMainCont & "$txt_addtime", txtAddTime
+               END IF
+               obj__TV.DoEffect elFrontLayer, "ADDTIME", efPlay : bAddTimeOnAIR = true
+            End If
+            b__DSSVisible  = True
+        END IF
+    End Sub
+    
+    public Sub DSS_Red_Card(r1,r2)
+        obj__TV.SendCommand "RENDERER*FRONT_LAYER*TREE*$ANI_RED_CARDS$ANI_RED_CARDS_TEAM_1*FUNCTION*Omo*vis_con SET " & r1
+        obj__TV.SendCommand "RENDERER*FRONT_LAYER*TREE*$ANI_RED_CARDS$ANI_RED_CARDS_TEAM_2*FUNCTION*Omo*vis_con SET " & r2
+    end sub
+
+    Public Sub FP_TactLineup(ByRef Data)
+      'Dim Player(11, 4)
+        'ShowDataObject Data
+        sScene = "VT_LINEUP_TAC"
+        LoadScene elMainlayer, sScene
+        sDirector = "VT"
+
+        'LineupWidth  = 430
+        'LineupHeight = 300
+        'SceneWidth   = 320
+        'SceneHeight  = 190
+        LineupWidth  = 960
+        LineupHeight = 576
+        SceneWidth   = 706
+        SceneHeight  = 380
+        Team = Data.Item("CURR_TEAM")
+        If Team = "A" Then TeamId = 1 else TeamId = 2
+
+        SetText "DATA$txt_team", Data.Item("T_LNAME_" & TeamId)
+        obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo*SCRIPT*INSTANCE*noc SET " &Data.Item("T_LOGO_" & TeamId)
+
+
+        Anz = 0
+        'ShowDataObject oData
+
+        For i = 1 to 11
+            P_Nr = Trim(Lineup.GetPlayer(Lineup_Nr, i))
+            'P_Name = Trim(Lineup.GetPlayer(Lineup_Name, i))
+
+            P_Name = GetData(Team & P_Nr)
+            'cc.sf.debugtext P_Name
+            strPlayerString = Team &":LASTNAME_COUNT:" & P_Name
+            'cc.sf.DebugText strPlayerString & ": " & Data.Item(strPlayerString)
+            IF Data.Exists(strPlayerString) then
+                if Data.Item(strPlayerString) > 1 then
+                    P_Name = UCASE(GetDataEx(Team & P_Nr))
+                end if
+            end if
+            P_Name = UCASE(P_Name)
+
+
+
+            x_Pos = Trim(Lineup.GetPlayer(Lineup_Name_X, i))
+            y_Pos = Trim(Lineup.GetPlayer(Lineup_Name_Y, i))
+
+            IF Team = "A" THEN
+                IF oData.Item("T_GK_BIB_1") = P_Nr THEN
+                    SetImg "ANI_SPIELER_" & i & "$img_shirt", s__TeamKits & oData.Item("T_DSSNAME_1") & "\" & pgLineUp.edtGKA.Text
+                    SetImg "ANI_SPIELER_" & i & "$txt_bib", s__TeamKits & oData.Item("T_DSSNAME_1") & "\" & pgLineUp.edtGKA.Text & "NUM"
+                ELSE
+                    SetImg "ANI_SPIELER_" & i & "$img_shirt", s__TeamKits & oData.Item("T_DSSNAME_1") & "\" & pgLineUp.edtPLA.Text
+                    SetImg "ANI_SPIELER_" & i & "$txt_bib", s__TeamKits & oData.Item("T_DSSNAME_1") & "\" & pgLineUp.edtPLA.Text & "NUM"
+                END IF
+
+                ' Karte
+                If  Data.Item("CARD_1_" & i) then
+                    obj__TV.ShowObject  "ANI_SPIELER_" & i & "$ONOFF_CARD"
+                else
+                    obj__TV.HideObject  "ANI_SPIELER_" & i & "$ONOFF_CARD"
+                end if
+
+                intOffset = CNumType(pgLineup.edtOffset.Text, vbInteger,0,null,0)/1000
+                FOR j = 1 TO 11
+                    IF P_Nr = pgLineUp.GridTeams.Cells(j, 0) THEN
+                        intGroup = CNUmType(pgLineUp.GridTeams.Cells(j, 2), vbInteger, 1, null,1)
+                        obj__TV.SendCommand "RENDERER*MAIN_LAYER*STAGE*DIRECTOR*TAC_SP_" & i & "*OFFSET SET " & Replace(intOffset * intGroup,",",".")
+                    END IF
+                NEXT
+                
+            ELSE  ' Team B
+                IF oData.Item("T_GK_BIB_2") = P_Nr THEN
+                    SetImg "ANI_SPIELER_" & i & "$img_shirt", s__TeamKits  & oData.Item("T_DSSNAME_2") & "\" & pgLineUp.edtGKB.Text
+                    SetImg "ANI_SPIELER_" & i & "$txt_bib", s__TeamKits & oData.Item("T_DSSNAME_2") & "\" & pgLineUp.edtGKB.Text &"NUM"
+                ELSE
+                    SetImg "ANI_SPIELER_" & i & "$img_shirt", s__TeamKits  & oData.Item("T_DSSNAME_2") & "\" & pgLineUp.edtPLB.Text
+                    SetImg "ANI_SPIELER_" & i & "$txt_bib", s__TeamKits & oData.Item("T_DSSNAME_2") & "\" & pgLineUp.edtPLB.Text &"NUM"
+                END IF
+                
+                ' Karte
+                If  Data.Item("CARD_2_" & i) then
+                    obj__TV.ShowObject  "ANI_SPIELER_" & i & "$ONOFF_CARD"
+                else
+                    obj__TV.HideObject  "ANI_SPIELER_" & i & "$ONOFF_CARD"
+                end if
+                
+                intOffset = CNumType(pgLineup.edtOffset.Text, vbInteger,0,null,0)/1000
+                FOR j = 1 TO 11
+                    IF P_Nr = pgLineUp.GridTeams.Cells(j, 3) THEN
+                        intGroup = CNUmType(pgLineUp.GridTeams.Cells(j, 5), vbInteger, 1, null,1)
+                        obj__TV.SendCommand "RENDERER*MAIN_LAYER*STAGE*DIRECTOR*TAC_SP_" & i & "*OFFSET SET " & Replace(intOffset * intGroup,",",".")
+                    END IF
+                NEXT
+            END IF
+
+
+            
+            ScenePosX  = Formatnumber((x_Pos - 450) / (LineupWidth / SceneWidth), 1)
+            ScenePosY  = Formatnumber((y_Pos - 300) / (LineupHeight / SceneHeight), 1)
+
+            obj__TV.SetGeometry "ANI_SPIELER_" & i & "$SET_POS", gmPosition, ScenePosX, ScenePosY, "0.0"
+
+            SetText "ANI_SPIELER_" & i & "$txt_bib", P_nr
+
+            SetText "ANI_SPIELER_" & i & "$txt_name", P_Name
+        Next
+        'obj__TV.SendCommand "RENDERER*MAIN_LAYER*STAGE*DIRECTOR*CHANGE*OFFSET SET 0.0"' & Replace(CNumType(pgLineUp.edtOffsetRot.Text, vbInteger, 0, null, 0)/1000,",",".")
+
+        GetPreview Array(sDirector & " 1.80", "TAC_SP_1 2.0", "TAC_SP_2 2.0", "TAC_SP_3 2.0", "TAC_SP_4 2.0", "TAC_SP_5 2.0", "TAC_SP_6 2.0", "TAC_SP_7 2.0", "TAC_SP_8 2.0", "TAC_SP_9 2.0", "TAC_SP_10 2.0", "TAC_SP_11 2.0"), "", sScene
+
+        Redim ActionList(2, 1)
+        ActionList(1, 0) = sDirector
+        ActionList(1, 1) = sDirector
+        ActionList(2, 1) = efPlay
+    End Sub
+    
+    Public Sub FP_TactLineupChange(ByRef Data)
+        Redim ActionList(2, 1)
+        ActionList(1, 0) =  "VT"
+        ActionList(1, 1) = "CHANGE"
+        ActionList(2, 1) = efPlay
+    End Sub
+
+    Public Sub FP_TactLineupLiveUpdate(ByRef Data)
+        LineupWidth  = 960
+        LineupHeight = 576
+        SceneWidth   = 706
+        SceneHeight  = 380
+        ScenePosX  = Formatnumber((Data.Item("myX") - 450) / (LineupWidth / SceneWidth), 1)
+        ScenePosY  = Formatnumber((Data.Item("myY") - 300) / (LineupHeight / SceneHeight), 1)
+        obj__TV.SetGeometry "ANI_SPIELER_" & Data.Item("Curr") & "$SET_POS", gmPosition, ScenePosX, ScenePosY, "0.0"
+    End Sub
+
+
+    Public Sub Show_AggScore(ByRef Data)
+        sDirector = "AGGREGATE"
+        IF NOT b__DSSVisible THEN
+            obj__TV.DoEffect elFrontLayer, sDirector, efReset
+            b__AGGSCOREVisible = false
+            EXIT SUB
+        END IF
+
+        IF b__AGGSCOREVisible THEN EXIT SUB
+        strAggScore = trim(GetString("INFO_AGG_SCORE", i__TVLanguage))
+        strAggScore = Replace(strAggScore, "%1", Data.Item("T_AGGSCORE_1"))
+        strAggScore = Replace(strAggScore, "%2", Data.Item("T_AGGSCORE_2"))
+        SetText "STAND$txt_add",  strAggScore
+
+        GetPreview sDirector, "0.3", sScene
+        obj__TV.DoEffect elFrontLayer, sDirector, efPlay
+        cc.SF.Wait 350
+
+        b__AGGSCOREVisible = true
+        b__DSSVisible  = True
+
+    End Sub
+
+    Public Sub Hide_AggScore()
+        sDirector = "AGGREGATE"
+        IF b__AGGSCOREVisible THEN
+            obj__TV.DoEffect elFrontLayer, sDirector, efContinue
+            cc.SF.Wait 1800
+        ELSE
+            obj__TV.DoEffect elFrontLayer, sDirector, efReset
+        END IF
+        GetPreview sDirector, "0.0", sScene
+
+        b__AGGSCOREVisible = False
+    End Sub
+
+    Public Sub Hide_PermScore()
+
+
+         IF b__DSSAddVisible or b__AGGSCOREVisible THEN
+                'Hide_DSS_Zusatz
+                obj__TV.DoEffect elFrontLayer, "ALL_INOUT", efContinue
+                cc.SF.Wait 1800
+
+                b__DSSVisible = False
+                b__AGGSCOREVisible = False
+                exit Sub
+            END IF
+        'IF b__AGGSCOREVisible THEN
+        '    Hide_AggScore
+        'END IF
+
+        SELECT CASE str__DSSType
+            CASE "PENALTIES"
+                'strMainCont = "$ELMETER$STAND"
+                sDirector = "ELFMETER"
+                sScene = "BX_PENALTY"
+            CASE ELSE
+                'strMainCont = "$STAND"
+                sDirector = "STAND"
+                sScene = "BX_STAND"
+        END SELECT
+        SetScene sScene
+        obj__TV.DoEffect elFrontLayer, sDirector, efContinue
+
+        'GetPreview sDirector, "0.0", sScene
+
+        b__DSSVisible = False
+        b__AGGSCOREVisible = false
+    End Sub
+
+
+    Public Sub Start_MainClock(ByRef Data)
+        'SetScene "BX_STAND"
+
+        iAddTime = Data.Item("INJURYTIME")
+        bAddTime = (iAddTime > -1)
+        obj__TV.SetClock 0, clLimit, Data.Item("MAINTIME_LIMIT")
+        'If bAddTime Then
+           obj__TV.SendCommand "CLOCK1*TIME SET " & (iAddTime / 1000)
+           obj__TV.SendCommand "CLOCK1 START"
+        'Else
+           obj__TV.SendCommand "CLOCK0*TIME SET " &  TSP.GetTime(TSP_Time, 0) / 1000
+           obj__TV.SetClock 0, clDirection, Data.Item("MAINTIME_DIRECTION")
+           obj__TV.SendCommand "CLOCK0 START"
+        'End If
+        'ShowDataObject Data
+    End Sub
+
+    Public Sub Stop_MainClock(ByRef Data)
+        'SetScene "BX_STAND"
+
+        iAddTime = Data.Item("INJURYTIME")
+        bAddTime = (iAddTime > -1)
+        obj__TV.SetClock 0, clLimit, Data.Item("MAINTIME_LIMIT")
+        'If bAddTime Then
+           obj__TV.SendCommand "CLOCK1 STOP"
+           obj__TV.SendCommand "CLOCK1*TIME SET " & (iAddTime / 1000)
+        'Else
+           obj__TV.SendCommand "CLOCK0 STOP "
+           obj__TV.SendCommand "CLOCK0*TIME SET " & (Data.Item("MAINTIME") / 1000)
+        'End If
+    End Sub
+
+
+    'Lädt Scene in Viz >> Synchron
+    Private Sub SetScene(ByVal sScene)
+        obj__TV.OpenProject s__VizPath
+        obj__TV.SetScene sScene
+    End Sub
+
+    Private Sub LoadScene(ByVal strLayer, ByVal sScene)
+        ClearAll
+        cc.SF.DebugText "Loading Scene '" & sScene & "' ..."
+        CC.SF.ShowSplashForm "VIZ is loading scene " & sScene & " ... ", clYellow
+
+        obj__TV.OpenProject s__VizPath
+        obj__TV.RendererUpdate false
+
+        'obj__TV.SendCommandEx("SCENE*" & s__VizPath &"/" & sScene &" CLOSE")
+        obj__TV.SendCommandEx("POOLS CLEANUP")
+        obj__TV.SetScene sScene
+        cc.SF.TimerSet
+
+        ' SIEMIC:   TODO  If Kill_Bill switch is set, terminate this routine instantly
+        If strLayer = 1 Then
+           sLayer = "FRONT_LAYER"
+        ElseIf strLayer = 2 Then
+           sLayer = "MAIN_LAYER"
+        ElseIf strLayer = 3 Then
+           sLayer = "BACK_LAYER"
+        End If
+
+        sResult = obj__TV.SendCommandEx("RENDERER*" & sLayer & " SET_OBJECT SCENE*" & s__VizPath & "/" & sScene)
+        sResult = obj__TV.SendCommandEx("RENDERER*" & sLayer & "*NAME GET")
+
+        'obj__TV.SendCommandEx("RENDERER*" & sLayer & "*STAGE SHOW 0.5")
+        Prepare_Layer strLayer
+
+        obj__TV.RendererUpdate true
+        CC.SF.HideSplashForm
+        cc.SF.Wait 250
+        cc.SF.DebugText "Scene '" & sResult & "' loaded in " & cc.SF.TimerGet & "ms ..."
+    End Sub
+
+    Private Sub LoadSceneEx(ByVal strLayer, ByVal sScene, ByVal inPos, ByVal outPos)
+        ClearAll
+        obj__TV.OpenProject s__VizPath
+        obj__TV.RendererUpdate false
+
+        'obj__TV.SendCommandEx("SCENE*" & s__VizPath &"/" & sScene &" CLOSE")
+        obj__TV.SendCommandEx("POOLS CLEANUP")
+        obj__TV.SetScene sScene
+        cc.SF.TimerSet
+        If strLayer = 1 Then
+           sLayer = "FRONT_LAYER"
+        ElseIf strLayer = 2 Then
+           sLayer = "MAIN_LAYER"
+        ElseIf strLayer = 3 Then
+           sLayer = "BACK_LAYER"
+        End If
+        sResult = obj__TV.SendCommandEx("RENDERER*" & sLayer & " SET_OBJECT SCENE*" & s__VizPath & "/" & sScene)
+        sResult = obj__TV.SendCommandEx("RENDERER*" & sLayer & "*NAME GET")
+
+        obj__TV.SendCommandEx("RENDERER*" & sLayer & "*TREE*$clip_in*FUNCTION*imageClip*animPos SET 5" )'& CStr(inPos) )
+        obj__TV.SendCommandEx("RENDERER*" & sLayer & "*TREE*$clip_out*FUNCTION*imageClip*animPos SET 5" )' & CStr(outPos))
+
+        Prepare_Layer strLayer
+
+        obj__TV.RendererUpdate true
+
+        cc.SF.DebugText "Scene '" & sResult & "' loaded in " & cc.SF.TimerGet & "ms ..."
+        cc.SF.Wait 2500
+    End Sub
+
+
+    'Numeric to Layer in Viz
+    Private Function GetLayer(ByVal intLayer)
+        Select Case intLayer
+            Case 1 : GetLayer = elFrontLayer
+            Case 2 : GetLayer = elMainLayer
+            Case 3 : GetLayer = elBackLayer
+        End Select
+    End Function
+
+    Private Sub Prepare_Layer(ByVal strLayer)
+        obj__TV.DoEffect strLayer, "ALL", efReset
+    End Sub
+
+    'Set Text in VIZ
+    Private Sub SetText(ByVal sObject, ByVal sContent)
+        obj__TV.SetContent sObject, objText, sContent
+    End Sub
+
+    'Set Image in VIZ
+    Private Sub SetImg(ByVal sObject, ByVal sContent)
+        obj__TV.SetContent sObject, objImage, sContent
+    End Sub
+
+    'Set Object in VIZ
+    Private Sub SetObj(ByVal sObject, ByVal sContent)
+        obj__TV.SetContent sObject, objObject, sContent
+    End Sub
+
+    'Preview ziehen von entsprechender Animation und Frame
+    Public Sub GetPreview(ByVal PrevData, ByVal intFrame, ByVal sScene)
+      Dim sCmd, sLayer
+
+        If iLayer = 1 Then
+            sLayer = "FRONT_LAYER"
+        ElseIf iLayer = 2 Then
+            sLayer = "MAIN_LAYER"
+        ElseIf iLayer = 3 Then
+            sLayer = "BACK_LAYER"
+        End If
+
+        If IsArray(PrevData) Then
+           iCount = UBound(PrevData)
+           For i = 0 to iCount
+               strPrevCmd = strPrevCmd & PrevData(i) & " "
+           Next
+           strPrevCmd = Trim(strPrevCmd)
+           obj__TV.SendCommand "RENDERER PREVIEW SCENE*" & s__VizPath & "/" & sScene & " VIDEO " & strPrevCmd
+        Else
+            obj__TV.SendCommand "RENDERER PREVIEW SCENE*" & s__VizPath & "/" & sScene & " VIDEO " & PrevData & " " & intFrame
+
+        End If
+
+    End Sub
+
+    ' Löscht den Preview
+    Public Sub ClearPreview()
+        IF trim(sScene) = "" THEN
+            obj__TV.SendCommand "RENDERER PREVIEW CURRENT VIDEO ALL 0.0"
+        ELSE
+            obj__TV.SendCommand "RENDERER PREVIEW SCENE*" & s__VizPath & "/" & sScene & " VIDEO Default 0.0"
+        END IF
+    End Sub
+
+    'Propertys
+    Public Property Get TVLanguage()
+        TVLanguage = i__TVLanguage
+    End Property
+    Public Property Let TVLanguage(ByVal intNewData)
+        i__TVLanguage = intNewData
+    End Property
+
+
+    Public Property Get TVContent()
+        TVContent = i__TVContent
+    End Property
+    Public Property Let TVContent(ByVal intNewData)
+        i__TVContent = intNewData
+    End Property
+
+    Public Property Get TVObj()
+        Set TVObj = obj__TV
+    End Property
+    Public Property Set TVObj(ByRef Data)
+        Set obj__TV = Data
+
+        If Not obj__TV Is Nothing Then
+        End If
+    End Property
+
+
+End Class
+
+</script_body>
+</script>

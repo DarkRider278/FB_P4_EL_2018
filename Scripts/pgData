@@ -1,0 +1,738 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+Const ScoutAppName = "opta Scouting Parser"
+Dim PData(999, 50, 22), bTeamImport
+Dim ScoutData(9999, 20)
+DIM objTeamStat
+
+Sub LoadXMLDataFromFile (Sender)
+    Dim sFile, sXML, objXML, iCount, i, objNode, bFound
+
+    sFile = pgData.ed_ScoutingFile.Text
+    If Not CC.Files.FileExists(sFile) Then
+        sFile = QualifyPath(CC.DEFS.AppPath) & "Data\" & CC.DEFS.ProjectName & "\Data"
+        sFile = CC.Dialogs.OpenDialog("*.xml", strFile)
+        pgData.ed_ScoutingFile.Text = sFile
+    End If
+
+    ' XML-Daten in String laden
+    sXML = CC.Strings.LoadFromFile(sFile)
+
+    ' Controls in CC löschen
+    CC.SF.ClearDebugWindow
+
+    ' Parser-Objekt erzeugen
+    Set objXML = CreateObject("MSXML2.DOMDocument")
+
+    ' Parser-Optionen festlegen, XML-Daten aus String laden
+    objXML.preserveWhiteSpace = True
+    objXML.loadXML(sXML)
+
+    ' Anzahl der Child-Nodes ermitteln, Root-Node (ID "Spiel") suchen
+    iCount = objXML.childNodes.length - 1
+    bFound = False
+    For i = 0 to iCount
+        Set objNode = objXML.childNodes.item(i)
+
+        ' nur Nodes vom Typ "Element" auswerten
+        If objNode.nodeType = 1 Then ' NODE_EELMENT
+            If objNode.baseName = "SoccerFeed" Then
+                ' Root-Eintrag der XML-Daten, an Parsing-Prozedur weiterreichen (gesamten Node übergeben)
+                LoadActionsFromXMLNode objNode
+                bFound = True
+                Exit For
+            End If
+        End If
+    Next
+
+    ' Objektreferenzen zerstören
+    Set objNode = Nothing
+    Set objXML = Nothing
+
+    ' Meldung ausgeben, wenn Root-Node nicht gefunden wurde
+    If Not bFound Then
+       Msgbox "Konnte Root-Node des Dokuments nicht finden, XML-Struktur ungültig oder abweichend.", vbCritical, ScoutAppName
+    End If
+End Sub
+
+' aus übergebenem XML-Node Spieldaten laden
+Sub LoadActionsFromXMLNode(ByRef objNode)
+Dim iCount, i, objChildNode, iTeam
+
+    iEvent = 0
+
+    iCount = objNode.childNodes.Length - 1
+    For i = 0 to iCount
+        Set objChildNode = objNode.childNodes.item(i)
+
+        If objChildNode.nodeType = 1 Then ' NODE_EELMENT
+           Select Case objChildNode.BaseName
+             Case "Event"
+                  ScoutData(iEvent, 0)  = objChildNode.getAttribute("id")
+                  ScoutData(iEvent, 1)  = objChildNode.getAttribute("event_id")
+                  ScoutData(iEvent, 2)  = objChildNode.getAttribute("event_type_id")
+                  ScoutData(iEvent, 3)  = objChildNode.getAttribute("outcome")
+                  ScoutData(iEvent, 4)  = objChildNode.getAttribute("period_id")
+                  ScoutData(iEvent, 5)  = objChildNode.getAttribute("period_minute")
+                  ScoutData(iEvent, 6)  = objChildNode.getAttribute("period_second")
+                  ScoutData(iEvent, 7)  = objChildNode.getAttribute("shirt_number")
+                  ScoutData(iEvent, 8)  = objChildNode.getAttribute("player_id")
+                  ScoutData(iEvent, 9)  = objChildNode.getAttribute("team_id")
+                  ScoutData(iEvent, 10) = objChildNode.getAttribute("x")
+                  ScoutData(iEvent, 11) = objChildNode.getAttribute("end_x")
+                  ScoutData(iEvent, 12) = objChildNode.getAttribute("y")
+                  ScoutData(iEvent, 13) = objChildNode.getAttribute("end_y")
+                  ScoutData(iEvent, 14) = objChildNode.getAttribute("z")
+                  ScoutData(iEvent, 15) = objChildNode.getAttribute("end_z")
+                  ScoutData(iEvent, 16) = objChildNode.getAttribute("c1")
+                  ScoutData(iEvent, 17) = objChildNode.getAttribute("c2")
+                  ScoutData(iEvent, 18) = objChildNode.getAttribute("c3")
+                  'cc.SF.DebugText iEvent & " " & isNull(ScoutData(iEvent, 18))
+
+                  iEvent = iEvent + 1
+             Case Else
+                  CC.SF.DebugText "Unbekannter/ignorierter Knoten -> " & objChildNode.baseName  & ": " & objChildNode.Text, RGB(0, 0, 255)
+           End Select
+        End If
+    Next
+
+    Set objChildNode = Nothing
+End Sub
+
+Function PStat (ByVal iSearchId, ByVal iStat, ByVal bPlayerStat)
+  Dim sQuerry, sFile, i, iCount, sIDAtt
+
+    GetPlayerStatistics = 0
+    sQuerry = "SoccerEventPositions/Event"
+
+    If bPlayerStat Then  'Spielerstatistik
+       sIDAtt = "player_id"
+    Else                 'Teamstatistik
+       sIDAtt = "team_id"
+    End If
+
+    Select Case iStat
+       Case 1 'Flanken +
+         sParam = "Flanken + :"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and @event_type_id = 1 and @outcome = 1 and @c1 = 1]"
+
+       Case 2 'Flanken -
+         sParam = "Flanken - :"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and @event_type_id = 1 and @outcome = 1 and @c1 = 0]"
+
+       Case 3 'Assists
+         sParam = "Assists:"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and @event_type_id = 1 and @c2 = 1]"
+
+       Case 4 'Langpass +
+         sParam = "Langpass + :"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and @event_type_id = 1 and @outcome = 1 and @c3 = 1]"
+
+       Case 5 'Langpass -
+         sParam = "Langpass - :"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and @event_type_id = 1 and @outcome = 1 and @c3 = 0]"
+
+       Case 6 'Kopfballduelle +
+         sParam = "Kopfballduelle + :"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and @event_type_id = 45 and @outcome = 1 and @c1= 1]"
+
+       Case 7 'Kopfballduelle -
+         sParam = "Kopfballduelle - :"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and @event_type_id = 45 and @outcome = 0 and @c1= 1]"
+
+       Case 8 'gehaltene Torschüsse
+         sParam = "Saves total:"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and @event_type_id = 10 and @c1= 0]"
+
+       Case 9 'Fouls
+         sParam = "Fouls :"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and @event_type_id = 45 and @outcome= 1 and @c1= 5]"
+
+       Case 10 'erhaltene Fouls
+         sParam = "erhaltene Fouls :"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and @event_type_id = 45 and @outcome= 0 and @c1= 5]"
+
+       Case 11 'Ecken
+         sParam = "Ecken total"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and @event_type_id = 1 and @c1= 3]"
+
+       Case 12 'Torschüsse
+         sParam = "Torschüsse"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and (@event_type_id = 13 or @event_type_id = 14 or @event_type_id = 15 or @event_type_id = 16 or @event_type_id = 24)]"
+
+       Case 13 'Zweikämpfe +
+         sParam = "Zweikämpfe + :"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and @event_type_id = 45 and @outcome = 1 and @c1>= 1]"
+
+       Case 14 'Zweikämpfe -
+         sParam = "Zweikämpfe - :"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and @event_type_id = 45 and @outcome = 0 and @c1>= 1]"
+
+       Case 15 'Pass +
+         sParam = "Pass + :"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and @event_type_id = 1 and @outcome = 1]"
+
+       Case 16 'Pass -
+         sParam = "Pass - :"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and @event_type_id = 1 and @outcome = 0]"
+
+       Case 17 'Freistöße
+         sParam = "Freistöße :"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and @event_type_id = 45 and @c1 = 2]"
+
+       Case 18 'Schüsse auf Tor
+         sParam = "Schüsse aufs Tor :"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and (@event_type_id = 15 or @event_type_id = 16)]"
+
+       Case 19 'Schüsse neben Tor
+         sParam = "Schüsse neben Tor :"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and (@event_type_id = 13 or @event_type_id = 14)]"
+
+       Case 20 'geblockte Schüsse
+         sParam = "Schüsse neben Tor :"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and @event_type_id = 24]"
+
+       Case 21 'Abseits
+         sParam = "Abseits :"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and @event_type_id = 2]"
+
+       Case 22 'Zweikämpfe Boden +
+         sParam = "Zweikämpfe Boden + :"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and @event_type_id = 45 and @outcome = 1 and @c1> 1]"
+
+       Case 23 'Zweikämpfe Boden -
+         sParam = "Zweikämpfe Boden - :"
+         sQuerry = sQuerry & "[@" & sIDAtt & " = " & CStr(iSearchId) & " and @event_type_id = 45 and @outcome = 0 and @c1> 1]"
+
+       Case else
+          Exit Function
+    End Select
+
+    CC.SF.TimerSet
+
+    sFile = pgData.ed_ScoutingFile.Text
+    If Not CC.Files.FileExists(sFile) Then
+        sFile = QualifyPath(CC.DEFS.AppPath) & "Data\" & CC.DEFS.ProjectName & "\Data"
+        sFile = CC.Dialogs.OpenDialog("*.xml", strFile)
+        pgData.ed_ScoutingFile.Text = sFile
+    End If
+
+    ' XML-Daten in String laden
+    sXML = CC.Strings.LoadFromFile(sFile)
+
+    ' Controls in CC löschen
+    CC.SF.ClearDebugWindow
+    CC.SF.DebugText sQuerry
+
+    ' Parser-Objekt erzeugen
+    Set objXML = CreateObject("MSXML2.DOMDocument")
+
+    ' Parser-Optionen festlegen, XML-Daten aus String laden
+    objXML.preserveWhiteSpace = True
+    objXML.loadXML(sXML)
+
+    objXML.setProperty("SelectionNamespaces") = "xmlns:xsl='http://www.w3.org/1999/XSL/Transform'"
+    objXML.setProperty("SelectionLanguage")   = "XPath"
+
+    Set objNodeList = objXML.selectNodes(CStr(sQuerry))
+    iCount = objNodeList.Length
+
+    If pgData.opt_ShowXMLResult.Checked Then
+      For i = 0 to iCount - 1
+          Set oQNodes = objNodeList.item(i)
+          CC.SF.DebugText oQNodes.Xml
+      Next
+    End If
+    ' Objektreferenzen zerstören
+    Set objNodeList = Nothing
+    Set objXML      = Nothing
+    Set oQNodes     = Nothing
+
+    PStat = iCount
+
+'    CC.sf.DebugText CC.SF.TimerGet
+    cc.SF.DebugText sParam & " " & pStat
+End Function
+
+Function GetPerc(ByVal a, ByVal b, ByVal c, ByVal KSt)
+   Dim iSum
+
+   GetPerc = 0
+
+   iSum = CInt(a) + CInt(b)
+
+   If not iSum = 0 Then
+      GetPerc = Formatnumber(100 / iSum * c, KSt)
+   End If
+
+   CC.SF.DebugText GetPerc
+End Function
+
+Sub LoadGameDataFromXML (Sender)
+    Dim sFile, sXML, objXML, iCount, i, objNode, bFound
+
+    CC.SF.ShowSplashForm "Laden XML-Daten", RGB(45, 90, 135)
+
+    bTeamImport = False
+    If Msgbox("Sollen die Teams in die TSP-Datenbank importiert werden?", vbYesNo, ScoutAppName) = vbYes Then
+       bTeamImport = True
+    End If
+
+    'Alle Teameinträge löschen
+    pgData.Lst_Teams.Items.Clear
+
+    sFile = pgData.ed_GameFile.Text
+    If Not CC.Files.FileExists(sFile) Then
+        sFile = QualifyPath(CC.DEFS.AppPath) & "Data\" & CC.DEFS.ProjectName & "\Data"
+        sFile = CC.Dialogs.OpenDialog("*.xml", strFile)
+        pgData.ed_GameFile.Text = sFile
+    End If
+
+    ' XML-Daten in String laden
+    sXML = CC.Strings.LoadFromFile(sFile)
+
+    ' Controls in CC löschen
+    CC.SF.ClearDebugWindow
+
+    ' Parser-Objekt erzeugen
+    Set objXML = CreateObject("MSXML2.DOMDocument")
+
+    ' Parser-Optionen festlegen, XML-Daten aus String laden
+    objXML.preserveWhiteSpace = True
+    objXML.loadXML(sXML)
+
+    ' Anzahl der Child-Nodes ermitteln, Root-Node (ID "Spiel") suchen
+    iCount = objXML.childNodes.length - 1
+    bFound = False
+    For i = 0 to iCount
+        Set objNode = objXML.childNodes.item(i)
+
+        ' nur Nodes vom Typ "Element" auswerten
+        If objNode.nodeType = 1 Then ' NODE_EELMENT
+            If objNode.baseName = "SoccerFeed" Then
+                ' Root-Eintrag der XML-Daten, an Parsing-Prozedur weiterreichen (gesamten Node übergeben)
+               'cc.SF.DebugText objNode.Text
+               LoadGameData objNode
+               bFound = True
+               Exit For
+            End If
+        End If
+    Next
+
+    ' Objektreferenzen zerstören
+    Set objNode = Nothing
+    Set objXML = Nothing
+
+    ' Meldung ausgeben, wenn Root-Node nicht gefunden wurde
+    If Not bFound Then
+       Msgbox "Konnte Root-Node des Dokuments nicht finden, XML-Struktur ungültig oder abweichend.", vbCritical, ScoutAppName
+    End If
+End Sub
+
+Sub LoadGameData(ByRef objNode)
+    iCount = objNode.childNodes.Length - 1
+    For i = 0 to iCount
+        Set objChildNode = objNode.childNodes.item(i)
+
+        If objChildNode.nodeType = 1 Then ' NODE_EELMENT
+           Select Case Trim(objChildNode.BaseName)
+             Case "SoccerDocument"
+                   LoadTeamDataFromXML objChildNode
+'             Case Else
+'                  CC.SF.DebugText "Unbekannter/ignorierter Knoten -> " & objChildNode.baseName  & ": " & objChildNode.Text, RGB(0, 0, 255)
+           End Select
+        End If
+    Next
+
+    Set objChildNode = Nothing
+End Sub
+
+Sub LoadTeamDataFromXML(ByRef objNode)
+ Dim iTeam, iCount
+
+    iTeam = 0
+    iCount = objNode.childNodes.Length - 1
+    For i = 0 to iCount
+        Set objChildNode = objNode.childNodes.item(i)
+
+        If objChildNode.nodeType = 1 Then ' NODE_EELMENT
+           Select Case objChildNode.BaseName
+             Case "Team"
+                 iTeam = iTeam + 1
+                 sValue = objChildNode.GetAttribute("uID")
+                 sTeamID = Mid(sValue, 2, Len(sValue) - 1)
+                 GetTeamName objChildNode, sTeamID, iTeam
+
+'             Case Else
+'                  CC.SF.DebugText "Unbekannter/ignorierter Knoten -> " & objChildNode.baseName  & ": " & objChildNode.Text, RGB(0, 0, 255)
+           End Select
+        End If
+    Next
+
+    Set objChildNode = Nothing
+End Sub
+
+Sub GetTeamName(ByRef objNode, ByVal sTeamId, ByVal iTeam)
+ Dim iCount, iPlayer
+
+    iPlayer = 0
+    sTName = ""
+    iCount = objNode.childNodes.Length - 1
+
+    For i = 0 to iCount
+        Set objChildNode = objNode.childNodes.item(i)
+
+        If objChildNode.nodeType = 1 Then ' NODE_EELMENT
+           Select Case objChildNode.BaseName
+             Case "Name"
+                  sTName = objChildNode.Text
+                  pgData.Lst_Teams.Items.Add sTeamId & ";" & sTName
+                  If bTeamImport Then
+                     TSP.ExecSQL "INSERT INTO TEAMS (long_name, tv_name_3) VALUES ('"& sTName & "','" & sTeamID & "')"
+                  End If
+
+             Case "Player"
+                   sPlayerID = objChildNode.GetAttribute("uID")
+                   iPID = Mid(sPlayerID, 2, Len(sPlayerID)- 1)
+                   iPlayer = iPlayer + 1
+                   If objChildNode.hasChildNodes Then
+                      LoadPlayersFromXML objChildNode, iTeam, iPlayer, IPId
+                   End If
+             Case "TeamOfficial"
+'             Case Else
+'                  CC.SF.DebugText "Unbekannter/ignorierter Knoten -> " & objChildNode.baseName  & ": " & objChildNode.Text, RGB(0, 0, 255)
+           End Select
+        End If
+    Next
+    Set objChildNode = Nothing
+End Sub
+
+Sub LoadPlayersFromXML(ByRef objNode, ByVal iTeam, ByVal iPlayer, ByVal iPId)
+ Dim iCount
+
+    iCount = objNode.childNodes.Length - 1
+    cc.SF.DebugText iTeam & " " & iPlayer
+    k = 0 'Anzahl Parameter je Spieler
+    PData(iTeam, iPlayer, 0) = iPID 'Player-ID zuweisen
+
+    For i = 0 to iCount
+        Set objChildNode = objNode.childNodes.item(i)
+
+        If objChildNode.nodeType = 1 Then ' NODE_EELMENT
+           k = k + 1
+
+           Select Case objChildNode.BaseName
+             Case "Name"
+                  PData(iTeam, iPlayer, k) = objChildNode.Text
+
+             Case "Position"
+                  PData(iTeam, iPlayer, k) = objChildNode.Text
+             Case "Stat"
+                  PData(iTeam, iPlayer, k) = objChildNode.Text
+'             Case Else
+'                  CC.SF.DebugText "Unbekannter/ignorierter Knoten -> " & objChildNode.baseName  & ": " & objChildNode.Text, RGB(0, 0, 255)
+           End Select
+        End If
+    Next
+    Set objChildNode = Nothing
+
+    cc.SF.HideSplashForm
+End Sub
+
+Sub PlayerImport (Sender)
+    Anz = 0
+    For k = 1 to 18
+      For b = 1 to UBound(PData, 2)
+        If not Trim(PData(k, b, 1)) = "" Then
+          Anz = Anz + 1
+          CC.SF.Debugtext "Spieler: " & PData(k, b, 1) & " wird importiert! (" & Anz & ")", RGB(34, 255, 97)
+
+          sSQl = ""
+          sSQL = "INSERT INTO PLAYERS_1 (tv_name_2,first_name, second_name, height, weight, born_date) "
+          sHeight   = PData(k, b, 8)
+          If UCase(sHeight) = "UNKNOWN" Then sHeight = 0
+
+          sWeight   = PData(k, b, 7)
+          If UCase(sWeight) = "UNKNOWN" Then sWeight = 0
+
+          sBorndate = PData(k, b, 6)
+          if UCase(sBornDate) = "UNKNOWN" Then sbornDate = ""
+
+
+          sSQL = sSQL & "VALUES ('" & PData(k, b, 0) & "','" &_
+                                      PData(k, b, 3) & "','" &_
+                                      PData(k, b, 4) & "','" &_
+                                      sHeight & "','" &_
+                                      sWeight & "','" &_
+                                      sBornDate & "')"
+
+          cc.SF.DebugText sSQL
+          TSP.ExecSQL sSQL
+        End If
+      Next
+    Next
+
+'    TSP.ExecSQL "INSERT INTO PLAYERS_1 (first_name, second_name, height, weight, born_date) VALUES ('Denny','Faber','185','98','10.02.1976')"
+'    TSP.ExecSQL "UPDATE TEAMS SET tv_name_2 = 'BLABLA' WHERE long_name = 'Bayern München'"
+end sub
+
+
+Sub SetFilePath (Sender)
+ Dim sDest
+
+    If Sender.Name = "Btn_OpenScoutingFile" Then
+       sDest = "ed_ScoutingFile"
+    ElseIf Sender.Name = "Btn_OpenResultFile" Then
+       sDest = "ed_ResultFile"
+    ElseIf Sender.Name = "Btn_OpenGameFile" Then
+       sDest = "ed_GameFile"
+    End If
+
+    sFile = pgData.ComponentByName(sDest).Text
+    If Not CC.Files.FileExists(sFile & ".Text") Then
+        sFile = QualifyPath(CC.DEFS.AppPath) & "Data\" & CC.DEFS.ProjectName & "\Data"
+        sFile = CC.Dialogs.OpenDialog("*.xml", sFile)
+        pgData.ComponentByName(sDest).Text = sFile
+    End If
+
+End Sub
+
+Sub pgData_Lst_TeamsClick (Sender)
+    CC.SF.ClearDebugWindow
+
+    Players = ""
+    For i = 1 to UBound(PData, 2)
+       sPlayer = Trim(PData(pgData.Lst_Teams.ItemIndex + 1, i, 1))
+       sPlayerData = ""
+       If not sPlayer = "" Then
+          For b = 0 To UBound(PData, 3)
+              sPData = Trim(PData(pgData.Lst_Teams.ItemIndex + 1, i, b))
+              If not sPData = "" Then
+                 sPlayerData = sPlayerData & sPdata & ";"
+              End If
+          Next
+          Players = Players & sPlayerData & vbcrlf
+       End If
+    Next
+
+    CC.SF.DebugText Players
+End Sub
+
+Function GetDynTeamData(ByVal Param, ByVal Team)
+    Dim oXML
+
+    sGameId = Trim(pgData.ed_CurrGameID.Text)
+    GetDynTeamData = 0
+    'cc.SF.DebugText Param & " " & Team
+
+    Set oXML = CreateObject("Microsoft.XMLDOM")
+
+    oXML.async = false
+    oXML.SetProperty "SelectionLanguage", "XPath"
+    oXML.SetProperty "ServerHTTPRequest", False
+    oXML.validateOnParse = False
+    oXML.resolveExternals = False
+
+    fileName = "http://SwissTiming:BejMoatKed8@www.sportingstatz.com/football/spstatz/authfeeds/srml/matchresults/srml-6-2010-f" & sGameID & "-matchresults.xml"
+    bLoaded = oXML.load(fileName)
+    
+    If not bLoaded Then
+       DbgErr "XML-File konnte nicht geladen werden!"
+       Exit Function
+    End If
+
+    If Team = 1 Then
+       sTeam = "Home"
+    Else
+       sTeam = "Away"
+    End If
+
+
+    If Param = "POSSESSION" Then
+       sParam = "possession_percentage"
+
+    ElseIf Param = "SHOTS" Then
+       sParam = "total_scoring_att"
+
+    ElseIf Param = "SHOTS ON TARGET" Then
+       sParam = "ontarget_scoring_att"
+
+    ElseIf Param = "CORNERS" Then
+       sParam = "won_corners"
+
+    ElseIf Param = "OFFSIDE" Then
+       sParam = "total_offside"
+
+    ElseIf Param = "SAVES" Then
+       sParam = "saves"
+
+    ElseIf Param = "FOULS" Then
+       sParam = "fouls"
+
+    ElseIf Param = "YELLOW_CARDS" Then
+       sParam = "yellow_card"
+
+    ElseIf Param = "RED_CARDS" Then
+       sParam = "red_card"
+    End If
+    
+
+    Set NodeList = oXML.SelectNodes("//TeamData[@Side='" & sTeam & "']/Stat[@Type = '" & sParam & "']")
+    If NodeList.Length = 0 Then
+       DbgErr "Parameter '" & sParam & "' nicht gefunden für Team: " & sTeam
+    Else
+        For i = 0 to NodeList.Length - 1
+            Param = NodeList.Item(i).GetAttribute("Type")
+            Value = NodeList.Item(i).Text
+
+            CC.SF.DebugText Param & " " & Value
+            GetDynTeamData = Value
+        Next
+    End If
+    
+    Set oXML = Nothing
+    Set Nodelist = Nothing
+End Function
+
+Sub pgData_Button2Click (Sender)
+    a = GetDynTeamData("CORNERS", 1)
+    b = GetDynTeamData("CORNERS", 2)
+    
+    cc.SF.DebugText a & " " & b
+end sub
+
+Sub pgData_Button1Click (Sender)
+
+    On Error resume Next
+    
+    Set oXML = CreateObject("Microsoft.XMLDOM")
+
+    oXML.async = false
+    oXML.SetProperty "SelectionLanguage", "XPath"
+    oXML.SetProperty "ServerHTTPRequest", False
+    oXML.validateOnParse = False
+    oXML.resolveExternals = False
+
+    sUser = "SwissTiming:BejMoatKed8@"
+    filename = "http://" & sUser & "www.sportingstatz.com/football/spstatz/authfeeds/srml/results/srml-6-2010-results.xml"
+
+    bLoaded = oXML.load(fileName)
+
+    If not bLoaded Then
+       DbgErr "XML-File konnte nicht geladen werden!"
+       Exit Sub
+    End If
+    pgdata.ListBox1.Items.Clear
+
+    'Set NodeList = oXML.SelectNodes("//TeamData[@Side='" & sTeam & "']/Stat[@Type = '" & sParam & "']")
+    Set NodeList = oXML.SelectNodes("//MatchData")
+
+    If NodeList.Length = 0 Then
+       DbgErr "Parameter '" & sParam & "' nicht gefunden für Team: " & sTeam
+    Else
+        For i = 0 to NodeList.Length - 1
+            Set objNode = NodeList.Item(i)
+            GameId = objNode.GetAttribute("uID")
+
+            sDate = objNode.SelectSingleNode(".//MatchInfo/Date").Text
+            sVenue = objNode.SelectSingleNode(".//Stat[@Type='Venue']").Text
+            sCity  = objNode.SelectSingleNode(".//Stat[@Type='City']").Text
+            pgData.ListBox1.Items.Add GameId & " | " & sDate & " | " & sVenue & " | " & sCity
+
+            Set oList = Nothing
+        Next
+        Set objNode = Nothing
+    End If
+
+    Set oXML = Nothing
+    Set Nodelist = Nothing
+end sub
+
+Sub pgData_ListBox1DblClick (Sender)
+
+    sItem = pgData.ListBox1.Items.Strings(pgData.ListBox1.ItemIndex)
+
+    If InStr(sItem, "|") <> 0 Then
+       Tmp = Split(sItem, "|", -1, 1)
+       
+       sGameId = Tmp(0)
+       sGameID = Mid(sGameId, 2, Len(sGameID) - 1)
+       pgData.ed_CurrGameID.Text = sGameID
+    
+    End If
+end sub
+
+
+' lädt das XML nur einmal um mehrere werte auszulesen, die als Array übergeben werden
+
+Function GetDynTeamDataArray()
+    Dim oXML
+
+    sGameId = Trim(pgData.ed_CurrGameID.Text)
+    Set oXML = CreateObject("Microsoft.XMLDOM")
+
+    oXML.async = false
+    oXML.SetProperty "SelectionLanguage", "XPath"
+    oXML.SetProperty "ServerHTTPRequest", False
+    oXML.validateOnParse = False
+    oXML.resolveExternals = False
+
+    fileName = "http://SwissTiming:BejMoatKed8@www.sportingstatz.com/football/spstatz/authfeeds/srml/matchresults/srml-6-2010-f" & sGameID & "-matchresults.xml"
+    bLoaded = oXML.load(fileName)
+
+    If not bLoaded Then
+       DbgErr "XML-File konnte nicht geladen werden!"
+       Exit Function
+    End If
+
+    objTeamStat.RemoveAll
+    frmStats.lb_Valid.Items.Clear
+    objTeamStat.Item("VALUE_VALID") = 0
+    FOR j = 1 TO 2
+        If j = 1 Then
+           sTeam = "Home"
+        Else
+           sTeam = "Away"
+        End If
+        objTeamStat.Item("VALUE_COUNT_" & CStr(j)) = 0
+
+
+
+        Set NodeList = oXML.SelectNodes("//TeamData[@Side='" & sTeam & "']/Stat") 'oXML.SelectNodes("//TeamData[@Side='" & sTeam & "']/Stat[@Type = '" & sParam & "']")
+        If NodeList.Length = 0 Then
+           DbgErr "Statistikdaten für Team '" & sTeam & "' nicht gefunden!"
+        Else
+            For i = 0 to NodeList.Length - 1
+                 objTeamStat.Item("VALUE_" & NodeList.Item(i).GetAttribute("Type") & "_" & CStr(j)) = trim(NodeList.Item(i).Text)
+                 objTeamStat.Item("VALUE_COUNT_" & CStr(j)) = objTeamStat.Item("VALUE_COUNT_" & CStr(j)) + 1
+                 IF j = 2 THEN
+                    IF objTeamStat.Exists("VALUE_" & NodeList.Item(i).GetAttribute("Type") & "_1") THEN ' wert für beide teams gefunden
+                        objTeamStat.Item("VALUE_VALID") = objTeamStat.Item("VALUE_VALID") + 1
+                        frmStats.lb_Valid.Items.Add(NodeList.Item(i).GetAttribute("Type") & "  ("&objTeamStat.Item("VALUE_" & NodeList.Item(i).GetAttribute("Type") & "_1")&"/"&objTeamStat.Item("VALUE_" & NodeList.Item(i).GetAttribute("Type") & "_2")&")")
+                    END IF
+                 END IF
+            Next
+        End If
+        cc.SF.DebugText "VALUES FOUND FOR '"&sTeam&"': " & objTeamStat.Item("VALUE_COUNT_" & CStr(j))
+        cc.SF.DebugText "VALUES VALID FOR 'Home' and 'Away': " & objTeamStat.Item("VALUE_VALID")
+    NEXT
+
+    
+
+
+    Set oXML = Nothing
+    Set Nodelist = Nothing
+End Function
+
+sub pgData_ed_TSP_PathClick (Sender)
+dim dir : dir =  CC.Dialogs.DirDialog(Sender.Text)
+    if trim(dir) = "" then exit sub
+    System.BdeDataSource1.Active = False
+    System.BdeDataSource1.DatabasePath = dir
+    Sender.Text = dir
+end sub
+
+</script_body>
+</script>

@@ -1,0 +1,1252 @@
+object pgData: TccTabSheet
+  Caption = 'Data'
+  Visible = True
+  object Label1: TptLabel
+    Left = 439
+    Top = 67
+    Width = 63
+    Height = 16
+    Caption = 'Scouting File'
+    Enabled = False
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clMaroon
+    Font.Height = -11
+    Font.Name = 'Trebuchet MS'
+    Font.Style = []
+    ParentFont = False
+    Locked = False
+  end
+  object Btn_OpenResultFile: TptSpeedButton
+    Left = 770
+    Top = 120
+    Width = 23
+    Height = 22
+    Caption = '...'
+    Enabled = False
+    Locked = False
+    EventDataNames = 'OnClick=SetFilePath'
+  end
+  object Label2: TptLabel
+    Left = 439
+    Top = 108
+    Width = 63
+    Height = 16
+    Caption = 'All Result File'
+    Enabled = False
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clMaroon
+    Font.Height = -11
+    Font.Name = 'Trebuchet MS'
+    Font.Style = []
+    ParentFont = False
+    Locked = False
+  end
+  object Label4: TptLabel
+    Left = 440
+    Top = 270
+    Width = 32
+    Height = 13
+    Caption = 'Teams'
+    Enabled = False
+    Locked = False
+  end
+  object Label3: TptLabel
+    Left = 439
+    Top = 147
+    Width = 47
+    Height = 16
+    Caption = 'Game File'
+    Enabled = False
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clMaroon
+    Font.Height = -11
+    Font.Name = 'Trebuchet MS'
+    Font.Style = []
+    ParentFont = False
+    Locked = False
+  end
+  object Btn_OpenScoutingFile: TptSpeedButton
+    Left = 770
+    Top = 80
+    Width = 23
+    Height = 22
+    Caption = '...'
+    Enabled = False
+    Locked = False
+    EventDataNames = 'OnClick=SetFilePath'
+  end
+  object Btn_OpenGameFile: TptSpeedButton
+    Left = 770
+    Top = 160
+    Width = 23
+    Height = 22
+    Caption = '...'
+    Enabled = False
+    Locked = False
+    EventDataNames = 'OnClick=SetFilePath'
+  end
+  object Label5: TptLabel
+    Left = 10
+    Top = 10
+    Width = 79
+    Height = 13
+    Caption = 'Available Games'
+    Locked = False
+  end
+  object Label6: TptLabel
+    Left = 209
+    Top = 6
+    Width = 91
+    Height = 13
+    Caption = 'Current GameID'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clMaroon
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold, fsUnderline]
+    ParentFont = False
+    Locked = False
+  end
+  object Label7: TptLabel
+    Left = 10
+    Top = 785
+    Width = 196
+    Height = 18
+    Caption = '1. Select TSP Database direcory'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Trebuchet MS'
+    Font.Style = [fsBold]
+    ParentFont = False
+    Locked = False
+  end
+  object Btn_LoadData: TptButton
+    Left = 454
+    Top = 200
+    Width = 125
+    Height = 25
+    Caption = 'Load ScoutingData'
+    Enabled = False
+    ModalResult = mrNone
+    TabOrder = 0
+    ParentColor = False
+    Color = clBtnFace
+    ColorMouseOver = clBtnFace
+    ColorFocused = clBtnFace
+    DrawFocusRect = False
+    MultiLineCaption = False
+    Alignment = alMiddleCenter
+    FontFocused.Charset = DEFAULT_CHARSET
+    FontFocused.Color = clWindowText
+    FontFocused.Height = -11
+    FontFocused.Name = 'MS Sans Serif'
+    FontFocused.Style = []
+    FontMouseOver.Charset = DEFAULT_CHARSET
+    FontMouseOver.Color = clWindowText
+    FontMouseOver.Height = -11
+    FontMouseOver.Name = 'MS Sans Serif'
+    FontMouseOver.Style = []
+    PreferFocused = False
+    FrameSize = 1
+    BackgroundTransparent = False
+    BackgroundStretch = True
+    BackgroundTransparentColor = clBlack
+    Down = False
+    DrawFocusBorder = True
+    Checkable = False
+    RightPressDown = False
+    StoreBackground = True
+    Hotkey.Shift = []
+    Hotkey.IsLong = False
+    Hotkey.Enabled = True
+    Locked = False
+    EventDataNames = 'OnClick=LoadXMLDataFromFile'
+  end
+  object ed_ScoutingFile: TptEdit
+    Left = 439
+    Top = 83
+    Width = 320
+    Height = 19
+    Ctl3D = False
+    Enabled = False
+    MaxLength = 0
+    ParentCtl3D = False
+    TabOrder = 1
+    Text = 
+      'C:\Documents and Settings\DEFA\Desktop\OptaData\Swiss Timing Fee' +
+      'd Examples\F40\srml-6-2009-squads.xml'
+    Numeric = False
+    InputType = itAnything
+    Locked = False
+  end
+  object ed_ResultFile: TptEdit
+    Left = 439
+    Top = 123
+    Width = 320
+    Height = 19
+    Ctl3D = False
+    Enabled = False
+    MaxLength = 0
+    ParentCtl3D = False
+    TabOrder = 2
+    Text = 
+      'C:\Documents and Settings\DEFA\Desktop\OptaData\srml-6-2009-resu' +
+      'lts.xml'
+    Numeric = False
+    InputType = itAnything
+    Locked = False
+  end
+  object ed_GameFile: TptEdit
+    Left = 439
+    Top = 163
+    Width = 320
+    Height = 19
+    Ctl3D = False
+    Enabled = False
+    MaxLength = 0
+    ParentCtl3D = False
+    TabOrder = 3
+    Text = 
+      'C:\Documents and Settings\DEFA\Desktop\OptaData\srml-6-2009-squa' +
+      'ds.xml'
+    Numeric = False
+    InputType = itAnything
+    Locked = False
+  end
+  object Btn_LoadGameData: TptButton
+    Left = 589
+    Top = 200
+    Width = 125
+    Height = 25
+    Caption = 'Load GameData'
+    Enabled = False
+    ModalResult = mrNone
+    TabOrder = 4
+    ParentColor = False
+    Color = clBtnFace
+    ColorMouseOver = clBtnFace
+    ColorFocused = clBtnFace
+    DrawFocusRect = False
+    MultiLineCaption = False
+    Alignment = alMiddleCenter
+    FontFocused.Charset = DEFAULT_CHARSET
+    FontFocused.Color = clWindowText
+    FontFocused.Height = -11
+    FontFocused.Name = 'MS Sans Serif'
+    FontFocused.Style = []
+    FontMouseOver.Charset = DEFAULT_CHARSET
+    FontMouseOver.Color = clWindowText
+    FontMouseOver.Height = -11
+    FontMouseOver.Name = 'MS Sans Serif'
+    FontMouseOver.Style = []
+    PreferFocused = False
+    FrameSize = 1
+    BackgroundTransparent = False
+    BackgroundStretch = True
+    BackgroundTransparentColor = clBlack
+    Down = False
+    DrawFocusBorder = True
+    Checkable = False
+    RightPressDown = False
+    StoreBackground = True
+    Hotkey.Shift = []
+    Hotkey.IsLong = False
+    Hotkey.Enabled = True
+    Locked = False
+    EventDataNames = 'OnClick=LoadgameDataFromXML'
+  end
+  object Lst_Teams: TptListBox
+    Left = 440
+    Top = 285
+    Width = 211
+    Height = 251
+    Ctl3D = False
+    Enabled = False
+    ItemHeight = 13
+    Items.WideStrings = (
+      '401;Aalborg BK'
+      '60;Aberdeen'
+      '234;AEK Athens'
+      '215;Ajax'
+      '2570;Amkar Perm'
+      '1126;Anorthosis Famagusta'
+      '2292;APOP Kinyras Peyias'
+      '7;Aston Villa'
+      '174;Athletic de Bilbao'
+      '1332;Austria Vienna'
+      '2849;B36 Tórshavn'
+      '2859;Banants Yerevan'
+      '1541;Bangor City'
+      '481;Basel'
+      '2155;BATE Borisov'
+      '251;Benfica'
+      '2860;Birkirkara'
+      '2790;Bnei Yehuda'
+      '239;Brrndby'
+      '1963;BSC Young Boys'
+      '2046;Budapest Honvéd'
+      '2003;CD Nacional'
+      '61;Celtic'
+      '2628;CFR Cluj'
+      '2145;Cherno More'
+      '413;Club Brügge'
+      '2780;Crusaders FC'
+      '2861;CS Grevenmacher'
+      '250;CSKA Sofia'
+      '2147;Dacia Chisinau'
+      '1615;Derry City'
+      '1020;Dinaburg'
+      '252;Dinamo Bucharest'
+      '943;Dinamo Minsk'
+      '472;Dinamo Moscow'
+      '899;Dinamo Tbilisi'
+      '2383;Dinamo Tirana'
+      '394;Dinamo Zagreb'
+      '375;Elfsborg'
+      '11;Everton'
+      '330;Falkirk'
+      '1746;FBK Kaunas'
+      '2833;FC Aktobe'
+      '2422;FC Differdange 03'
+      '2708;FC Honka'
+      '569;FC Krbenhavn'
+      '2041;FC Lahti'
+      '2841;FC MTZ-RIPO'
+      '3753;FC Okzhetpes'
+      '2829;FC Santa Coloma'
+      '1414;FC Sion'
+      '2583;FC Timisoara'
+      '324;FC Twente'
+      '2819;FC Vaduz'
+      '2750;FC Vaslui'
+      '1460;FC Zimbru Chisinau'
+      '253;Fenerbahce'
+      '2465;FK Baku'
+      '2830;FK Buducnost Podgorica'
+      '214;FK Crvena Zvezda'
+      '3107;FK Karabakh'
+      '2843;FK Milano'
+      '216;FK Partizan Belgrade'
+      '985;FK Sarajevo'
+      '4146;FK Sevojno'
+      '3593;FK Sutjeska Niksic'
+      '226;FK Teplice'
+      '2456;FK Vojvodina'
+      '2120;Flamurtari Vlorë'
+      '793;Flora'
+      '2121;Fram Reykjavik'
+      '1312;Fredrikstad'
+      '54;Fulham'
+      '208;Galatasaray'
+      '2921;Gandzasar Kapan'
+      '990;Genoa'
+      '428;Guingamp'
+      '269;Hajduk Split'
+      '161;Hamburger SV'
+      '245;Hapoel Tel-Aviv'
+      '3032;HB Tórshavn'
+      '59;Hearts'
+      '318;Heerenveen'
+      '217;Helsingborgs'
+      '162;Hertha BSC'
+      '452;HJK Helsinki'
+      '244;IFK Göteborg'
+      '2828;Inter Baku'
+      '2249;Interblock Ljubljana'
+      '3755;Irtysh Pavlodar'
+      '3914;Iskra-Stal Ribnita'
+      '2840;Juvenes/Dogana'
+      '678;KAA Gent'
+      '3875;Kalju'
+      '1310;Keflavik'
+      '2280;KR Reykjavik'
+      '414;KRC Genk'
+      '2005;Krylia Sovetov Samara'
+      '2241;Larissa FC'
+      '129;Lazio'
+      '243;Lech Poznan'
+      '263;Legia Warsaw'
+      '2039;Levadia'
+      '270;Levski Sofia'
+      '1789;Liepajas Metalurgs'
+      '429;Lille'
+      '2044;Linfield'
+      '2384;Lisburn Distillery'
+      '887;Litex Lovech'
+      '2770;Llanelli'
+      '2787;Maccabi Netanya'
+      '1951;Metalist Kharkiv'
+      '1425;Metalurh Donetsk'
+      '461;MFK Kosice'
+      '2868;MIKA Ashtarak'
+      '65;Motherwell'
+      '1712;MSK Zilina'
+      '423;NAC Breda'
+      '3740;Naftan Novopolotsk'
+      '488;ND Gorica'
+      '3033;NK Maribor'
+      '463;NK Rijeka'
+      '2832;NSÍ Runavík'
+      '545;Odense Boldklub'
+      '3926;OFK Petrovac'
+      '2152;Olimpi Rustavi'
+      '213;Omonia Nicosia'
+      '1981;Pacos Ferreira'
+      '264;Panathinaikos'
+      '237;PAOK Salonika'
+      '473;Polonia Warsaw'
+      '204;PSV Eindhoven'
+      '2062;Rabotnicki'
+      '1943;Randers FC'
+      '212;Rapid Vienna'
+      '857;Red Bull Salzburg'
+      '2867;Renova'
+      '121;Roma'
+      '197;Rosenborg'
+      '241;RSC Anderlecht'
+      '3035;Rudar Velenje'
+      '455;Shakhtar Donetsk'
+      '936;Sheriff Tiraspol'
+      '247;Sigma Olomouc'
+      '3870;Simurq Zaqatala'
+      '2858;Siroki Brijeg'
+      '2137;Sivasspor'
+      '199;SK Sturm Graz'
+      '219;Skonto'
+      '2688;Slaven Belupo'
+      '273;Slavia Prague'
+      '3883;Slavija Sarajevo'
+      '2431;Sliema Wanderers'
+      '2432;Sligo Rovers'
+      '211;Slovan Bratislava'
+      '485;Slovan Liberec'
+      '206;Sparta Prague'
+      '260;Spartak Trnava'
+      '372;Sporting Braga'
+      '255;Sporting Lisbon'
+      '442;St Patrick'#39's Athletic'
+      '278;Stabaek'
+      '265;Steaua Bucharest'
+      '2851;Suduva'
+      '2722;Szombathelyi Haladás'
+      '916;The New Saints'
+      '2844;Tobol Kostanay'
+      '427;Toulouse'
+      '383;Trabzonspor'
+      '2876;Trans'
+      '310;Tromsr'
+      '1464;Újpest'
+      '3906;UN Käerjéng 97'
+      '191;Valencia'
+      '311;Valerenga'
+      '2391;Valletta FC'
+      '974;Ventspils'
+      '2148;Vetra'
+      '449;Villarreal'
+      '938;Vllaznia'
+      '2759;Vorskla Poltava'
+      '171;Werder Bremen'
+      '1341;Zenit St Petersburg'
+      '2848;Zestaponi')
+    Items.WideStrings_UTF7 = (
+      '401;Aalborg BK'
+      '60;Aberdeen'
+      '234;AEK Athens'
+      '215;Ajax'
+      '2570;Amkar Perm'
+      '1126;Anorthosis Famagusta'
+      '2292;APOP Kinyras Peyias'
+      '7;Aston Villa'
+      '174;Athletic de Bilbao'
+      '1332;Austria Vienna'
+      '2849;B36 T+APM-rshavn'
+      '2859;Banants Yerevan'
+      '1541;Bangor City'
+      '481;Basel'
+      '2155;BATE Borisov'
+      '251;Benfica'
+      '2860;Birkirkara'
+      '2790;Bnei Yehuda'
+      '239;Br+AVk-ndby'
+      '1963;BSC Young Boys'
+      '2046;Budapest Honv+AOk-d'
+      '2003;CD Nacional'
+      '61;Celtic'
+      '2628;CFR Cluj'
+      '2145;Cherno More'
+      '413;Club Br+APw-gge'
+      '2780;Crusaders FC'
+      '2861;CS Grevenmacher'
+      '250;CSKA Sofia'
+      '2147;Dacia Chisinau'
+      '1615;Derry City'
+      '1020;Dinaburg'
+      '252;Dinamo Bucharest'
+      '943;Dinamo Minsk'
+      '472;Dinamo Moscow'
+      '899;Dinamo Tbilisi'
+      '2383;Dinamo Tirana'
+      '394;Dinamo Zagreb'
+      '375;Elfsborg'
+      '11;Everton'
+      '330;Falkirk'
+      '1746;FBK Kaunas'
+      '2833;FC Aktobe'
+      '2422;FC Differdange 03'
+      '2708;FC Honka'
+      '569;FC K+AVk-benhavn'
+      '2041;FC Lahti'
+      '2841;FC MTZ-RIPO'
+      '3753;FC Okzhetpes'
+      '2829;FC Santa Coloma'
+      '1414;FC Sion'
+      '2583;FC Timisoara'
+      '324;FC Twente'
+      '2819;FC Vaduz'
+      '2750;FC Vaslui'
+      '1460;FC Zimbru Chisinau'
+      '253;Fenerbahce'
+      '2465;FK Baku'
+      '2830;FK Buducnost Podgorica'
+      '214;FK Crvena Zvezda'
+      '3107;FK Karabakh'
+      '2843;FK Milano'
+      '216;FK Partizan Belgrade'
+      '985;FK Sarajevo'
+      '4146;FK Sevojno'
+      '3593;FK Sutjeska Niksic'
+      '226;FK Teplice'
+      '2456;FK Vojvodina'
+      '2120;Flamurtari Vlor+AOs'
+      '793;Flora'
+      '2121;Fram Reykjavik'
+      '1312;Fredrikstad'
+      '54;Fulham'
+      '208;Galatasaray'
+      '2921;Gandzasar Kapan'
+      '990;Genoa'
+      '428;Guingamp'
+      '269;Hajduk Split'
+      '161;Hamburger SV'
+      '245;Hapoel Tel-Aviv'
+      '3032;HB T+APM-rshavn'
+      '59;Hearts'
+      '318;Heerenveen'
+      '217;Helsingborgs'
+      '162;Hertha BSC'
+      '452;HJK Helsinki'
+      '244;IFK G+APY-teborg'
+      '2828;Inter Baku'
+      '2249;Interblock Ljubljana'
+      '3755;Irtysh Pavlodar'
+      '3914;Iskra-Stal Ribnita'
+      '2840;Juvenes/Dogana'
+      '678;KAA Gent'
+      '3875;Kalju'
+      '1310;Keflavik'
+      '2280;KR Reykjavik'
+      '414;KRC Genk'
+      '2005;Krylia Sovetov Samara'
+      '2241;Larissa FC'
+      '129;Lazio'
+      '243;Lech Poznan'
+      '263;Legia Warsaw'
+      '2039;Levadia'
+      '270;Levski Sofia'
+      '1789;Liepajas Metalurgs'
+      '429;Lille'
+      '2044;Linfield'
+      '2384;Lisburn Distillery'
+      '887;Litex Lovech'
+      '2770;Llanelli'
+      '2787;Maccabi Netanya'
+      '1951;Metalist Kharkiv'
+      '1425;Metalurh Donetsk'
+      '461;MFK Kosice'
+      '2868;MIKA Ashtarak'
+      '65;Motherwell'
+      '1712;MSK Zilina'
+      '423;NAC Breda'
+      '3740;Naftan Novopolotsk'
+      '488;ND Gorica'
+      '3033;NK Maribor'
+      '463;NK Rijeka'
+      '2832;NS+AM0 Runav+AO0-k'
+      '545;Odense Boldklub'
+      '3926;OFK Petrovac'
+      '2152;Olimpi Rustavi'
+      '213;Omonia Nicosia'
+      '1981;Pacos Ferreira'
+      '264;Panathinaikos'
+      '237;PAOK Salonika'
+      '473;Polonia Warsaw'
+      '204;PSV Eindhoven'
+      '2062;Rabotnicki'
+      '1943;Randers FC'
+      '212;Rapid Vienna'
+      '857;Red Bull Salzburg'
+      '2867;Renova'
+      '121;Roma'
+      '197;Rosenborg'
+      '241;RSC Anderlecht'
+      '3035;Rudar Velenje'
+      '455;Shakhtar Donetsk'
+      '936;Sheriff Tiraspol'
+      '247;Sigma Olomouc'
+      '3870;Simurq Zaqatala'
+      '2858;Siroki Brijeg'
+      '2137;Sivasspor'
+      '199;SK Sturm Graz'
+      '219;Skonto'
+      '2688;Slaven Belupo'
+      '273;Slavia Prague'
+      '3883;Slavija Sarajevo'
+      '2431;Sliema Wanderers'
+      '2432;Sligo Rovers'
+      '211;Slovan Bratislava'
+      '485;Slovan Liberec'
+      '206;Sparta Prague'
+      '260;Spartak Trnava'
+      '372;Sporting Braga'
+      '255;Sporting Lisbon'
+      '442;St Patrick'#39's Athletic'
+      '278;Stabaek'
+      '265;Steaua Bucharest'
+      '2851;Suduva'
+      '2722;Szombathelyi Halad+AOE-s'
+      '916;The New Saints'
+      '2844;Tobol Kostanay'
+      '427;Toulouse'
+      '383;Trabzonspor'
+      '2876;Trans'
+      '310;Troms+AVk'
+      '1464;+ANo-jpest'
+      '3906;UN K+AOQ-erj+AOk-ng 97'
+      '191;Valencia'
+      '311;Valerenga'
+      '2391;Valletta FC'
+      '974;Ventspils'
+      '2148;Vetra'
+      '449;Villarreal'
+      '938;Vllaznia'
+      '2759;Vorskla Poltava'
+      '171;Werder Bremen'
+      '1341;Zenit St Petersburg'
+      '2848;Zestaponi')
+    ParentCtl3D = False
+    TabOrder = 5
+    SaveStyle = ssNone
+    Locked = False
+    EventDataNames = 'OnClick=pgData_Lst_TeamsClick'
+  end
+  object Btn_PlayerImport: TptButton
+    Left = 589
+    Top = 230
+    Width = 125
+    Height = 25
+    Caption = 'Player-Import 2 TSP'
+    Enabled = False
+    ModalResult = mrNone
+    TabOrder = 6
+    ParentColor = False
+    Color = clBtnFace
+    ColorMouseOver = clBtnFace
+    ColorFocused = clBtnFace
+    DrawFocusRect = False
+    MultiLineCaption = False
+    Alignment = alMiddleCenter
+    FontFocused.Charset = DEFAULT_CHARSET
+    FontFocused.Color = clWindowText
+    FontFocused.Height = -11
+    FontFocused.Name = 'MS Sans Serif'
+    FontFocused.Style = []
+    FontMouseOver.Charset = DEFAULT_CHARSET
+    FontMouseOver.Color = clWindowText
+    FontMouseOver.Height = -11
+    FontMouseOver.Name = 'MS Sans Serif'
+    FontMouseOver.Style = []
+    PreferFocused = False
+    FrameSize = 1
+    BackgroundTransparent = False
+    BackgroundStretch = True
+    BackgroundTransparentColor = clBlack
+    Down = False
+    DrawFocusBorder = True
+    Checkable = False
+    RightPressDown = False
+    StoreBackground = True
+    Hotkey.Shift = []
+    Hotkey.IsLong = False
+    Hotkey.Enabled = True
+    Locked = False
+    EventDataNames = 'OnClick=PlayerImport'
+  end
+  object Button1: TptButton
+    Left = 440
+    Top = 25
+    Width = 126
+    Height = 26
+    Caption = 'Load Matches from Opta.'
+    ModalResult = mrNone
+    TabOrder = 7
+    ParentColor = False
+    Color = clBtnFace
+    ColorMouseOver = clBtnFace
+    ColorFocused = clBtnFace
+    DrawFocusRect = False
+    MultiLineCaption = False
+    Alignment = alMiddleCenter
+    FontFocused.Charset = DEFAULT_CHARSET
+    FontFocused.Color = clWindowText
+    FontFocused.Height = -11
+    FontFocused.Name = 'MS Sans Serif'
+    FontFocused.Style = []
+    FontMouseOver.Charset = DEFAULT_CHARSET
+    FontMouseOver.Color = clWindowText
+    FontMouseOver.Height = -11
+    FontMouseOver.Name = 'MS Sans Serif'
+    FontMouseOver.Style = []
+    PreferFocused = False
+    FrameSize = 1
+    BackgroundTransparent = False
+    BackgroundStretch = True
+    BackgroundTransparentColor = clBlack
+    Down = False
+    DrawFocusBorder = True
+    Checkable = False
+    RightPressDown = False
+    StoreBackground = True
+    Hotkey.Shift = []
+    Hotkey.IsLong = False
+    Hotkey.Enabled = True
+    Locked = False
+    EventDataNames = 'OnClick=pgData_Button1Click'
+  end
+  object opt_ShowXMLResult: TptCheckBox
+    Left = 455
+    Top = 235
+    Width = 115
+    Height = 17
+    Caption = 'Zeige XML Result'
+    Color = clBtnFace
+    Enabled = False
+    ParentColor = False
+    TabOrder = 8
+    Locked = False
+    ColorFocused = clBtnFace
+    ColorMouseOver = clBtnFace
+  end
+  object ListBox1: TptListBox
+    Left = 10
+    Top = 25
+    Width = 416
+    Height = 741
+    Hint = 'Doppelklick >> Setzt aktuelle GameId'
+    Ctl3D = False
+    ItemHeight = 13
+    Items.WideStrings = (
+      'g306602 | 2009-12-03 18:00:00 | Weserstadion | Bremen'
+      'g306507 | 2009-12-17 18:00:00 | Stadium Lille Métropole | Lille'
+      'g313617 | 2010-02-25 18:00:00 | Constant Vanden Stock | Brussels'
+      'g306526 | 2009-12-03 20:05:00 | Ventspils Stadions | Ventspils'
+      
+        'g306499 | 2009-12-02 20:05:00 | Stadionul Dan Paltinisanu | Timi' +
+        'soara'
+      'g306496 | 2009-11-05 18:00:00 | Maksimir | Zagreb'
+      'g313613 | 2010-02-18 18:00:00 | Stadium Lille Métropole | Lille'
+      'g306519 | 2009-11-05 18:00:00 | Jose Alvalade | Lisbon'
+      'g306551 | 2009-10-01 18:00:00 | Horodskiy Stadium | Minsk'
+      'g306581 | 2009-10-22 18:00:00 | RSK Olimpiyskyi | Donetsk'
+      'g306512 | 2009-12-17 18:00:00 | Bloomfield Stadium | Tel-Aviv'
+      'g306541 | 2009-09-17 20:05:00 | Sukru Saracoglu | Istanbul'
+      
+        'g306608 | 2009-11-05 20:05:00 | Stadionul Dr. Constantin Radules' +
+        'cu | Cluj'
+      'g306609 | 2009-11-05 20:05:00 | Weserstadion | Bremen'
+      'g306544 | 2009-10-01 18:00:00 | Georgi Asparuhov Stadium | Sofia'
+      'g306531 | 2009-09-17 20:05:00 | Estadio El Madrigal | Villarreal'
+      'g306596 | 2009-12-16 20:05:00 | Estadio Eng. Rui Alves | Funchal'
+      'g306550 | 2009-10-01 18:00:00 | Athens Olympic Stadium | Athens'
+      'g306469 | 2009-09-17 18:00:00 | Maksimir | Zagreb'
+      'g306571 | 2009-10-01 18:00:00 | Parken | Zagreb'
+      'g313609 | 2010-02-18 20:05:00 | HSH Nordbank Arena | Hamburg'
+      
+        'g306553 | 2009-10-22 18:00:00 | Wals-Siezenheim Stadium | Salzbu' +
+        'rg'
+      
+        'g306481 | 2009-10-01 20:05:00 | Stadionul Dan Paltinisanu | Timi' +
+        'soara'
+      'g306573 | 2009-10-01 18:00:00 | Philips Stadion | Eindhoven'
+      'g306558 | 2009-10-22 18:00:00 | Estadio da Luz | Lisbon'
+      'g306577 | 2009-12-02 18:00:00 | Arke Stadion | Enschende'
+      'g313615 | 2010-02-18 20:05:00 | Olympiastadion | Berlin'
+      'g313605 | 2010-02-18 18:00:00 | Amsterdam ArenA | Amsterdam'
+      'g306535 | 2009-12-16 18:00:00 | Abe Lenstra Stadion | Heerenveen'
+      'g306546 | 2009-10-01 18:00:00 | Arke Stadion | Enschende'
+      'g306484 | 2009-10-01 20:05:00 | HSH Nordbank Arena | Hamburg'
+      
+        'g306524 | 2009-11-05 18:00:00 | Stadionul Dinamo, Bucharest | Bu' +
+        'charest'
+      'g313629 | 2010-02-25 20:05:00 | Sukru Saracoglu | Istanbul'
+      
+        'g306508 | 2009-10-01 20:05:00 | Stadionul Dinamo, Bucharest | Bu' +
+        'charest'
+      'g306475 | 2009-09-17 18:00:00 | Gerhard Hanappi | Vienna'
+      'g306610 | 2009-11-05 20:05:00 | Estadio Eng. Rui Alves | Funchal'
+      'g306486 | 2009-10-01 20:05:00 | Olimpico | Roma'
+      'g306590 | 2009-10-22 18:00:00 | AXA Arena | Prague'
+      'g306536 | 2009-12-16 18:00:00 | Balgarska Armiya Stadium | Sofia'
+      'g306586 | 2009-12-17 20:05:00 | Estadio da Luz | Lisbon'
+      'g306576 | 2009-10-01 18:00:00 | Franz Horr Stadion | Vienna'
+      
+        'g306605 | 2009-11-05 20:05:00 | Parc Municipal des Sports, Toulo' +
+        'use | Toulouse'
+      'g306511 | 2009-10-22 20:05:00 | Ventspils Stadions | Ventspils'
+      'g306488 | 2009-10-22 20:05:00 | Amsterdam ArenA | Amsterdam'
+      
+        'g306570 | 2009-12-02 18:00:00 | Wals-Siezenheim Stadium | Salzbu' +
+        'rg'
+      'g306501 | 2009-12-02 20:05:00 | Estadio Mestalla | Valencia'
+      'g306513 | 2009-10-22 20:05:00 | Olympiastadion | Berlin'
+      'g306491 | 2009-10-22 20:05:00 | Celtic Park | Glasgow'
+      'g306556 | 2009-10-22 18:00:00 | Stadionul Ghencea | Bucharest'
+      'g313624 | 2010-02-25 18:00:00 | Stadionul Tineretului | Brasov'
+      'g306493 | 2009-11-05 18:00:00 | HSH Nordbank Arena | Hamburg'
+      'g306523 | 2009-11-05 18:00:00 | St Jakob-Park | Basel'
+      'g313628 | 2010-02-25 20:05:00 | Weserstadion | Bremen'
+      'g313631 | 2010-02-23 17:00:00 | Estadio da Luz | Lisbon'
+      
+        'g306598 | 2009-12-03 18:00:00 | Parc Municipal des Sports, Toulo' +
+        'use | Toulouse'
+      
+        'g306545 | 2009-10-01 18:00:00 | Wals-Siezenheim Stadium | Salzbu' +
+        'rg'
+      'g306589 | 2009-10-22 18:00:00 | Philips Stadion | Eindhoven'
+      'g306497 | 2009-11-05 18:00:00 | Eden Stadion | Prague'
+      'g313604 | 2010-02-18 20:05:00 | Vicente Calderon | Madrid'
+      'g306568 | 2009-11-05 20:05:00 | Goodison Park | Liverpool'
+      'g306518 | 2009-10-22 20:05:00 | Athens Olympic Stadium | Athens'
+      'g306575 | 2009-10-01 18:00:00 | Weserstadion | Bremen'
+      'g306540 | 2009-09-17 20:05:00 | Stadionul Ghencea | Bucharest'
+      'g306471 | 2009-09-17 18:00:00 | Comunale Luigi Ferraris | Genova'
+      'g306477 | 2009-09-17 18:00:00 | UPC Arena | Graz'
+      'g306515 | 2009-10-22 20:05:00 | Craven Cottage | London'
+      'g306528 | 2009-12-03 20:05:00 | Craven Cottage | London'
+      'g306548 | 2009-09-17 20:05:00 | Jan Breydel | Brugge'
+      'g306584 | 2009-12-17 20:05:00 | Stadionul Ghencea | Bucharest'
+      'g306593 | 2009-12-16 20:05:00 | AXA Arena | Prague'
+      'g306542 | 2009-09-17 20:05:00 | Estadio da Luz | Lisbon'
+      'g306503 | 2009-12-02 20:05:00 | Celtic Park | Glasgow'
+      'g306595 | 2009-12-16 20:05:00 | Estadio San Mamés | Bilbao'
+      'g313602 | 2010-02-18 20:05:00 | Parken Stadion | Copenhagen'
+      'g313622 | 2010-02-25 20:05:00 | Estadio Mestalla | Valencia'
+      'g306603 | 2009-10-22 18:00:00 | Franz Horr Stadion | Vienna'
+      'g306563 | 2009-09-17 20:05:00 | Estadio San Mamés | Bilbao'
+      'g306495 | 2009-11-05 18:00:00 | Constant Vanden Stock | Brussels'
+      'g306565 | 2009-09-17 20:05:00 | Estadio Eng. Rui Alves | Funchal'
+      'g306521 | 2009-11-05 18:00:00 | Abe Lenstra Stadion | Heerenveen'
+      'g313619 | 2010-02-25 18:00:00 | Olimpico | Roma'
+      'g313616 | 2010-02-25 20:05:00 | Bloomfield Stadium | Tel-Aviv'
+      'g306538 | 2009-12-16 18:00:00 | Athens Olympic Stadium | Athens'
+      'g306505 | 2009-12-17 18:00:00 | Maksimir | Zagreb'
+      'g306580 | 2009-12-02 18:00:00 | Athens Olympic Stadium | Athens'
+      'g306466 | 2009-09-17 18:00:00 | Olympiastadion | Berlin'
+      'g306572 | 2009-12-02 18:00:00 | Georgi Asparuhov Stadium | Sofia'
+      'g306591 | 2009-12-16 20:05:00 | Jan Breydel | Brugge'
+      
+        'g306594 | 2009-12-16 20:05:00 | Stadionul Dr. Constantin Radules' +
+        'cu | Cluj'
+      'g306490 | 2009-10-22 20:05:00 | Stadium Lille Métropole | Lille'
+      'g313618 | 2010-02-25 18:00:00 | Stade Vélodrome | Marseille'
+      'g306607 | 2009-11-05 20:05:00 | Parken | Marseille'
+      'g306485 | 2009-10-01 20:05:00 | Celtic Park | Glasgow'
+      'g306547 | 2009-10-01 18:00:00 | Sheriff Stadium | Tiraspol'
+      'g306569 | 2009-10-01 18:00:00 | RSK Olimpiyskyi | Donetsk'
+      
+        'g306533 | 2009-12-03 20:05:00 | Stadionul Dinamo, Bucharest | Bu' +
+        'charest'
+      'g313610 | 2010-02-18 18:00:00 | Estadio El Madrigal | Villarreal'
+      'g306561 | 2009-11-05 20:05:00 | Arke Stadion | Enschende'
+      'g306579 | 2009-12-03 18:00:00 | RSK Olimpiyskyi | Donetsk'
+      'g313614 | 2010-02-16 17:45:00 | Goodison Park | Liverpool'
+      'g306554 | 2009-10-22 18:00:00 | Olimpico | Roma'
+      'g313608 | 2010-02-18 20:05:00 | Anfield | Liverpool'
+      'g306600 | 2009-12-03 18:00:00 | Parken | Liverpool'
+      'g306494 | 2009-11-05 18:00:00 | Gerhard Hanappi | Vienna'
+      'g306578 | 2009-12-02 18:00:00 | Horodskiy Stadium | Minsk'
+      'g306549 | 2009-09-17 20:05:00 | FK Partizan Stadium | Belgrade'
+      'g306585 | 2009-12-17 20:05:00 | Sukru Saracoglu | Istanbul'
+      'g313626 | 2010-02-25 20:05:00 | Volkswagen Arena | Wolfsburg'
+      'g306479 | 2009-10-01 20:05:00 | Constant Vanden Stock | Brussels'
+      'g306509 | 2009-12-17 18:00:00 | Comunale Luigi Ferraris | Genova'
+      'g306498 | 2009-11-05 18:00:00 | Comunale Luigi Ferraris | Genova'
+      'g306516 | 2009-10-22 20:05:00 | Balgarska Armiya Stadium | Sofia'
+      'g306522 | 2009-11-05 18:00:00 | Olimpico | Roma'
+      'g313612 | 2010-02-18 18:00:00 | Arke Stadion | Enschende'
+      'g306489 | 2009-10-22 20:05:00 | Estadio Mestalla | Valencia'
+      'g306470 | 2009-09-17 18:00:00 | Stadium Lille Métropole | Lille'
+      'g306468 | 2009-09-17 18:00:00 | Abe Lenstra Stadion | Heerenveen'
+      'g306525 | 2009-11-05 18:00:00 | UPC Arena | Graz'
+      'g306510 | 2009-10-01 20:05:00 | Ali Sami Yen Stadium | Istanbul'
+      'g306559 | 2009-11-05 20:05:00 | Georgi Asparuhov Stadium | Sofia'
+      'g306606 | 2009-11-05 20:05:00 | FK Partizan Stadium | Belgrade'
+      'g306557 | 2009-10-22 18:00:00 | Horodskiy Stadium | Minsk'
+      'g306483 | 2009-10-01 20:05:00 | Estadio Mestalla | Valencia'
+      'g306476 | 2009-09-17 18:00:00 | Athens Olympic Stadium | Athens'
+      'g306601 | 2009-12-03 18:00:00 | Franz Horr Stadion | Vienna'
+      'g306527 | 2009-12-03 20:05:00 | Jose Alvalade | Lisbon'
+      'g306582 | 2009-12-17 20:05:00 | Olimpico | Roma'
+      'g313606 | 2010-02-18 18:00:00 | Jan Breydel | Brugge'
+      'g306529 | 2009-09-17 20:05:00 | Olimpico | Roma'
+      'g313603 | 2010-02-18 20:05:00 | Athens Olympic Stadium | Athens'
+      'g306537 | 2009-12-16 18:00:00 | St Jakob-Park | Basel'
+      'g306583 | 2009-12-17 20:05:00 | Estadio El Madrigal | Villarreal'
+      
+        'g313627 | 2010-02-25 20:05:00 | Wals-Siezenheim Stadium | Salzbu' +
+        'rg'
+      'g313630 | 2010-02-25 20:05:00 | Jose Alvalade | Lisbon'
+      'g313600 | 2010-02-18 14:00:00 | Central Stadium Kazan | Kazan'
+      'g306560 | 2009-11-05 20:05:00 | Estadio El Madrigal | Villarreal'
+      'g306587 | 2009-10-22 18:00:00 | Jan Breydel | Brugge'
+      'g306588 | 2009-12-17 20:05:00 | Goodison Park | Liverpool'
+      'g313621 | 2010-02-25 20:05:00 | Olimpico Grande Torino | Torino'
+      'g306555 | 2009-10-22 18:00:00 | Sheriff Stadium | Tiraspol'
+      'g306564 | 2009-11-05 20:05:00 | Sukru Saracoglu | Istanbul'
+      'g306530 | 2009-12-03 20:05:00 | Olimpico | Roma'
+      'g313607 | 2010-02-18 20:05:00 | Craven Cottage | London'
+      'g306473 | 2009-09-17 18:00:00 | Balgarska Armiya Stadium | Sofia'
+      'g306474 | 2009-09-17 18:00:00 | St Jakob-Park | Basel'
+      'g313623 | 2010-02-25 18:00:00 | RSK Olimpiyskyi | Donetsk'
+      'g313620 | 2010-02-25 18:00:00 | Ali Sami Yen Stadium | Istanbul'
+      'g306500 | 2009-12-02 20:05:00 | Constant Vanden Stock | Brussels'
+      'g306482 | 2009-10-01 20:05:00 | Eden Stadion | Prague'
+      'g306517 | 2009-10-22 20:05:00 | Ali Sami Yen Stadium | Istanbul'
+      'g306492 | 2009-10-22 20:05:00 | Bloomfield Stadium | Tel-Aviv'
+      'g306478 | 2009-10-01 20:05:00 | Jose Alvalade | Lisbon'
+      'g306574 | 2009-12-02 18:00:00 | Sheriff Stadium | Tiraspol'
+      'g306467 | 2009-09-17 18:00:00 | Amsterdam ArenA | Amsterdam'
+      'g306566 | 2009-11-05 20:05:00 | Athens Olympic Stadium | Athens'
+      'g313625 | 2010-02-25 18:00:00 | Philips Stadion | Eindhoven'
+      'g306539 | 2009-12-16 18:00:00 | UPC Arena | Graz'
+      'g306502 | 2009-12-02 20:05:00 | Eden Stadion | Prague'
+      
+        'g306562 | 2009-09-17 20:05:00 | Stadionul Dr. Constantin Radules' +
+        'cu | Cluj'
+      'g313611 | 2010-02-18 18:00:00 | Stade de Sclessin | Liege'
+      'g306534 | 2009-12-16 18:00:00 | Olympiastadion | Berlin'
+      'g306472 | 2009-09-17 18:00:00 | Bloomfield Stadium | Tel-Aviv'
+      'g306552 | 2009-09-17 20:05:00 | AXA Arena | Prague'
+      'g306520 | 2009-12-02 20:05:00 | HSH Nordbank Arena | Hamburg'
+      'g306543 | 2009-09-17 20:05:00 | Goodison Park | Liverpool'
+      'g306592 | 2009-12-16 20:05:00 | FK Partizan Stadium | Belgrade'
+      'g306514 | 2009-12-17 18:00:00 | Gerhard Hanappi | Vienna'
+      
+        'g306487 | 2009-10-22 20:05:00 | Stadionul Dan Paltinisanu | Timi' +
+        'soara'
+      'g313601 | 2010-02-18 20:05:00 | Estadio San Mamés | Bilbao'
+      'g306480 | 2009-10-01 20:05:00 | Ventspils Stadions | Ventspils'
+      
+        'g306567 | 2009-10-01 18:00:00 | Parc Municipal des Sports, Toulo' +
+        'use | Toulouse'
+      'g306506 | 2009-10-01 20:05:00 | Craven Cottage | London'
+      'g306599 | 2009-12-03 18:00:00 | Philips Stadion | Eindhoven'
+      'g306504 | 2009-12-17 18:00:00 | Amsterdam ArenA | Amsterdam'
+      'g306532 | 2009-12-03 20:05:00 | Ali Sami Yen Stadium | Istanbul'
+      'g306604 | 2009-10-22 18:00:00 | Estadio San Mamés | Bilbao')
+    Items.WideStrings_UTF7 = (
+      'g306602 | 2009-12-03 18:00:00 | Weserstadion | Bremen'
+      
+        'g306507 | 2009-12-17 18:00:00 | Stadium Lille M+AOk-tropole | Li' +
+        'lle'
+      'g313617 | 2010-02-25 18:00:00 | Constant Vanden Stock | Brussels'
+      'g306526 | 2009-12-03 20:05:00 | Ventspils Stadions | Ventspils'
+      
+        'g306499 | 2009-12-02 20:05:00 | Stadionul Dan Paltinisanu | Timi' +
+        'soara'
+      'g306496 | 2009-11-05 18:00:00 | Maksimir | Zagreb'
+      
+        'g313613 | 2010-02-18 18:00:00 | Stadium Lille M+AOk-tropole | Li' +
+        'lle'
+      'g306519 | 2009-11-05 18:00:00 | Jose Alvalade | Lisbon'
+      'g306551 | 2009-10-01 18:00:00 | Horodskiy Stadium | Minsk'
+      'g306581 | 2009-10-22 18:00:00 | RSK Olimpiyskyi | Donetsk'
+      'g306512 | 2009-12-17 18:00:00 | Bloomfield Stadium | Tel-Aviv'
+      'g306541 | 2009-09-17 20:05:00 | Sukru Saracoglu | Istanbul'
+      
+        'g306608 | 2009-11-05 20:05:00 | Stadionul Dr. Constantin Radules' +
+        'cu | Cluj'
+      'g306609 | 2009-11-05 20:05:00 | Weserstadion | Bremen'
+      'g306544 | 2009-10-01 18:00:00 | Georgi Asparuhov Stadium | Sofia'
+      'g306531 | 2009-09-17 20:05:00 | Estadio El Madrigal | Villarreal'
+      'g306596 | 2009-12-16 20:05:00 | Estadio Eng. Rui Alves | Funchal'
+      'g306550 | 2009-10-01 18:00:00 | Athens Olympic Stadium | Athens'
+      'g306469 | 2009-09-17 18:00:00 | Maksimir | Zagreb'
+      'g306571 | 2009-10-01 18:00:00 | Parken | Zagreb'
+      'g313609 | 2010-02-18 20:05:00 | HSH Nordbank Arena | Hamburg'
+      
+        'g306553 | 2009-10-22 18:00:00 | Wals-Siezenheim Stadium | Salzbu' +
+        'rg'
+      
+        'g306481 | 2009-10-01 20:05:00 | Stadionul Dan Paltinisanu | Timi' +
+        'soara'
+      'g306573 | 2009-10-01 18:00:00 | Philips Stadion | Eindhoven'
+      'g306558 | 2009-10-22 18:00:00 | Estadio da Luz | Lisbon'
+      'g306577 | 2009-12-02 18:00:00 | Arke Stadion | Enschende'
+      'g313615 | 2010-02-18 20:05:00 | Olympiastadion | Berlin'
+      'g313605 | 2010-02-18 18:00:00 | Amsterdam ArenA | Amsterdam'
+      'g306535 | 2009-12-16 18:00:00 | Abe Lenstra Stadion | Heerenveen'
+      'g306546 | 2009-10-01 18:00:00 | Arke Stadion | Enschende'
+      'g306484 | 2009-10-01 20:05:00 | HSH Nordbank Arena | Hamburg'
+      
+        'g306524 | 2009-11-05 18:00:00 | Stadionul Dinamo, Bucharest | Bu' +
+        'charest'
+      'g313629 | 2010-02-25 20:05:00 | Sukru Saracoglu | Istanbul'
+      
+        'g306508 | 2009-10-01 20:05:00 | Stadionul Dinamo, Bucharest | Bu' +
+        'charest'
+      'g306475 | 2009-09-17 18:00:00 | Gerhard Hanappi | Vienna'
+      'g306610 | 2009-11-05 20:05:00 | Estadio Eng. Rui Alves | Funchal'
+      'g306486 | 2009-10-01 20:05:00 | Olimpico | Roma'
+      'g306590 | 2009-10-22 18:00:00 | AXA Arena | Prague'
+      'g306536 | 2009-12-16 18:00:00 | Balgarska Armiya Stadium | Sofia'
+      'g306586 | 2009-12-17 20:05:00 | Estadio da Luz | Lisbon'
+      'g306576 | 2009-10-01 18:00:00 | Franz Horr Stadion | Vienna'
+      
+        'g306605 | 2009-11-05 20:05:00 | Parc Municipal des Sports, Toulo' +
+        'use | Toulouse'
+      'g306511 | 2009-10-22 20:05:00 | Ventspils Stadions | Ventspils'
+      'g306488 | 2009-10-22 20:05:00 | Amsterdam ArenA | Amsterdam'
+      
+        'g306570 | 2009-12-02 18:00:00 | Wals-Siezenheim Stadium | Salzbu' +
+        'rg'
+      'g306501 | 2009-12-02 20:05:00 | Estadio Mestalla | Valencia'
+      'g306513 | 2009-10-22 20:05:00 | Olympiastadion | Berlin'
+      'g306491 | 2009-10-22 20:05:00 | Celtic Park | Glasgow'
+      'g306556 | 2009-10-22 18:00:00 | Stadionul Ghencea | Bucharest'
+      'g313624 | 2010-02-25 18:00:00 | Stadionul Tineretului | Brasov'
+      'g306493 | 2009-11-05 18:00:00 | HSH Nordbank Arena | Hamburg'
+      'g306523 | 2009-11-05 18:00:00 | St Jakob-Park | Basel'
+      'g313628 | 2010-02-25 20:05:00 | Weserstadion | Bremen'
+      'g313631 | 2010-02-23 17:00:00 | Estadio da Luz | Lisbon'
+      
+        'g306598 | 2009-12-03 18:00:00 | Parc Municipal des Sports, Toulo' +
+        'use | Toulouse'
+      
+        'g306545 | 2009-10-01 18:00:00 | Wals-Siezenheim Stadium | Salzbu' +
+        'rg'
+      'g306589 | 2009-10-22 18:00:00 | Philips Stadion | Eindhoven'
+      'g306497 | 2009-11-05 18:00:00 | Eden Stadion | Prague'
+      'g313604 | 2010-02-18 20:05:00 | Vicente Calderon | Madrid'
+      'g306568 | 2009-11-05 20:05:00 | Goodison Park | Liverpool'
+      'g306518 | 2009-10-22 20:05:00 | Athens Olympic Stadium | Athens'
+      'g306575 | 2009-10-01 18:00:00 | Weserstadion | Bremen'
+      'g306540 | 2009-09-17 20:05:00 | Stadionul Ghencea | Bucharest'
+      'g306471 | 2009-09-17 18:00:00 | Comunale Luigi Ferraris | Genova'
+      'g306477 | 2009-09-17 18:00:00 | UPC Arena | Graz'
+      'g306515 | 2009-10-22 20:05:00 | Craven Cottage | London'
+      'g306528 | 2009-12-03 20:05:00 | Craven Cottage | London'
+      'g306548 | 2009-09-17 20:05:00 | Jan Breydel | Brugge'
+      'g306584 | 2009-12-17 20:05:00 | Stadionul Ghencea | Bucharest'
+      'g306593 | 2009-12-16 20:05:00 | AXA Arena | Prague'
+      'g306542 | 2009-09-17 20:05:00 | Estadio da Luz | Lisbon'
+      'g306503 | 2009-12-02 20:05:00 | Celtic Park | Glasgow'
+      'g306595 | 2009-12-16 20:05:00 | Estadio San Mam+AOk-s | Bilbao'
+      'g313602 | 2010-02-18 20:05:00 | Parken Stadion | Copenhagen'
+      'g313622 | 2010-02-25 20:05:00 | Estadio Mestalla | Valencia'
+      'g306603 | 2009-10-22 18:00:00 | Franz Horr Stadion | Vienna'
+      'g306563 | 2009-09-17 20:05:00 | Estadio San Mam+AOk-s | Bilbao'
+      'g306495 | 2009-11-05 18:00:00 | Constant Vanden Stock | Brussels'
+      'g306565 | 2009-09-17 20:05:00 | Estadio Eng. Rui Alves | Funchal'
+      'g306521 | 2009-11-05 18:00:00 | Abe Lenstra Stadion | Heerenveen'
+      'g313619 | 2010-02-25 18:00:00 | Olimpico | Roma'
+      'g313616 | 2010-02-25 20:05:00 | Bloomfield Stadium | Tel-Aviv'
+      'g306538 | 2009-12-16 18:00:00 | Athens Olympic Stadium | Athens'
+      'g306505 | 2009-12-17 18:00:00 | Maksimir | Zagreb'
+      'g306580 | 2009-12-02 18:00:00 | Athens Olympic Stadium | Athens'
+      'g306466 | 2009-09-17 18:00:00 | Olympiastadion | Berlin'
+      'g306572 | 2009-12-02 18:00:00 | Georgi Asparuhov Stadium | Sofia'
+      'g306591 | 2009-12-16 20:05:00 | Jan Breydel | Brugge'
+      
+        'g306594 | 2009-12-16 20:05:00 | Stadionul Dr. Constantin Radules' +
+        'cu | Cluj'
+      
+        'g306490 | 2009-10-22 20:05:00 | Stadium Lille M+AOk-tropole | Li' +
+        'lle'
+      'g313618 | 2010-02-25 18:00:00 | Stade V+AOk-lodrome | Marseille'
+      'g306607 | 2009-11-05 20:05:00 | Parken | Marseille'
+      'g306485 | 2009-10-01 20:05:00 | Celtic Park | Glasgow'
+      'g306547 | 2009-10-01 18:00:00 | Sheriff Stadium | Tiraspol'
+      'g306569 | 2009-10-01 18:00:00 | RSK Olimpiyskyi | Donetsk'
+      
+        'g306533 | 2009-12-03 20:05:00 | Stadionul Dinamo, Bucharest | Bu' +
+        'charest'
+      'g313610 | 2010-02-18 18:00:00 | Estadio El Madrigal | Villarreal'
+      'g306561 | 2009-11-05 20:05:00 | Arke Stadion | Enschende'
+      'g306579 | 2009-12-03 18:00:00 | RSK Olimpiyskyi | Donetsk'
+      'g313614 | 2010-02-16 17:45:00 | Goodison Park | Liverpool'
+      'g306554 | 2009-10-22 18:00:00 | Olimpico | Roma'
+      'g313608 | 2010-02-18 20:05:00 | Anfield | Liverpool'
+      'g306600 | 2009-12-03 18:00:00 | Parken | Liverpool'
+      'g306494 | 2009-11-05 18:00:00 | Gerhard Hanappi | Vienna'
+      'g306578 | 2009-12-02 18:00:00 | Horodskiy Stadium | Minsk'
+      'g306549 | 2009-09-17 20:05:00 | FK Partizan Stadium | Belgrade'
+      'g306585 | 2009-12-17 20:05:00 | Sukru Saracoglu | Istanbul'
+      'g313626 | 2010-02-25 20:05:00 | Volkswagen Arena | Wolfsburg'
+      'g306479 | 2009-10-01 20:05:00 | Constant Vanden Stock | Brussels'
+      'g306509 | 2009-12-17 18:00:00 | Comunale Luigi Ferraris | Genova'
+      'g306498 | 2009-11-05 18:00:00 | Comunale Luigi Ferraris | Genova'
+      'g306516 | 2009-10-22 20:05:00 | Balgarska Armiya Stadium | Sofia'
+      'g306522 | 2009-11-05 18:00:00 | Olimpico | Roma'
+      'g313612 | 2010-02-18 18:00:00 | Arke Stadion | Enschende'
+      'g306489 | 2009-10-22 20:05:00 | Estadio Mestalla | Valencia'
+      
+        'g306470 | 2009-09-17 18:00:00 | Stadium Lille M+AOk-tropole | Li' +
+        'lle'
+      'g306468 | 2009-09-17 18:00:00 | Abe Lenstra Stadion | Heerenveen'
+      'g306525 | 2009-11-05 18:00:00 | UPC Arena | Graz'
+      'g306510 | 2009-10-01 20:05:00 | Ali Sami Yen Stadium | Istanbul'
+      'g306559 | 2009-11-05 20:05:00 | Georgi Asparuhov Stadium | Sofia'
+      'g306606 | 2009-11-05 20:05:00 | FK Partizan Stadium | Belgrade'
+      'g306557 | 2009-10-22 18:00:00 | Horodskiy Stadium | Minsk'
+      'g306483 | 2009-10-01 20:05:00 | Estadio Mestalla | Valencia'
+      'g306476 | 2009-09-17 18:00:00 | Athens Olympic Stadium | Athens'
+      'g306601 | 2009-12-03 18:00:00 | Franz Horr Stadion | Vienna'
+      'g306527 | 2009-12-03 20:05:00 | Jose Alvalade | Lisbon'
+      'g306582 | 2009-12-17 20:05:00 | Olimpico | Roma'
+      'g313606 | 2010-02-18 18:00:00 | Jan Breydel | Brugge'
+      'g306529 | 2009-09-17 20:05:00 | Olimpico | Roma'
+      'g313603 | 2010-02-18 20:05:00 | Athens Olympic Stadium | Athens'
+      'g306537 | 2009-12-16 18:00:00 | St Jakob-Park | Basel'
+      'g306583 | 2009-12-17 20:05:00 | Estadio El Madrigal | Villarreal'
+      
+        'g313627 | 2010-02-25 20:05:00 | Wals-Siezenheim Stadium | Salzbu' +
+        'rg'
+      'g313630 | 2010-02-25 20:05:00 | Jose Alvalade | Lisbon'
+      'g313600 | 2010-02-18 14:00:00 | Central Stadium Kazan | Kazan'
+      'g306560 | 2009-11-05 20:05:00 | Estadio El Madrigal | Villarreal'
+      'g306587 | 2009-10-22 18:00:00 | Jan Breydel | Brugge'
+      'g306588 | 2009-12-17 20:05:00 | Goodison Park | Liverpool'
+      'g313621 | 2010-02-25 20:05:00 | Olimpico Grande Torino | Torino'
+      'g306555 | 2009-10-22 18:00:00 | Sheriff Stadium | Tiraspol'
+      'g306564 | 2009-11-05 20:05:00 | Sukru Saracoglu | Istanbul'
+      'g306530 | 2009-12-03 20:05:00 | Olimpico | Roma'
+      'g313607 | 2010-02-18 20:05:00 | Craven Cottage | London'
+      'g306473 | 2009-09-17 18:00:00 | Balgarska Armiya Stadium | Sofia'
+      'g306474 | 2009-09-17 18:00:00 | St Jakob-Park | Basel'
+      'g313623 | 2010-02-25 18:00:00 | RSK Olimpiyskyi | Donetsk'
+      'g313620 | 2010-02-25 18:00:00 | Ali Sami Yen Stadium | Istanbul'
+      'g306500 | 2009-12-02 20:05:00 | Constant Vanden Stock | Brussels'
+      'g306482 | 2009-10-01 20:05:00 | Eden Stadion | Prague'
+      'g306517 | 2009-10-22 20:05:00 | Ali Sami Yen Stadium | Istanbul'
+      'g306492 | 2009-10-22 20:05:00 | Bloomfield Stadium | Tel-Aviv'
+      'g306478 | 2009-10-01 20:05:00 | Jose Alvalade | Lisbon'
+      'g306574 | 2009-12-02 18:00:00 | Sheriff Stadium | Tiraspol'
+      'g306467 | 2009-09-17 18:00:00 | Amsterdam ArenA | Amsterdam'
+      'g306566 | 2009-11-05 20:05:00 | Athens Olympic Stadium | Athens'
+      'g313625 | 2010-02-25 18:00:00 | Philips Stadion | Eindhoven'
+      'g306539 | 2009-12-16 18:00:00 | UPC Arena | Graz'
+      'g306502 | 2009-12-02 20:05:00 | Eden Stadion | Prague'
+      
+        'g306562 | 2009-09-17 20:05:00 | Stadionul Dr. Constantin Radules' +
+        'cu | Cluj'
+      'g313611 | 2010-02-18 18:00:00 | Stade de Sclessin | Liege'
+      'g306534 | 2009-12-16 18:00:00 | Olympiastadion | Berlin'
+      'g306472 | 2009-09-17 18:00:00 | Bloomfield Stadium | Tel-Aviv'
+      'g306552 | 2009-09-17 20:05:00 | AXA Arena | Prague'
+      'g306520 | 2009-12-02 20:05:00 | HSH Nordbank Arena | Hamburg'
+      'g306543 | 2009-09-17 20:05:00 | Goodison Park | Liverpool'
+      'g306592 | 2009-12-16 20:05:00 | FK Partizan Stadium | Belgrade'
+      'g306514 | 2009-12-17 18:00:00 | Gerhard Hanappi | Vienna'
+      
+        'g306487 | 2009-10-22 20:05:00 | Stadionul Dan Paltinisanu | Timi' +
+        'soara'
+      'g313601 | 2010-02-18 20:05:00 | Estadio San Mam+AOk-s | Bilbao'
+      'g306480 | 2009-10-01 20:05:00 | Ventspils Stadions | Ventspils'
+      
+        'g306567 | 2009-10-01 18:00:00 | Parc Municipal des Sports, Toulo' +
+        'use | Toulouse'
+      'g306506 | 2009-10-01 20:05:00 | Craven Cottage | London'
+      'g306599 | 2009-12-03 18:00:00 | Philips Stadion | Eindhoven'
+      'g306504 | 2009-12-17 18:00:00 | Amsterdam ArenA | Amsterdam'
+      'g306532 | 2009-12-03 20:05:00 | Ali Sami Yen Stadium | Istanbul'
+      'g306604 | 2009-10-22 18:00:00 | Estadio San Mam+AOk-s | Bilbao')
+    ParentCtl3D = False
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 9
+    SaveStyle = ssNone
+    Locked = False
+    EventDataNames = 'OnDblClick=pgData_ListBox1DblClick'
+  end
+  object Button2: TptButton
+    Left = 395
+    Top = 970
+    Width = 111
+    Height = 26
+    Caption = 'Button2'
+    ModalResult = mrNone
+    TabOrder = 10
+    ParentColor = False
+    Color = clBtnFace
+    ColorMouseOver = clBtnFace
+    ColorFocused = clBtnFace
+    DrawFocusRect = False
+    MultiLineCaption = False
+    Alignment = alMiddleCenter
+    FontFocused.Charset = DEFAULT_CHARSET
+    FontFocused.Color = clWindowText
+    FontFocused.Height = -11
+    FontFocused.Name = 'MS Sans Serif'
+    FontFocused.Style = []
+    FontMouseOver.Charset = DEFAULT_CHARSET
+    FontMouseOver.Color = clWindowText
+    FontMouseOver.Height = -11
+    FontMouseOver.Name = 'MS Sans Serif'
+    FontMouseOver.Style = []
+    PreferFocused = False
+    FrameSize = 2
+    BackgroundTransparent = False
+    BackgroundStretch = True
+    BackgroundTransparentColor = clBlack
+    Down = False
+    DrawFocusBorder = True
+    Checkable = False
+    RightPressDown = False
+    StoreBackground = True
+    Hotkey.Shift = []
+    Hotkey.IsLong = False
+    Hotkey.Enabled = True
+    Locked = False
+    EventDataNames = 'OnClick=pgData_Button2Click'
+  end
+  object ed_CurrGameID: TptEdit
+    Left = 305
+    Top = 5
+    Width = 81
+    Height = 19
+    Color = 8454143
+    Ctl3D = False
+    MaxLength = 0
+    ParentCtl3D = False
+    TabOrder = 11
+    Text = '2015789'
+    Numeric = False
+    InputType = itAnything
+    Locked = False
+  end
+  object ed_TSP_Path: TptEdit
+    Left = 10
+    Top = 805
+    Width = 451
+    Height = 21
+    Cursor = crHandPoint
+    MaxLength = 0
+    TabOrder = 12
+    Text = 'D:\TSP_UEFA_EL_20180129'
+    Numeric = False
+    InputType = itAnything
+    Locked = False
+    EventDataNames = 'OnClick=pgData_ed_TSP_PathClick'
+  end
+end

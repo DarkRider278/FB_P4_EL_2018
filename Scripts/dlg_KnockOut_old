@@ -1,0 +1,38 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+
+sub dlg_KnockOut_Show (Sender)
+    dlg_KnockOut.Width  = 738
+    dlg_KnockOut.Height = 344
+end sub
+
+sub dlg_KnockOut_Btn_Show1Click (Sender)
+    ' clear all
+    
+    oData.RemoveAll ' clear dict
+    'read teams from grid
+    FOR i = 1 To 8
+        strTeamID = dlg_KnockOut.grd_Teams.Cells(i,0) ' A, B, C, D, E, F, G, H
+        strTeamName         = trim(dlg_KnockOut.grd_Teams.Cells(i,1))
+        strTeamShortName    = trim(dlg_KnockOut.grd_Teams.Cells(i,2))
+        strTeamLogo         = trim(dlg_KnockOut.grd_Teams.Cells(i,3))
+        
+        oData.Item("ITEM_TEAMNAME_" & strTeamID)    =  strTeamName
+        oData.Item("ITEM_TEAMSHORT_" & strTeamID)   =  strTeamShortName
+        oData.Item("ITEM_TEAMLOGO_" & strTeamID)    =  strTeamLogo
+    NEXT
+    ' read matches
+    FOR i = 1 TO 7
+        FOR j = 1 TO 2
+            oData.Item("ITEM_MATCH_" & CStr(i) & "_" & CStr(j) ) = trim(dlg_KnockOut.ComponentByName("edt_MATCH_" & CStr(i) & "_" & CStr(j)).Text)
+        NEXT
+    NEXT
+
+    ALLTV.TV__VTKnockOutTree oData ' global call
+
+end sub
+
+</script_body>
+</script>

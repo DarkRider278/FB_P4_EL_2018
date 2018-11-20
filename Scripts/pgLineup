@@ -1,0 +1,331 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+sub PG3_Btn_ClearLineupClick (Sender)
+    Auswahl = UCASE(Inputbox("Zu löschendes Lineup angeben!", "Eingabeaufforderung", Right(Lineup.ActiveLineup, 1)))
+    If (Auswahl <> "A") and (Auswahl <> "B") then Exit Sub
+
+    Lineup.ActiveLineup = "Team " & Auswahl
+
+    Lineup.ClearPlayers(Auswahl)
+end sub
+
+sub PG3_Btn_AddPlayerClick (Sender)
+    Auswahl = UCASE(Inputbox("Zu setzendes Team angeben!","Eingabeaufforderung", Right(Lineup.ActiveLineup, 1)))
+    If (Auswahl <> "A") and (Auswahl <> "B") then Msgbox "Ungültige Eingabe!",1,"Fehler" : Exit Sub
+
+    TSP.SetTeamPos Auswahl
+    Lineup.ActiveLineup = "Team " & Auswahl
+    Lineup.ClearPlayers Lineup_ACT
+    NomPlayer = 0
+
+    Tsp.SetPlayerPos "First", "ALL", "Actual"
+
+    Do
+      If (TSP.GetTPlayer(TSP_status) = "G") or (TSP.GetTPlayer(TSP_status) = "I") then
+           NomPlayer = NomPlayer + 1
+           'Lineup.Addplayer UCase(TSP.GetHPlayer(TSP_second_name)), TSP.GetTPlayer(TSP_dress_nr), Auswahl
+           Lineup.Addplayer UCase(GetNameTranslation("P", TSP.GetTPlayer(TSP_player_id), TSP_second_name )), TSP.GetTPlayer(TSP_dress_nr), Auswahl
+             'Lineup.GetPlayer
+      end If
+    Loop Until TSP.SetPlayerPos("NEXT", "ALL", "Actual") = False
+
+    If NomPlayer < 11 Then Msgbox "Nur " & NomPlayer & " Spieler nominiert! Korrigieren"
+end sub
+
+sub PG3_Btn_UpdateClick (Sender)
+    Auswahl = UCASE(Inputbox("Welches Lineup soll geupdatet werden!","Eingabeaufforderung","A"))
+    If (Auswahl <> "A") and (Auswahl <> "B") then Msgbox "Ungültige Eingabe!", 1, "Fehler" : Exit Sub
+
+    TSP.SetTeamPos Auswahl
+    Tsp.SetPlayerPos "First", "ALL", "Actual"
+    Do
+      If (TSP.GetTPlayer(TSP_status) = "G") or (TSP.GetTPlayer(TSP_status) = "I") then
+          'Lineup.AddUpdatePlayer UCase(TSP.GetHPlayer(TSP_second_name)), TSP.GetTPlayer(TSP_dress_nr), Auswahl
+          Lineup.AddUpdatePlayer UCase(GetNameTranslation("P", TSP.GetTPlayer(TSP_player_id), TSP_second_name )), TSP.GetTPlayer(TSP_dress_nr), Auswahl
+
+      End If
+    Loop Until TSp.SetPlayerPos("Next", "ALL", "Actual") = False
+
+    Lineup.ProcessUpdate Auswahl
+end sub
+
+Sub PG3_Btn_ShowLineupClick (Sender, Button, Shift, X, Y)
+    'Team = Inputbox("Anzuzeigendes Team angeben!", "Eingabe", "A")
+    'if not (UCase(Team) = "A") and not (UCase(Team) = "B") then Msgbox("Ungültige Auswahl") : exit Sub
+    oData.RemoveAll()
+
+    TSP.SaveSelection
+
+    For i = 1 to 2
+        bReserveGoalie = False
+
+        iCount = 0
+        iResCount = 0
+        If i = 1 Then TC = "A" else TC = "B"
+        TSP.SetTeamPos TC
+
+        TSP.SetPlayerPos TSP_First, TSP_ALL, TC
+        Do
+           PState = TSP.GetTPlayer(TSP_status)
+           CARD     = NOT (trim(TSP.GetTPlayer(TSP_dummy_3)) = "")
+
+           If PState = "G" or PState = "I" Then
+              iCount = iCount + 1
+
+              DressNr   = TSP.GetTPlayer(TSP_dress_nr)
+              PName     = GetNameTranslation("P", TSP.GetTPlayer(TSP_player_id), TSP_player_name ) 'TSP.GetTPlayer(TSP_player_name)       TSP_db_id
+
+              'cc.SF.DebugText tsp.GetHPlayer(TSP_db_id)
+              'cc.SF.DebugText tsp.GetTPlayer(TSP_db_id)
+
+              P_LName   = GetNameTranslation("P", TSP.GetTPlayer(TSP_player_id), TSP_second_name )'TSP.GetHPlayer(TSP_second_name)
+              P_FName   = GetNameTranslation("P", TSP.GetTPlayer(TSP_player_id), TSP_first_name )'TSP.GetHPlayer(TSP_first_name)
+              CARD     = NOT (trim(TSP.GetTPlayer(TSP_dummy_3)) = "")
+
+
+
+              bIsCaptain = Trim(UCASE(tsp.GetTPlayer(TSP_pos_in_game))) = "C"
+
+              If PState = "G" Then
+                 IF bIsCaptain THEN
+                    Tmp = "(GK) (C)"
+                 ELSE
+                     Tmp = "(GK)"
+                 END IF
+              Else
+                 IF bIsCaptain THEN
+                    Tmp = "(C)"
+                 ELSE
+                     Tmp = ""
+                 END IF
+              End If
+
+              oData.Item("P_POS_"   & i & "_" & iCount) = Tmp
+              oData.Item("P_DRESS_" & i & "_" & iCount) = DressNr
+              oData.Item("PNAME_"   & i & "_" & iCount) = PName
+              oData.Item("P_LNAME_" & i & "_" & iCount) = P_LName
+              oData.Item("P_FNAME_" & i & "_" & iCount) = P_FName
+              oData.Item("CARD_"    & i & "_" & iCount) = CARD
+
+           Elseif PState = "R" or PState = "O" Then
+              DressNr   = TSP.GetTPlayer(TSP_dress_nr)
+              'P_LName   = GetNameTranslation("P", TSP.GetTPlayer(TSP_player_id), TSP_second_name ) ' TSP.GetHPlayer(TSP_second_name)
+              'P_FName   = GetNameTranslation("P", TSP.GetTPlayer(TSP_player_id), TSP_first_name ) ' TSP.GetHPlayer(TSP_first_name)
+              P_LName   = GetNameTranslation("P", TSP.GetTPlayer(TSP_player_id), TSP_second_name )'TSP.GetHPlayer(TSP_second_name)
+              P_FName   = GetNameTranslation("P", TSP.GetTPlayer(TSP_player_id), TSP_first_name )'TSP.GetHPlayer(TSP_first_name)
+              If PState = "R" Then
+                 IF GetIniOption("SUBSTITUTES_HIGHLIGHT_GK", false) THEN
+                     Tmp = "(GK)"
+                 ELSE
+                     Tmp = ""
+                 END IF
+                 oData.Item("P_POS_RES_"   & i & "_GK") = Tmp
+                 oData.Item("P_DRESS_RES_" & i & "_GK") = DressNr
+                 oData.Item("P_LNAME_RES_" & i & "_GK") = P_LName
+                 oData.Item("P_FNAME_RES_" & i & "_GK") = P_FName
+                 oData.Item("CARD_RES_"    & i & "_GK") = CARD
+                 bReserveGoalie = True
+
+              Else
+                 Tmp = ""
+                 iResCount = iResCount + 1
+                 oData.Item("P_POS_RES_"   & i & "_" & iResCount) = Tmp
+                 oData.Item("P_DRESS_RES_" & i & "_" & iResCount) = DressNr
+                 oData.Item("P_LNAME_RES_" & i & "_" & iResCount) = P_LName
+                 oData.Item("P_FNAME_RES_" & i & "_" & iResCount) = P_FName
+                 oData.Item("CARD_RES_"    & i & "_" & iResCount) = CARD
+              End If
+
+           End If
+           
+           strPlayerString = TC &":LASTNAME_COUNT:" & P_LName
+           SELECT CASE PState
+                CASE "R","O", "G", "I"
+                    IF oData.Exists(strPlayerString) THEN
+                        oData.Item(strPlayerString) = oData.Item(strPlayerString) + 1
+                    ELSE
+                       oData.Item(strPlayerString) = 1
+                    END IF
+            END SELECT
+
+        Loop Until TSP.SetPlayerPos(TSP_Next, TSP_ALL, TC) = False
+
+        oData.Item("RESERVE_GOALIE_EXIST_" & i) = bReserveGoalie
+
+
+        For k = iCount + 1 to 11
+            oData.Item("P_POS_"   & i & "_" & k) = ""
+            oData.Item("P_DRESS_" & i & "_" & k) = ""
+            oData.Item("P_LNAME_" & i & "_" & k) = ""
+            oData.Item("P_FNAME_" & i & "_" & k) = ""
+        Next
+
+        For k = iResCount + 1 to 7
+            oData.Item("P_POS_RES_"   & i & "_" & k) = ""
+            oData.Item("P_DRESS_RES_" & i & "_" & k) = ""
+            oData.Item("P_LNAME_RES_" & i & "_" & k) = ""
+            oData.Item("P_FNAME_RES_" & i & "_" & k) = ""
+        Next
+
+        ' die ersten 5 team officials durchlaufen
+        For j = 1 to 5
+            IF CNumType( TSP.GetSTeam("coach_" & j & "_id"),vbInteger, 0, null, 0)>0 THEN ' id größer 0 ... also einer da ...
+
+
+                IF Trim(UCase(TSP.GetOfficialById(TSP.GetSTeam("coach_" & j & "_id"), TSP_text_2))) = "X" THEN ' nominierter Trainer
+                    oData.Item("COACH" & i & "_FNAME") = GetNameTranslation("C", TSP.GetSTeam("coach_" & j & "_id"), TSP_first_name)
+                    oData.Item("COACH" & i & "_LNAME") = GetNameTranslation("C", TSP.GetSTeam("coach_" & j & "_id"), TSP_second_name)
+                    oData.Item("COACH_DB" & i & "_FUNCTION") = TSP.GetOfficialById(TSP.GetSTeam("coach_" & j & "_id"), TSP_text_1)
+                    exit for
+                END IF
+
+
+            END IF
+        next
+        'ShowDataObject oData
+    Next
+
+    TSP.RestoreSelection
+
+
+    if (Button = 0) Then Team = "A" Else Team = "B"
+
+    Lineup.ActiveLineup = "Team " & UCase(Team)
+
+    If Lineup.PlayerCount < 11 Then
+       Msgbox "Ungenügend Spieler in Taktischer Aufstellung"
+       Exit Sub
+    End If
+
+    TSP.SaveSelection
+    For i = 1 to 2
+       If i = 1 then TSP.SetTeamPos "A" else TSP.SetTeamPos "B"
+
+       FName = GetNameTranslation("C", TSP.GetSTeam("coach_1_id"), TSP_first_name) 'TSP.GetOfficialById(TSP.GetSTeam("coach_1_id"),"First_name")
+       LName = GetNameTranslation("C", TSP.GetSTeam("coach_1_id"), TSP_second_name) 'TSP.GetOfficialById(TSP.GetSTeam("coach_1_id"),"last_name")
+
+       oData.Item("COACH" & i & "_FNAME") = FName
+       oData.Item("COACH" & i & "_LNAME") = LName
+    Next
+    TSP.RestoreSelection
+
+    oData.Item("CURR_TEAM") = UCase(TEAM)
+    
+    AllTV.TV__FP_TactLineup
+end sub
+
+sub pgLineup_Button1Click (Sender)
+    X_Pos = Lineup.GetPlayer(Lineup_Name_X, 1, "A")
+    Y_Pos = Lineup.GetPlayer(Lineup_Name_Y, 1, "A")
+    cc.SF.DebugText X_POS & " " & Y_POS
+end sub
+
+
+
+
+sub pgLineup_ButtonLoadClick (Sender)
+    LoadLineUp2Grid "A"
+    LoadLineUp2Grid "B"
+end sub
+
+SUB LoadLineUp2Grid(ByVal strTeam)
+    'msgbox strTeam
+    Dim i, offset
+
+
+    i = 0
+    If strTeam = "B" THEN
+        offset = 3
+    else
+        offset = 0
+    end if
+    TSP.SetTeamPos strTeam
+    pgLineUp.ComponentByName("BoxTeam" & strTeam).UserData = TSP.GetSTeam(TSP_text_1)
+    Tsp.SetPlayerPos "First", "ALL", "Actual"
+    Do
+
+        If (TSP.GetTPlayer(TSP_status) = "G") or (TSP.GetTPlayer(TSP_status) = "I") then
+
+            pgLineUp.GridTeams.Cells(i+1, offset) = TSP.GetTPlayer(TSP_dress_nr)
+            IF TSP.GetTPlayer(TSP_status) = "G" THEN
+                pgLineUp.GridTeams.Cells(i+1, offset+1) = GetNameTranslation("P", TSP.GetTPlayer(TSP_player_id), TSP_second_name) & " (G)"
+            ELSE
+                pgLineUp.GridTeams.Cells(i+1, offset+1) = GetNameTranslation("P", TSP.GetTPlayer(TSP_player_id), TSP_second_name)
+            END IF
+            
+            i = i + 1
+            
+        End If
+    Loop Until TSP.SetPlayerPos("Next", "ALL", "Actual") = False
+    
+    myDir = cc.DEFS.ProjectDataPath & "\GFX\TEAM_KITS\" & pgLineUp.ComponentByName("BoxTeam" & strTeam).UserData
+    IF  pgLineUp.ComponentByName("BoxTeam" & strTeam).UserData = "" THEN
+        MsgBox "Kein Teamkürzel gefunden! Teamkürzel für den DSS werden in der Teamtabelle in der Spalte text_1 eingetragen.", vbOK, "Fehler"
+        exit sub
+    END IF
+
+    pgLineUp.ComponentByName("BoxTeam" & strTeam).ClearImages
+    pgLineUp.ComponentByName("BoxDSS" & strTeam).ClearImages
+    IF cc.Files.DirectoryExists(myDir) THEN
+        myFiles = cc.Files.GetFileList(myDir, "*.png")
+        If IsArray(myFiles) then
+            for i = 0 to UBound(myFiles)
+                'cc.sf.DebugText myDir & "\" & myFiles(i)
+                myPic = myDir & "\" & myFiles(i)
+                myPicName = Replace(myFiles(i), ".png", "")
+                If (UCase(Left(myPicName,2)) = "GK" OR UCase(Left(myPicName,2)) = "PL") AND NOT UCase(Right(myPicName,3)) = "NUM" THEN
+                    pgLineUp.ComponentByName("BoxTeam" & strTeam).AddImageFromFile myPic, myPicName
+                END IF
+
+                IF UCase(Left(myPicName,3)) = "DSS" THEN
+                    pgLineUp.ComponentByName("BoxDSS" & strTeam).AddImageFromFile myPic, myPicName
+                END IF
+
+            next
+        else
+            cc.sf.DebugText "No Images found for Team '" & strTeam & " ' (" & pgLineUp.ComponentByName("BoxTeam" & strTeam).UserData &" in Folder: '" & myDir & "')"
+        end if
+    ELSE
+        cc.sf.DebugText "No Images found for Team " & strTeam & "(" & pgLineUp.ComponentByName("BoxTeam" & strTeam).UserData &")"
+    END IF
+    
+END SUB
+
+sub pgLineup_BoxDSSBDblClick (Sender)
+    Select Case Sender.Name
+        Case "BoxDSSA"
+            pgLineUp.edtDSSA.Text =  pgLineup.BoxDSSA.ImageTitles(pgLineup.BoxDSSA.ItemIndex)
+        Case "BoxDSSB"
+            pgLineUp.edtDSSB.Text =  pgLineup.BoxDSSB.ImageTitles(pgLineup.BoxDSSB.ItemIndex)
+        
+        Case "BoxTeamA"
+            myText = Sender.ImageTitles(Sender.ItemIndex)
+            IF Left(myText, 2) = "GK" THEN
+                pgLineUp.edtGKA.Text =  myText
+            ELSE
+                pgLineUp.edtPLA.Text =  myText
+            END IF
+
+        Case "BoxTeamB"
+            myText = Sender.ImageTitles(Sender.ItemIndex)
+            IF Left(myText, 2) = "GK" THEN
+                pgLineUp.edtGKB.Text =  myText
+            ELSE
+                pgLineUp.edtPLB.Text =  myText
+            END IF
+
+        
+    end select
+
+end sub
+
+sub pgLineup_Btn_ClearLineup1Click (Sender)
+    if msgbox("Wirlich löschen?", vbYesNo, "Achtung") = vbYes THEN
+        Lineup.ClearPlayers()
+    end if
+end sub
+
+</script_body>
+</script>

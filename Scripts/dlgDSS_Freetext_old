@@ -1,0 +1,33 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+Dim player_current_goals
+Dim player_current_id
+
+Sub dlgDSS_Freetext_Btn_ShowClick (Sender)
+    'hide_ADD_AGG
+    AllTV.TV__Hide_DSS_Zusatz
+
+    P_Dress = TSP.GetTPlayer(TSP_dress_nr)
+    P_Name = GetNameTranslation("P", TSP.GetTPlayer(TSP_player_id), TSP_second_name ) 'TSP.GetHPlayer(TSP_second_name)
+    sTLogo    = TSP.GetSTeam(TSP_logo)
+    strTmName = GetNameTranslation("T", TSP.GetSTeam(TSP_db_id), TSP_short_name) 'TSP.GetSTeam(TSP_short_name)
+
+    oData.Item("NR")   = P_Dress
+    oData.Item("NAME") = P_Name
+    oData.Item("TEAM") = strTmName
+    oData.Item("INFO") = trim(dlgDSS_Freetext.edInfo1.Text)
+    oData.Item("TEAMLOGO")  = TSP.GetSTeam(TSP_logo)
+
+    if dlgDSS_Freetext.cb_torschutze.Checked then
+        oData.Item("DSS_ZUSATZ")   = "GOAL_FREETEXT"
+    else
+        oData.Item("DSS_ZUSATZ") = "PLAYER_STAT"
+    end if
+
+    ALLTV.TV__Show_DSS_ZUSATZ oData
+end sub
+
+</script_body>
+</script>

@@ -1,0 +1,14 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+sub twWeather_Bn_ShowClick (Sender)
+    AllTV.TV__Weather  false
+end sub
+
+sub twWeather_Bn_Show_pcClick (Sender)
+    AllTV.TV__Weather  true
+end sub
+
+</script_body>
+</script>

@@ -1,0 +1,39 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+
+Sub OnRunMode (Sender)
+    Set AllTV = New cls_Grafikaufrufe
+    OpenLanguageDatabase
+    tw_ScoreInfo.Visible = false
+    tw_Options.Visible= false
+    tw_NameTranslation.Visible = false
+    dlgTeamstats.visible = false
+    frmStats.visible = false
+    twFreeBB.Visible = false
+    twE2ETest.visible = false
+    dlgPlayerStats.visible = false
+    SET objTeamStat = CreateObject("Scripting.Dictionary")
+    LoadNameTranslations
+end sub
+
+sub System_ScriptHotkey1Execute (Sender)
+    TV__ClearAll (Sender)
+end sub
+
+sub System_ScriptHotkey2Execute (Sender)
+    pgMain_Btn_Hide_DSS_ZusatzClick (Sender)
+end sub
+
+sub System_AppEventsTVConnectionChange (Sender, ConnID)
+    cc.SF.DebugText "TV CONNECTIONS CHANGED!! ", clRed
+    ReadTVConnections
+end sub
+
+sub System_AppEventsOpenProject (Sender)
+    ReadTVConnections
+end sub
+
+</script_body>
+</script>

@@ -1,0 +1,10 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+sub dlgTeamstats_Btn_CloseClick (Sender)
+    dlgTeamstats.visible = false
+end sub
+
+</script_body>
+</script>

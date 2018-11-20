@@ -1,0 +1,594 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+FUNCTION DataFeedEnabled
+   IF NOT pgMain.chbDataFeedEnabled.Checked then
+    MsgBox "Datafeed not enabled!", vbOk
+   end if
+   DataFeedEnabled = pgMain.chbDataFeedEnabled.Checked
+END FUNCTION
+
+function getRemoteData(byval apiString, byval matchID)
+    dim bOk : bOk = false
+    ' Verbindung zum Server aufbauen und daten abfragen
+    set objSrvHTTP = CreateObject ("MSXML2.ServerXMLHTTP.6.0")
+    objSrvHTTP.open "GET","http://ngsapis.digitalmedia.ngs.deltatre.net/api/Match/Lineups?matchID=" & matchID & "&language=en-uk",false
+    objSrvHTTP.setRequestHeader "Content-Type", "application/xml; charset=utf-8"
+    objSrvHTTP.setRequestHeader "Accept", "application/xml"
+    objSrvHTTP.send
+
+    ' Status ok?
+    If objSrvHTTP.status = 200 then
+        bOk = true
+        set oXMLNew = CreateObject("Msxml2.DOMDocument")
+        oXMLNew.SetProperty "SelectionLanguage", "XPath"
+        oXMLNew.loadXML (objSrvHTTP.responseText)
+        Set objNodeList = oXMLNew.getElementsByTagName("AwayTeam//Player")
+        cc.sf.DebugText  objNodeList.Length
+    end if
+
+    set objSrvHTTP = nothing
+end function
+
+function GetCompetitions(byval season)
+    dim bOk : bOk = false
+    ' Verbindung zum Server aufbauen und daten abfragen
+    set objSrvHTTP = CreateObject ("MSXML2.ServerXMLHTTP.6.0")
+    objSrvHTTP.open "GET","http://ngsapis.digitalmedia.ngs.deltatre.net/api/Competition/CompetitionList",false
+    objSrvHTTP.setRequestHeader "Content-Type", "application/xml; charset=utf-8"
+    objSrvHTTP.setRequestHeader "Accept", "application/xml"
+    objSrvHTTP.send
+
+    ' Status ok?
+    If objSrvHTTP.status = 200 then
+        bOk = true
+        set oXMLNew = CreateObject("Msxml2.DOMDocument")
+        oXMLNew.SetProperty "SelectionLanguage", "XPath"
+        oXMLNew.loadXML (objSrvHTTP.responseText)
+        Set objNodeList = oXMLNew.getElementsByTagName("Competition[Season="&season&"]")
+        cc.sf.DebugText  "DATA ... Competitions loaded: " & objNodeList.Length
+        set GetCompetitions = objNodeList
+    end if
+
+    set objSrvHTTP = nothing
+end function
+
+
+function GetTeams(ByVal competitionTypeID, ByVal season )
+    dim bOk : bOk = false
+    ' Verbindung zum Server aufbauen und daten abfragen
+    set objSrvHTTP = CreateObject ("MSXML2.ServerXMLHTTP.6.0")
+    objSrvHTTP.open "GET","http://ngsapis.digitalmedia.ngs.deltatre.net/api/Competition/Participants?competitionTypeID=" & competitionTypeID & "&season=" & season & "&language=en-uk",false
+    objSrvHTTP.setRequestHeader "Content-Type", "application/xml; charset=utf-8"
+    objSrvHTTP.setRequestHeader "Accept", "application/xml"
+    objSrvHTTP.send
+    
+    ' Status ok?
+    If objSrvHTTP.status = 200 then
+        bOk = true
+        set oXMLNew = CreateObject("Msxml2.DOMDocument")
+        oXMLNew.SetProperty "SelectionLanguage", "XPath"
+        oXMLNew.loadXML (objSrvHTTP.responseText)
+        Set objNodeList = oXMLNew.getElementsByTagName("Team")
+        cc.sf.DebugText  "DATA ... Teams loaded: " & objNodeList.Length
+        set GetTeams = objNodeList
+    end if
+
+    set objSrvHTTP = nothing
+end function
+
+function GetSchedule(ByVal competitionTypeID, ByVal season )
+    dim bOk : bOk = false
+    ' Verbindung zum Server aufbauen und daten abfragen
+    set objSrvHTTP = CreateObject ("MSXML2.ServerXMLHTTP.6.0")
+    objSrvHTTP.open "GET","http://ngsapis.digitalmedia.ngs.deltatre.net/api/Competition/FormatAndScheduling?competitionTypeID=" & competitionTypeID & "&season=" & season & "&language=en-uk",false
+    objSrvHTTP.setRequestHeader "Content-Type", "application/xml; charset=utf-8"
+    objSrvHTTP.setRequestHeader "Accept", "application/xml"
+    objSrvHTTP.send
+
+    ' Status ok?
+    If objSrvHTTP.status = 200 then
+        bOk = true
+        set oXMLNew = CreateObject("Msxml2.DOMDocument")
+        oXMLNew.setProperty("SelectionNamespaces") = "xmlns:xsl='http://www.w3.org/1999/XSL/Transform'"
+        oXMLNew.SetProperty "SelectionLanguage", "XPath"
+        oXMLNew.loadXML (objSrvHTTP.responseText)
+
+        cc.sf.DebugText  "DATA ... Matches loaded:" & oXMLNew.getElementsByTagName("Match").Length
+        set myGrid = tsData2016.grdSchedule
+        myGrid.Clear false
+        myGrid.RowCount = 2
+        if oXMLNew.getElementsByTagName("Match").Length >= 2 then myGrid.RowCount = oXMLNew.getElementsByTagName("Match").Length
+        
+        dim i
+        i = 0
+        for each matchItem in oXMLNew.getElementsByTagName("Match") '[HomeTeam/@nil != 'true']
+            if matchItem.getElementsByTagName("HomeTeam")(0).Attributes.Length= 0 and matchItem.getElementsByTagName("AwayTeam")(0).Attributes.Length= 0 then
+                i = i + 1
+                myGrid.Cells(i, 0) = GetSingleNodeText(matchItem, "ID")
+                myGrid.Cells(i, 1) = matchItem.getElementsByTagName("DateLocal")(0).Text
+                myGrid.Cells(i, 2) = matchItem.getElementsByTagName("HomeTeam/OfficialName")(0).Text
+                myGrid.Cells(i, 3) = matchItem.getElementsByTagName("AwayTeam/OfficialName")(0).Text
+                myGrid.Cells(i, 4) = matchItem.getElementsByTagName("HomeTeam/ID")(0).Text
+                myGrid.Cells(i, 5) = matchItem.getElementsByTagName("AwayTeam/ID")(0).Text
+
+            end if
+
+        next
+        myGrid.RowCount = i
+    else
+        cc.sf.DebugText  "DATA ... Rounds loading error. (Error code: "& objSrvHTTP.status &")"
+    end if
+
+    set objSrvHTTP = nothing
+end function
+
+function GetSingleNodeText(byRef matchItem, ByVal strName)
+    set mynodes = matchItem.ChildNodes
+    for each nod in matchItem.ChildNodes
+        if nod.NodeName = strName THEN
+            GetSingleNodeText = nod.Text
+        end if
+    next
+end function
+
+
+function GetStatisticCatalog()
+    dim bOk : bOk = false
+    ' Verbindung zum Server aufbauen und daten abfragen
+    set objSrvHTTP = CreateObject ("MSXML2.ServerXMLHTTP.6.0")
+    objSrvHTTP.open "GET","http://ngsapis.digitalmedia.ngs.deltatre.net/api/Stats/Stats/GetCatalog",false
+    objSrvHTTP.setRequestHeader "Content-Type", "application/xml; charset=utf-8"
+    objSrvHTTP.setRequestHeader "Accept", "application/xml"
+    objSrvHTTP.send
+
+    ' Status ok?
+    If objSrvHTTP.status = 200 then
+        bOk = true
+        set oXMLNew = CreateObject("Msxml2.DOMDocument")
+        oXMLNew.SetProperty "SelectionLanguage", "XPath"
+        oXMLNew.loadXML (objSrvHTTP.responseText)
+        
+        Set objNodeList = oXMLNew.getElementsByTagName("StatsCatalogItem")
+        cc.sf.DebugText  "DATA ... Satistic Catalog loaded: " & objNodeList.Length
+
+        tsData2016.gridStatValues.Clear(false)
+
+        If  objNodeList.Length > 0 then
+            tsData2016.gridStatValues.RowCount = objNodeList.Length + 1
+        else
+            tsData2016.gridStatValues.RowCount = 2
+        end if
+        SET myGrid = tsData2016.gridStatValues
+
+        for i = 1 to objNodeList.Length
+          myGrid.Cells(i,0) = objNodeList(i-1).getElementsByTagName("ID")(0).Text
+          myGrid.Cells(i,1) = objNodeList(i-1).getElementsByTagName("Name")(0).Text
+          myGrid.Cells(i,2) = objNodeList(i-1).getElementsByTagName("Aggregation")(0).Text
+          myGrid.Cells(i,3) = objNodeList(i-1).getElementsByTagName("MatricsAttribute")(0).Text
+        next
+'        tsData2016.treeRounds
+        set GetStatisticCatalog = objNodeList
+    else
+        cc.sf.DebugText  "DATA ... Statistic Catalog loading error. (Error code: "& objSrvHTTP.status &")"
+    end if
+
+    set objSrvHTTP = nothing
+end function
+
+sub tsData2016_Button1Click (Sender)
+    If Not DataFeedEnabled then exit sub
+    tsData2016.cmbCompetitions.Items.Clear
+
+    set myCompetitions = GetCompetitions (tsData2016.edtSeason.Text)
+    If myCompetitions.Length > 0 then
+        for each item in myCompetitions
+          tsData2016.cmbCompetitions.Items.Add item.getElementsByTagName("Name")(0).Text  & " ## "  & item.getElementsByTagName("ID")(0).Text  & " ## "  & item.getElementsByTagName("CompetitionTypeID")(0).Text
+        next
+    end if
+    
+    Call GetStatisticCatalog
+end sub
+
+
+sub tsData2016_Button2Click (Sender)
+    If Not DataFeedEnabled then exit sub
+    strSelection = tsData2016.cmbCompetitions.Text
+    if Len(strSelection) >0 then
+        arrSelection = Split(strSelection, " ## ")
+        if UBound(arrSelection) >= 2 then
+            'set myTeams = GetTeams(arrSelection(2), tsData2016.edtSeason.Text)
+'
+'            tsData2016.grdTeams.Clear (false)
+'            If  myTeams.Length > 0 then
+'                tsData2016.grdTeams.RowCount = myTeams.Length + 1
+'            else
+'                tsData2016.grdTeams.RowCount = 2
+'            end if
+'            SET myGrid = tsData2016.grdTeams
+'            for i = 1 to myTeams.Length
+'              myGrid.Cells(i,0) = myTeams(i-1).getElementsByTagName("ID")(0).Text
+'              myGrid.Cells(i,1) = myTeams(i-1).getElementsByTagName("OfficialName")(0).Text
+'              myGrid.Cells(i,2) = myTeams(i-1).getElementsByTagName("Code")(0).Text
+'            next
+
+            Call GetSchedule(arrSelection(2), tsData2016.edtSeason.Text)
+        end if
+    end if
+end sub
+
+sub tsData2016_Button3Click (Sender)
+    strSelection = tsData2016.cmbCompetitions.Text
+    if Len(strSelection) >0 then
+        arrSelection = Split(strSelection, " ## ")
+        if UBound(arrSelection) >= 2 then
+            set myTeams = GetTeams(arrSelection(2), tsData2016.edtSeason.Text)
+            Call GetSchedule(arrSelection(2), tsData2016.edtSeason.Text)
+        end if
+    end if
+end sub
+
+sub tsData2016_Button4Click (Sender)
+    If Not DataFeedEnabled then exit sub
+    dim bOk : bOk = false
+    dim myString
+    ' Verbindung zum Server aufbauen und daten abfragen
+    set objSrvHTTP = CreateObject ("MSXML2.ServerXMLHTTP.6.0")
+    myString = "http://ngsapis.digitalmedia.ngs.deltatre.net/api/Match/Lineups?matchID="& tsData2016.edtMatchID.Text & "&language=en-uk"
+    cc.sf.DebugText myString
+    objSrvHTTP.open "GET",myString ,false
+    objSrvHTTP.setRequestHeader "Content-Type", "application/xml; charset=utf-8"
+    objSrvHTTP.setRequestHeader "Accept", "application/xml"
+    objSrvHTTP.send
+    
+    set objSrvHTTP2 = CreateObject ("MSXML2.ServerXMLHTTP.6.0")
+    myString = "http://ngsapis.digitalmedia.ngs.deltatre.net/api/Match/MatchInfo?matchID="& tsData2016.edtMatchID.Text&"&language=en-uk"
+    cc.sf.DebugText myString
+    objSrvHTTP2.open "GET", myString,false
+    objSrvHTTP2.setRequestHeader "Content-Type", "application/xml; charset=utf-8"
+    objSrvHTTP2.setRequestHeader "Accept", "application/xml"
+    objSrvHTTP2.send
+    ' Matchdata ok ?
+    
+    dim strHomeTeam, strAwayTeam
+    strHomeTeam = "A"
+    strAwayTeam = "B"
+    If objSrvHTTP2.status = 200 then
+        bOk = true
+        set oXMLNew2 = CreateObject("Msxml2.DOMDocument")
+        oXMLNew2.SetProperty "SelectionLanguage", "XPath"
+        oXMLNew2.loadXML (objSrvHTTP2.responseText)
+        
+        'strHomeTeam = oXMLNew2.getElementsByTagName("Match//HomeTeamCode")(0).Text
+        'strAwayTeam = oXMLNew2.getElementsByTagName("Match//AwayTeamCode")(0).Text
+    else
+        cc.sf.DebugText  "DATA ... Match data loading error. (Error code: "& objSrvHTTP2.status &")"
+    end if
+    
+
+    ' Lineupdata ok?
+    If objSrvHTTP.status = 200 then
+        bOk = true
+        set oXMLNew = CreateObject("Msxml2.DOMDocument")
+        oXMLNew.SetProperty "SelectionLanguage", "XPath"
+        oXMLNew.loadXML (objSrvHTTP.responseText)
+
+        numPlayers = oXMLNew.getElementsByTagName("Player").Length
+        
+        cc.sf.DebugText "Players loaded: " & oXMLNew.getElementsByTagName("Player").Length
+        
+        If numPlayers >= 1 then
+            tsData2016.grdLineups.RowCount = numPlayers
+        else
+            tsData2016.grdLineups.RowCount = 2
+        end if
+        tsData2016.grdLineups.Clear false
+
+        ' HomeTeam
+        SET myGrid = tsData2016.grdLineups
+
+        set nodes =  oXMLNew.getElementsByTagName("HomeTeam//Player")
+        Dim i
+        i = 0
+        for each node in nodes
+
+             myGrid.Cells(i+1,0) = node.getElementsByTagName("ID")(0).Text
+             myGrid.Cells(i+1,1) = node.getElementsByTagName("Country//d5p1:Code")(0).Text
+             SELECT CASE UCASE(node.getElementsByTagName("IsCaptain")(0).Text)
+                CASE "TRUE"
+                    myGrid.Cells(i+1,2) = "X"
+                CASE ELSE
+                    myGrid.Cells(i+1,2) = ""
+             END SELECT
+             
+              SELECT CASE UCASE(node.getElementsByTagName("IsGoalkeeper")(0).Text)
+                CASE "TRUE"
+                    myGrid.Cells(i+1,3) = "X"
+                CASE ELSE
+                    myGrid.Cells(i+1,3) = ""
+             END SELECT
+
+             myGrid.Cells(i+1,4) = node.getElementsByTagName("OfficialSurname")(0).Text
+             myGrid.Cells(i+1,5) = node.getElementsByTagName("OfficialName")(0).Text
+             myGrid.Cells(i+1,6) = node.getElementsByTagName("JerseyNumber")(0).Text
+             myGrid.Cells(i+1,7) = strHomeTeam
+            i = i + 1
+        next
+        set nodes =  oXMLNew.getElementsByTagName("AwayTeam//Player")
+        for each node in nodes
+
+             myGrid.Cells(i+1,0) = node.getElementsByTagName("ID")(0).Text
+             myGrid.Cells(i+1,1) = node.getElementsByTagName("Country//d5p1:Code")(0).Text
+
+             SELECT CASE UCASE(node.getElementsByTagName("IsCaptain")(0).Text)
+                CASE "TRUE"
+                    myGrid.Cells(i+1,2) = "X"
+                CASE ELSE
+                    myGrid.Cells(i+1,2) = ""
+             END SELECT
+
+             SELECT CASE UCASE(node.getElementsByTagName("IsGoalkeeper")(0).Text)
+                CASE "TRUE"
+                    myGrid.Cells(i+1,3) = "X"
+                CASE ELSE
+                    myGrid.Cells(i+1,3) = ""
+             END SELECT
+             myGrid.Cells(i+1,4) = node.getElementsByTagName("OfficialSurname")(0).Text
+             myGrid.Cells(i+1,5) = node.getElementsByTagName("OfficialName")(0).Text
+             myGrid.Cells(i+1,6) = node.getElementsByTagName("JerseyNumber")(0).Text
+             myGrid.Cells(i+1,7) = strAwayTeam
+            i = i + 1
+        next
+        ' set GetSchedule = objNodeList
+    else
+        cc.sf.DebugText  "DATA ... Lineups loading error. (Error code: "& objSrvHTTP.status &")"
+    end if
+
+    set objSrvHTTP = nothing
+end sub
+
+sub tsData2016_Button5Click (Sender)
+
+    for i = 1 to tsData2016.grdLineups.RowCount -1
+        sSQL = "INSERT INTO PLAYERS_1 (first_name, second_name, nationality, text1) " &_
+                              "VALUES ('" & tsData2016.grdLineups.cells(i,5) & "','" & tsData2016.grdLineups.cells(i,4) & "','" & tsData2016.grdLineups.cells(i,1) & "','" & tsData2016.grdLineups.cells(i,0) & "')"
+        cc.sf.DebugText TSP.ExecSQL(sSQL)
+    next
+end sub
+
+sub GetDeltaTrePlayerStats()
+    If Not DataFeedEnabled then exit sub
+    cc.SF.TimerSet
+    dim bOk : bOk = false
+    dim myString
+    ' Verbindung zum Server aufbauen und daten abfragen
+    set objSrvHTTP = CreateObject ("MSXML2.ServerXMLHTTP.6.0")
+    myString = "http://ngsapis.digitalmedia.ngs.deltatre.net/api/Stats/Stats/GetMatchPlayerSummary?matchID="& tsData2016.edtMatchID.Text & "&language=en-uk"
+    cc.sf.DebugText myString
+    objSrvHTTP.open "GET",myString ,false
+    objSrvHTTP.setRequestHeader "Content-Type", "application/xml; charset=utf-8"
+    objSrvHTTP.setRequestHeader "Accept", "application/xml"
+    objSrvHTTP.send
+
+     If objSrvHTTP.status = 200 then
+        bOk = true
+        set oXMLNew = CreateObject("Msxml2.DOMDocument")
+        oXMLNew.SetProperty "SelectionLanguage", "XPath"
+        oXMLNew.loadXML (objSrvHTTP.responseText)
+
+        set nodes =  oXMLNew.getElementsByTagName("PlayerStats")
+        cc.sf.DebugText "Player.Stats: " & nodes.Length
+        set myGrid = tsData2016.grdLineups
+        for each node in nodes
+            dim playerid : playerid =  node.getElementsByTagName("PlayerID")(0).Text
+            dim myRow: myRow = GetIdRow(myGrid, playerid)
+            If myRow > 0 then
+                myGrid.Cells(myRow,8) =  node.getElementsByTagName("MatchesPlayed")(0).Text
+                for each value in node.getElementsByTagName("StatsValues/StatsItem")
+
+                    SELECT CASE trim(value.getElementsByTagName("StatsID")(0).Text)
+                        CASE "1" ' Goals
+                            myGrid.Cells(myRow,9) = value.getElementsByTagName("ValueString")(0).Text
+                        CASE "3" ' Attempts
+                            myGrid.Cells(myRow,10) = value.getElementsByTagName("ValueString")(0).Text
+                        CASE "4" ' Attempts on Target
+                            myGrid.Cells(myRow,11) = value.getElementsByTagName("ValueString")(0).Text
+                        CASE "13" ' Offsides
+                            myGrid.Cells(myRow,12) = value.getElementsByTagName("ValueString")(0).Text
+                    END SELECT
+                next
+            end if
+        next
+        Call LoadPreMatchData
+     end if
+    cc.sf.DebugText "Player Stats loaded in :" & cc.sf.TimerGet/1000 & "s"
+     
+end sub
+
+sub LoadPreMatchData
+     If Not DataFeedEnabled then exit sub
+    dim bOk : bOk = false
+    dim myString
+    ' Verbindung zum Server aufbauen und daten abfragen
+    set objSrvHTTP = CreateObject ("MSXML2.ServerXMLHTTP.6.0")
+    myString = "http://ngsapis.digitalmedia.ngs.deltatre.net/api/Match/PreMatchData?matchID="& tsData2016.edtMatchID.Text & "&language=en-uk"
+    cc.sf.DebugText myString
+    objSrvHTTP.open "GET",myString ,false
+    objSrvHTTP.setRequestHeader "Content-Type", "application/xml; charset=utf-8"
+    objSrvHTTP.setRequestHeader "Accept", "application/xml"
+    objSrvHTTP.send
+
+     If objSrvHTTP.status = 200 then
+        bOk = true
+        set oXMLNew = CreateObject("Msxml2.DOMDocument")
+        oXMLNew.SetProperty "SelectionLanguage", "XPath"
+        oXMLNew.loadXML (objSrvHTTP.responseText)
+
+        set nodes =  oXMLNew.getElementsByTagName("PreMatchPlayer")
+        cc.sf.DebugText "Player.Stats: " & nodes.Length
+        set myGrid = tsData2016.grdLineups
+        for each node in nodes
+            dim playerid : playerid =  node.getElementsByTagName("ID")(0).Text
+            dim myRow: myRow = GetIdRow(myGrid, playerid)
+            If myRow > 0 then
+
+                If node.getElementsByTagName("GoalScored").length = 1 then
+                    myGrid.Cells(myRow,13) = node.getElementsByTagName("GoalScored")(0).Text
+                else
+                    myGrid.Cells(myRow,13) =  ""
+                end if
+            end if
+        next
+
+     end if
+end sub
+
+sub tsData2016_ButtonPlayerStatClick (Sender)
+    Call GetDeltaTrePlayerStats
+end sub
+
+'Function GetPlayerRow(myGrid, playerid)
+'    dim myRow : myRow = -1
+'    for i = 1 to myGrid.RowCount - 1
+'        if myGrid.Cells(i,0) = playerid then
+'            myRow = i
+'            exit for
+'        end if
+'    next
+'    GetPlayerRow = myRow
+'end function
+
+
+Sub GetDeltaTreTeamStats
+    If Not DataFeedEnabled then exit sub
+'Stats allowed on-screen:
+'• Possession (%)
+'• Corners
+'• Attempts
+'• Attempts on target
+'• Offsides
+'• Fouls committed
+'• Fouls suffered
+'• Passes completed
+' YELLOW/RED CARDS
+    dim bOk : bOk = false
+    dim myString, statsid, myRow
+    ' Verbindung zum Server aufbauen und daten abfragen
+    set objSrvHTTP = CreateObject ("MSXML2.ServerXMLHTTP.6.0")
+    myString = "http://ngsapis.digitalmedia.ngs.deltatre.net/api/Stats/Stats/GetMatchTeamSummary?matchID="& tsData2016.edtMatchID.Text & "&language=en-uk"
+    cc.sf.DebugText myString
+    objSrvHTTP.open "GET",myString ,false
+    objSrvHTTP.setRequestHeader "Content-Type", "application/xml; charset=utf-8"
+    objSrvHTTP.setRequestHeader "Accept", "application/xml"
+    objSrvHTTP.send
+
+     If objSrvHTTP.status = 200 then
+        bOk = true
+        set oXMLNew = CreateObject("Msxml2.DOMDocument")
+        oXMLNew.SetProperty "SelectionLanguage", "XPath"
+        oXMLNew.loadXML (objSrvHTTP.responseText)
+
+        ' HOMETEAM
+        set nodes =  oXMLNew.getElementsByTagName("HomeTeam/StatsValues/StatsItem")
+
+        cc.sf.DebugText "Home Team.Stats: " & nodes.Length
+        set myGrid = tsData2016.grdTeamStats
+        for each node in nodes
+
+            statsid =  node.getElementsByTagName("StatsID")(0).Text
+            myRow = GetIdRow(myGrid, statsid)
+            If myRow > 0 then
+                myGrid.Cells(myRow,2) = node.getElementsByTagName("ValueString")(0).Text
+            END IF
+        next
+        
+        ' AWAYTEAM
+        set nodes =  oXMLNew.getElementsByTagName("AwayTeam/StatsValues/StatsItem")
+
+        cc.sf.DebugText "Home Away.Stats: " & nodes.Length
+        set myGrid = tsData2016.grdTeamStats
+        for each node in nodes
+
+            statsid = node.getElementsByTagName("StatsID")(0).Text
+            myRow = GetIdRow(myGrid, statsid)
+            If myRow > 0 then
+                myGrid.Cells(myRow,3) = node.getElementsByTagName("ValueString")(0).Text
+            END IF
+        next
+        ReplaceAllData
+        frmStats.btn_LoadData.Color = clGreen
+        frmStats.btn_LoadData.ColorFocused = clGreen
+        frmStats.btn_LoadData.ColorMouseOver = clGreen
+     end if
+END Sub
+
+Function GetIdRow(myGrid, id)
+    dim myRow : myRow = -1
+    for i = 1 to myGrid.RowCount - 1
+        if CStr(myGrid.Cells(i,0)) = CStr(id) then
+            myRow = i
+            exit for
+        end if
+    next
+    GetIdRow = myRow
+end function
+
+sub tsData2016_ButtonPlayerStat1Click (Sender)
+
+    Call GetDeltaTreTeamStats
+end sub
+
+sub tsData2016_btnAddTeamStatsRowClick (Sender)
+    tsData2016.grdTeamStats.RowCount =  tsData2016.grdTeamStats.RowCount + 1
+end sub
+
+sub tsData2016_btnSubTeamStatsRowClick (Sender)
+    IF tsData2016.grdTeamStats.RowCount > 2 then
+        tsData2016.grdTeamStats.RowCount =  tsData2016.grdTeamStats.RowCount - 1
+    end if
+end sub
+
+
+Function ReplaceAllData
+    Dim reg : set reg = New RegExp
+    reg.Pattern = "\{(\d+)\}"
+    reg.IgnoreCase = True
+    reg.Global = True
+    'ReplaceData = regAusdr.Replace(value, replacement)
+    
+    ' Home
+    for i = 1 to frmStats.grdData.RowCount -1
+        val = frmStats.grdData.Cells(i,2)
+        for each match in reg.Execute(val)
+            row = GetIdRow( tsData2016.grdTeamStats, match.SubMatches(0))
+            if row > 0 then
+                val = Replace(val, match.Value , tsData2016.grdTeamStats.Cells(row,2))
+            end if
+        next
+        frmStats.grdData.Cells(i,3) = val
+    next
+    
+    ' Away
+    for i = 1 to frmStats.grdData.RowCount -1
+        val = frmStats.grdData.Cells(i,2)
+        for each match in reg.Execute(val)
+            row = GetIdRow( tsData2016.grdTeamStats, match.SubMatches(0))
+            if row > 0 then
+                val = Replace(val, match.Value , tsData2016.grdTeamStats.Cells(row,3))
+            end if
+        next
+        frmStats.grdData.Cells(i,4) = val
+    next
+End function
+
+Function ReplaceData(byval value, byval replacement)
+    Dim reg : set reg = New RegExp
+    reg.Pattern = "\{(\d+)\}"
+    reg.IgnoreCase = True
+    reg.Global = True
+    ReplaceData = reg.Replace(value, replacement)   ' Führt die Ersetzung durch.
+End Function
+
+</script_body>
+</script>

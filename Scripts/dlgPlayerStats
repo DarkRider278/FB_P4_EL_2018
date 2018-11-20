@@ -1,0 +1,32 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+sub dlgPlayerStats_opt_ParamClick (Sender)
+
+
+    dim statText : statText = GetString("DSS_PLAYER_STAT_TEXT_" & dlgPlayerStats.opt_Param.ItemIndex, 1)
+    dlgPlayerStats.edtInfo.Text = statText
+    DIM intValue : intValue = -1
+    IF  pgMain.chbDataFeedEnabled.Checked then
+         ' Statistiken aktualisieren
+        SELECT CASE dlgPlayerStats.opt_Param.ItemIndex
+            CASE 0 : intValue = CNumType(GetPlayerStatValue(TSP.GetTPlayer(TSP_dress_nr), TSP.GetActualTeam (0), 10), vbInteger, 0, null, 0)
+            CASE 1 : intValue = CNumType(GetPlayerStatValue(TSP.GetTPlayer(TSP_dress_nr), TSP.GetActualTeam (0), 11), vbInteger, 0, null, 0)
+            CASE 2 : intValue = CNumType(GetPlayerStatValue(TSP.GetTPlayer(TSP_dress_nr), TSP.GetActualTeam (0), 9), vbInteger, 0, null, 0)
+            CASE 3 : intValue = CNumType(GetPlayerStatValue(TSP.GetTPlayer(TSP_dress_nr), TSP.GetActualTeam (0), 12), vbInteger, 0, null, 0)
+        END SELECT
+        IF intValue >= 0  then
+            dlgPlayerStats.edtInfo.Text = Replace(statText, "{0}", intValue)
+        END IF
+    end if
+end sub
+
+sub dlgPlayerStats_Btn_PlayerTSStatsClick (Sender)
+    dlgDSS_FreeText.cb_torschutze.Checked = false
+    dlgDSS_FreeText.edInfo1.Text = dlgPlayerStats.edtInfo.Text
+    Call dlgDSS_Freetext_Btn_ShowClick (Sender)
+end sub
+
+</script_body>
+</script>

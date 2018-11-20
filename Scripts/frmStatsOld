@@ -1,0 +1,55 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+
+sub frmStats_Btn_ShowClick (Sender)
+    GetTeamData
+    oData.Item("ITEM_COUNT") = 0
+    FOR i = 1 To frmStats.grdData.RowCount - 1
+        IF NOT trim(frmStats.grdData.Cells(i,1)) = "" THEN
+            oData.Item("ITEM_COUNT") = oData.Item("ITEM_COUNT") + 1
+            oData.Item("ITEM_PARA_" & oData.Item("ITEM_COUNT"))   =  trim(frmStats.grdData.Cells(i,1))
+            oData.Item("ITEM_TYPE_" & oData.Item("ITEM_COUNT"))   =  trim(frmStats.grdData.Cells(i,2))
+            oData.Item("ITEM_VAL_A_" & oData.Item("ITEM_COUNT"))  =  trim(frmStats.grdData.Cells(i,3))
+            oData.Item("ITEM_VAL_B_" & oData.Item("ITEM_COUNT"))  =  trim(frmStats.grdData.Cells(i,4))
+            oData.Item("ITEM_FORMAT_" & oData.Item("ITEM_COUNT")) =  trim(frmStats.grdData.Cells(i,5))
+        END IF
+    NEXT
+    iPeriod = TSP.GetTime(TSP_HalfTime)
+    oData.Item("TXT_PERIOD") = iPeriod
+    oData.Item("FREETEXT_FOOTER") = frmStats.ed_freetext.Text
+    
+    oData.Item("FREETEXT_FOOTER") = AutoText(oData, oData.Item("FREETEXT_FOOTER"))
+
+    'ShowDataObject oData
+    
+    ALLTV.TV__VTStatistics oData
+end sub
+
+sub frmStats_btn_LoadDataClick (Sender)
+    'GetDynTeamDataArray
+    frmStats.btn_LoadData.Color = clRed
+    frmStats.btn_LoadData.ColorFocused = clRed
+    frmStats.btn_LoadData.ColorMouseOver = clRed
+    Call GetDeltaTreTeamStats
+    
+    'FOR i = 1 TO frmStats.grdData.RowCount - 1
+'        strParameter    = frmStats.grdData.Cells(i,2)
+'        strFormat       = Trim(frmStats.grdData.Cells(i,5))
+'        strValue1       = objTeamStat.Item("VALUE_" & strParameter & "_1") ' Wert für Team 1
+'        strValue2       = objTeamStat.Item("VALUE_" & strParameter & "_2") ' Wert für Team 2
+'        IF NOT strFormat = "" THEN
+'            strValue1       = Replace(strFormat, "#", strValue1)
+'            strValue2       = Replace(strFormat, "#", strValue2)
+'        END IF
+'        IF strValue1 = "" THEN strValue1 = frmStats.grdData.Cells(i,6)
+'        IF strValue2 = "" THEN strValue2 = frmStats.grdData.Cells(i,6)
+'
+'        frmStats.grdData.Cells(i,3) = strValue1
+'        frmStats.grdData.Cells(i,4) = strValue2
+'    NEXT
+end sub
+
+</script_body>
+</script>

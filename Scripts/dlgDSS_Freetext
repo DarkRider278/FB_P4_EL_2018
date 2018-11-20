@@ -1,0 +1,11 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+
+sub dlgDSS_Freetext_btn_update_dbClick (Sender)
+    TSP.ExecSQL "UPDATE players_2 SET goals = '"& player_current_goals &"' WHERE player_id = '"&player_current_id&"'"
+end sub
+
+</script_body>
+</script>

@@ -1,0 +1,52 @@
+object System: TccContainer
+  Caption = 'System'
+  TabVisible = False
+  object AppEvents: TptApplicationEvents
+    Left = 54
+    Top = 13
+    EventDataNames = 
+      'OnRunMode=OnRunMode,OnTVConnectionChange=System_AppEventsTVConne' +
+      'ctionChange,OnOpenProject=System_AppEventsOpenProject,OnTVDialog' +
+      'Close=System_AppEventsTVConnectionChange'
+  end
+  object BDE_DS_Language: TptBdeDataSource
+    Active = True
+    DatabasePath = 
+      'D:\Program Files\ST Software\Control Center GT 1174\Data\UEFA_EL' +
+      '_2017_2018\Data\Database\'
+    SQL = 'SELECT ITEM, ENG, GER FROM LANGUAGE.DBF'#13#10
+    Filtered = False
+    RequestLive = True
+    Left = 11
+    Top = 12
+  end
+  object ScriptHotkey1: TptScriptHotkey
+    Hotkey.LongKeyData = '99'
+    Hotkey.Shift = [ssCtrl]
+    Hotkey.IsLong = True
+    Hotkey.Enabled = True
+    Left = 55
+    Top = 55
+    EventDataNames = 'OnExecute=System_ScriptHotkey1Execute'
+  end
+  object ScriptHotkey2: TptScriptHotkey
+    Hotkey.LongKeyData = '88'
+    Hotkey.Shift = [ssCtrl]
+    Hotkey.IsLong = True
+    Hotkey.Enabled = True
+    Left = 55
+    Top = 95
+    EventDataNames = 'OnExecute=System_ScriptHotkey2Execute'
+  end
+  object BdeDataSource1: TptBdeDataSource
+    Active = False
+    DatabasePath = 'D:\TSP_UEFA_EL_20180129'
+    SQL = 
+      'SELECT PLAYED_GAMES FROM PLAYERS_2.DBF WHERE PLAYER_ID='#39'570'#39#13#10' A' +
+      'ND team_id<>'#39'0'#39#13#10
+    Filtered = False
+    RequestLive = False
+    Left = 235
+    Top = 35
+  end
+end

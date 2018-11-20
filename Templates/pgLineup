@@ -1,0 +1,1070 @@
+object pgLineup: TccTabSheet
+  Caption = 'Lineup'
+  Visible = True
+  object Label1: TptLabel
+    Left = 940
+    Top = 5
+    Width = 15
+    Height = 13
+    Caption = 'GK'
+    Locked = False
+  end
+  object Label2: TptLabel
+    Left = 940
+    Top = 30
+    Width = 29
+    Height = 13
+    Caption = 'Player'
+    Locked = False
+  end
+  object Label3: TptLabel
+    Left = 940
+    Top = 55
+    Width = 52
+    Height = 13
+    Caption = 'Team DSS'
+    Locked = False
+  end
+  object Btn_ClearLineup: TptButton
+    Left = 765
+    Top = 25
+    Width = 140
+    Height = 35
+    Caption = 'Lineup löschen'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clNavy
+    Font.Height = -13
+    Font.Name = 'Trebuchet MS'
+    Font.Style = []
+    ModalResult = mrNone
+    ParentFont = False
+    TabOrder = 0
+    ParentColor = False
+    Color = clBtnFace
+    ColorMouseOver = clBtnFace
+    ColorFocused = clBtnFace
+    DrawFocusRect = False
+    MultiLineCaption = False
+    Alignment = alMiddleCenter
+    FontFocused.Charset = DEFAULT_CHARSET
+    FontFocused.Color = clWindowText
+    FontFocused.Height = -11
+    FontFocused.Name = 'MS Sans Serif'
+    FontFocused.Style = []
+    FontMouseOver.Charset = DEFAULT_CHARSET
+    FontMouseOver.Color = clWindowText
+    FontMouseOver.Height = -11
+    FontMouseOver.Name = 'MS Sans Serif'
+    FontMouseOver.Style = []
+    PreferFocused = False
+    FrameSize = 1
+    BackgroundTransparent = False
+    BackgroundStretch = True
+    BackgroundTransparentColor = clBlack
+    Down = False
+    DrawFocusBorder = True
+    Checkable = False
+    RightPressDown = False
+    StoreBackground = True
+    Hotkey.Shift = []
+    Hotkey.IsLong = False
+    Hotkey.Enabled = True
+    Locked = False
+    Caption_UTF7 = 'Lineup l+APY-schen'
+    EventDataNames = 'OnClick=PG3_Btn_ClearLineupClick'
+  end
+  object Btn_AddPlayer: TptButton
+    Left = 765
+    Top = 105
+    Width = 140
+    Height = 35
+    Caption = 'Spieler hinzufügen'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clNavy
+    Font.Height = -13
+    Font.Name = 'Trebuchet MS'
+    Font.Style = []
+    ModalResult = mrNone
+    ParentFont = False
+    TabOrder = 1
+    ParentColor = False
+    Color = clBtnFace
+    ColorMouseOver = clBtnFace
+    ColorFocused = clBtnFace
+    DrawFocusRect = False
+    MultiLineCaption = False
+    Alignment = alMiddleCenter
+    FontFocused.Charset = DEFAULT_CHARSET
+    FontFocused.Color = clWindowText
+    FontFocused.Height = -11
+    FontFocused.Name = 'MS Sans Serif'
+    FontFocused.Style = []
+    FontMouseOver.Charset = DEFAULT_CHARSET
+    FontMouseOver.Color = clWindowText
+    FontMouseOver.Height = -11
+    FontMouseOver.Name = 'MS Sans Serif'
+    FontMouseOver.Style = []
+    PreferFocused = False
+    FrameSize = 1
+    BackgroundTransparent = False
+    BackgroundStretch = True
+    BackgroundTransparentColor = clBlack
+    Down = False
+    DrawFocusBorder = True
+    Checkable = False
+    RightPressDown = False
+    StoreBackground = True
+    Hotkey.Shift = []
+    Hotkey.IsLong = False
+    Hotkey.Enabled = True
+    Locked = False
+    Caption_UTF7 = 'Spieler hinzuf+APw-gen'
+    EventDataNames = 'OnClick=PG3_Btn_AddPlayerClick'
+  end
+  object Btn_Update: TptButton
+    Left = 765
+    Top = 145
+    Width = 140
+    Height = 35
+    Caption = 'Lineup aktualisieren'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clNavy
+    Font.Height = -13
+    Font.Name = 'Trebuchet MS'
+    Font.Style = []
+    ModalResult = mrNone
+    ParentFont = False
+    TabOrder = 2
+    ParentColor = False
+    Color = clBtnFace
+    ColorMouseOver = clBtnFace
+    ColorFocused = clBtnFace
+    DrawFocusRect = False
+    MultiLineCaption = False
+    Alignment = alMiddleCenter
+    FontFocused.Charset = DEFAULT_CHARSET
+    FontFocused.Color = clWindowText
+    FontFocused.Height = -11
+    FontFocused.Name = 'MS Sans Serif'
+    FontFocused.Style = []
+    FontMouseOver.Charset = DEFAULT_CHARSET
+    FontMouseOver.Color = clWindowText
+    FontMouseOver.Height = -11
+    FontMouseOver.Name = 'MS Sans Serif'
+    FontMouseOver.Style = []
+    PreferFocused = False
+    FrameSize = 1
+    BackgroundTransparent = False
+    BackgroundStretch = True
+    BackgroundTransparentColor = clBlack
+    Down = False
+    DrawFocusBorder = True
+    Checkable = False
+    RightPressDown = False
+    StoreBackground = True
+    Hotkey.Shift = []
+    Hotkey.IsLong = False
+    Hotkey.Enabled = True
+    Locked = False
+    EventDataNames = 'OnClick=PG3_Btn_UpdateClick'
+  end
+  object Btn_ShowLineup: TptButton
+    Left = 765
+    Top = 185
+    Width = 140
+    Height = 35
+    Caption = 'Lineup anzeigen'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clNavy
+    Font.Height = -13
+    Font.Name = 'Trebuchet MS'
+    Font.Style = []
+    ModalResult = mrNone
+    ParentFont = False
+    TabOrder = 3
+    ParentColor = False
+    Color = clBtnFace
+    ColorMouseOver = clBtnFace
+    ColorFocused = clBtnFace
+    DrawFocusRect = False
+    MultiLineCaption = False
+    Alignment = alMiddleCenter
+    FontFocused.Charset = DEFAULT_CHARSET
+    FontFocused.Color = clWindowText
+    FontFocused.Height = -11
+    FontFocused.Name = 'MS Sans Serif'
+    FontFocused.Style = []
+    FontMouseOver.Charset = DEFAULT_CHARSET
+    FontMouseOver.Color = clWindowText
+    FontMouseOver.Height = -11
+    FontMouseOver.Name = 'MS Sans Serif'
+    FontMouseOver.Style = []
+    PreferFocused = False
+    FrameSize = 1
+    Background.Data = {
+      9E140000424D9E14000000000000360400002800000078000000230000000100
+      0800000000006810000000000000000000000001000000000000B3B3B300B4B4
+      B400D2D2D200CFCFCF00CECECE00D1D1D100C3C3C300B5B5B500C2C2C200B6B6
+      B600B9B9B900BABABA00B8B8B800BBBBBB00B7B7B700C6C6C600BDBDBD00BCBC
+      BC00BFBFBF00BEBEBE00C5C5C500C4C4C400C7C7C700CACACA00C9C9C900D0D0
+      D000CCCCCC00CBCBCB00CDCDCD00D3D3D30000000000C1C1C100C0C0C000C8C8
+      C8000202020021212100B2B2B2008A8A8A002D2D2D0005050500929292007F7F
+      7F001D1D1D0007070700181818000D0D0D002A2A2A003B3B3B00717171002F2F
+      2F0003030300939393006D6D6D0028282800242424007A7A7A003A3A3A003535
+      350078787800A8A8A80041414100969696008C8C8C0080808000858585002849
+      44000D0A20002020200020202000205669005F5F560072626500656974006E20
+      540075650D0020202000202020002020200072735400742043006E7420002022
+      240078745F0069746500222C2000697465000D0A200020202000202020002041
+      6E005A656900656E2000204B6500466163005F64610061283600203129000A20
+      20002020200020202000466F720069203D003120740020350D00202020002020
+      2000202020002020200074724900666F2000204B6500466163005F4461006128
+      6900203129000A20200020202000202020002020200049662000203E20006E7A
+      5A00696C6500207468006E0D0A00202020002020200020202000202020002055
+      730054562E0069646500626A6500742043006E7420002022240045494C005F22
+      200020690D00202020002020200020202000202020006C7365000A2020002020
+      2000202020002020200020202000736554002E536800774F620065637400436F
+      6E0020262000245A45004C455F00202620000D0A200020202000202020002020
+      20002020200069662000726D5F0065796600637473006F707400546F70006973
+      7400436865006B656400746865000D0A20002020200020202000202020002020
+      20002020200072735400742043006E7420002022240045494C005F2220002069
+      20002022240078745F00616374002C2022000D0A200020202000202020002020
+      2000202020002020200072735400742043006E7420002022240045494C005F22
+      2000206920002022240078745F00616D65002C204B0079466100745F44007461
+      28002C2031000D0A200020202000202020002020200020202000202020007273
+      5400742043006E7420002022240045494C005F22200020692000202224007874
+      5F00657274002C204B0079466100745F4400746128002C2032000D0A20002020
+      2000202020002020200020202000656C73000D0A200020202000202020002020
+      2000202020002020200072735400742043006E7420002022240045494C005F22
+      2000206920002022240078745F00616374002C20730072496E00000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000242400000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000001010101010101010101010101010101010101010101
+      0101010101010101010101010101010101010101010101010101010101010101
+      0101010101010101010101010101010101010101010101010101010101010101
+      0101010101010101010101010101010101010101010101010101010101010101
+      0101010101010101010101010101010101010101010101010101010101010101
+      0101010101010101010101010101010101010101010101010101010101010101
+      0101010101010101010101010101010101010101010101010101010101010101
+      0101010101010101010101010101010101010101010101010707070707070707
+      0707070707070707070707070707070707070707070707070707070707070707
+      0707070707070707070707070707070707070707070707070707070707070707
+      0707070707070707070707070707070707070707070707070707070707070707
+      0707070707070707070707070707070707070909090909090909090909090909
+      0909090909090909090909090909090909090909090909090909090909090909
+      0909090909090909090909090909090909090909090909090909090909090909
+      0909090909090909090909090909090909090909090909090909090909090909
+      090909090909090909090E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E
+      0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E
+      0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E
+      0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E
+      0E0E0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C
+      0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C
+      0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C
+      0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0A0A0A0A0A0A
+      0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A
+      0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A
+      0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A
+      0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0B0B0B0B0B0B0B0B0B0B0B0B0B0B
+      0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B
+      0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B
+      0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B
+      0B0B0B0B0B0B0B0B0B0B0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D
+      0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D
+      0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D
+      0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D0D
+      0D0D111111111111111111111111111111111111111111111111111111111111
+      1111111111111111111111111111111111111111111111111111111111111111
+      1111111111111111111111111111111111111111111111111111111111111111
+      1111111111111111111111111111111111111111111111111011101010101010
+      1010101010101010101010101010101010101010101010101010101010101010
+      1010101010101010101010101010101010101010101010101010101010101010
+      1010101010101010101010101010101010101010101010101010101010101010
+      1010101010101010101010101010101013131213131313131313131313131313
+      1313131313131313131313131313131313131313131313131313131313131313
+      1313131313131313131313131313131313131313131313131313131313131313
+      1313131313131313131313131313131313131313131313131313131313131313
+      1313131313131313121220201212121212121212121212121212121212121212
+      1212121212121212121212121212121212121212121212121212121212121212
+      1212121212121212121212121212121212121212121212121212121212121212
+      1212121212121212121212121212121212121212121212121212121212121212
+      20201F1F20201F1F202020201F1F1F1F1F1F1F2020202020201F1F1F20202020
+      1F1F1F1F1F1F20202020201F1F2020202020202020201F1F20201F1F20201F1F
+      1F1F1F1F1F1F1F1F1F1F1F202020201F1F1F20201F1F202020201F1F20201F1F
+      1F1F1F20201F1F1F1F20201F1F201F1F20201F1F202020201F1F080808080808
+      0808080808080808080808080808080808080808080808080808080808080808
+      0808080808080808080808080808080808080808080808080808080808080808
+      0808080808080808080808080808080808080808080808080808080808080808
+      0808080808080808080808080808080806080606060606060606060606060606
+      0606060606060606060606060606060606060606060606060606060606060606
+      0606060606060606060606060606060606060606060606060606060606060606
+      0606060606060606060606060606060606060606060606060606060606060606
+      0606060606060606151514151515151515151515151515151515151515151515
+      1515151515151515151515151515151515151515151515151515151515151515
+      1515151515151515151515151515151515151515151515151515151515151515
+      1515151515151515151515151515151515151515151515151515151515151515
+      14140F0F14141414141414141414141414141414141414141414141414141414
+      1414141414141414141414141414141414141414141414141414141414141414
+      1414141414141414141414141414141414141414141414141414141414141414
+      1414141414141414141414141414141414141414141414140F0F16160F0F0F0F
+      0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F
+      0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F
+      0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F
+      0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F08162121211616161616161616161616
+      1616161616161616161616161616161616161616161616161616161616161616
+      1616161616161616161616161616161616161616161616161616161616161616
+      1616161616161616161616161616161616161616161616161616161616161616
+      1616161616161606332118181818181818181818181818181818181818181818
+      1818181818181818181818181818181818181818181818181818181818181818
+      1818181818181818181818181818181818181818181818181818181818181818
+      181818181818181818181818181818181818181818181818181818181818213D
+      3817171717171717171717171717171717171717171717171717171717171717
+      1717171717171717171717171717171717171717171717171717171717171717
+      1717171717171717171717171717171717171717171717171717171717171717
+      17171717171717171717171717171717171717171717282F2B1B1B1B1B1B1B1B
+      1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B
+      1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B
+      1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B1B
+      1B1B1B1B1B1B1B1B1B1B1B1B063E39221E1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A
+      1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A
+      1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A
+      1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A
+      1A1A1A08252E1E1E1E1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C
+      1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C
+      1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C
+      1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C2526221E1E
+      1E040404041C0404040404040404040404040404040404040404040404040404
+      0404040404040404040404040404040404040404040404040404040404040404
+      0404040404040404040404040404040404040404040404040404040404040404
+      04040404040404040404040404040404041A4031271E1E1E1E03030303040303
+      0303040403030403030404030303030404040404040404040303040403030404
+      0403030303030303030303030303030304040303030303030303030304040404
+      0303030304040404030304040303040403030303030303030303030404040403
+      0303030303040404063F351E1E1E1E1E1E191919190303030303031919190303
+      0303031919030303030303030303030303030303030303030303030303030303
+      0303030303030303030303030303030303030303191903030303030303030303
+      0303030303030303030303030303030303030303030303030303030303030320
+      29231E1E1E1E1E1E1E0505051919191919191919191919191919191919191919
+      1919191919191919191919191919191919191919191919191919191919191919
+      1919191919191919191919191919191919191919191919191919191919191919
+      191919191919191919191919191919191919191919031A37231E1E1E1E1E1E1E
+      1E05020505050505050505050505050505050505050505050505050505050505
+      0505050505050505050505050505050505050505050505050505050505050505
+      0505050505050505050505050505050505050505050505050505050505050505
+      05050505050505050505050505213A36321E1E1E1E1E1E1E1E02020202020202
+      0202050502020205050505020205050202020202020205050505050505050505
+      0502020202020202020202020505020202020202050505050202020202020505
+      0202020202020202050505050202020202020505020202020202020202020205
+      050202021F302A1E1E1E1E1E1E1E1E1E1E021D1D020202020202020202020202
+      0202020202020202020202020202020202020202020202020202020202020202
+      0202020202020202020202020202020202020202020202020202020202020202
+      0202020202020202020202020202020202020202020202020202023B342C1E1E
+      1E1E1E1E1E1E1E1E1E021D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D
+      1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D
+      1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D
+      1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D3C2D1E1E1E1E1E1E1E1E1E1E1E
+      1E02}
+    BackgroundTransparent = False
+    BackgroundStretch = True
+    BackgroundTransparentColor = clBlack
+    Down = False
+    DrawFocusBorder = True
+    Checkable = False
+    RightPressDown = False
+    StoreBackground = True
+    Hotkey.Shift = []
+    Hotkey.IsLong = False
+    Hotkey.Enabled = True
+    Locked = False
+    EventDataNames = 'OnMouseUp=PG3_Btn_ShowLineupClick'
+  end
+  object Btn_ClearAll: TptButton
+    Left = 765
+    Top = 223
+    Width = 140
+    Height = 58
+    Caption = '    ClearAll     (Ctrl-99)'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clRed
+    Font.Height = -16
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ModalResult = mrNone
+    ParentFont = False
+    TabOrder = 4
+    ParentColor = False
+    Color = clBtnFace
+    ColorMouseOver = clInfoBk
+    ColorFocused = clLime
+    DrawFocusRect = False
+    MultiLineCaption = True
+    Alignment = alMiddleCenter
+    FontFocused.Charset = DEFAULT_CHARSET
+    FontFocused.Color = clWindowText
+    FontFocused.Height = -11
+    FontFocused.Name = 'MS Sans Serif'
+    FontFocused.Style = []
+    FontMouseOver.Charset = DEFAULT_CHARSET
+    FontMouseOver.Color = clWindowText
+    FontMouseOver.Height = -11
+    FontMouseOver.Name = 'MS Sans Serif'
+    FontMouseOver.Style = []
+    PreferFocused = False
+    FrameSize = 1
+    BackgroundTransparent = False
+    BackgroundStretch = True
+    BackgroundTransparentColor = clBlack
+    Down = False
+    DrawFocusBorder = True
+    Checkable = False
+    RightPressDown = False
+    StoreBackground = True
+    Hotkey.Shift = []
+    Hotkey.IsLong = False
+    Hotkey.Enabled = False
+    Locked = False
+    EventDataNames = 'OnClick=pgMain_Btn_ClearAllClick'
+  end
+  object ccLineup_ctlLineup1: TccModulePanel
+    Left = 0
+    Top = 0
+    Width = 756
+    Height = 1105
+    Align = alLeft
+    Caption = 'ccLineup.ctlLineup1'
+    SavedData = 
+      'FileFormatVersion=1.5.0$$Language=Deutsch$$AllowSetChanges=0$$Ma' +
+      'xSetCount=1$$Password=267285318228306309342330111369210354213360' +
+      '3063693422853273062973003182912732672792581112192523273812223632' +
+      '79273348294237213294$$NoTooltip=0$$<InternalFont>$$Name=Tahoma$$' +
+      'Size=11.25$$Bold=0$$Italic=0$$</InternalFont>$$<EventData>$$<OnN' +
+      'ameMove>$$Raise=1$$Wait=0$$Script=TV__FP_TactLineupUpdate;LinupL' +
+      'iveUpate$$</OnNameMove>$$<AfterNameMove>$$Raise=0$$Wait=0$$Scrip' +
+      't=$$</AfterNameMove>$$<OnNumberMove>$$Raise=1$$Wait=0$$Script=TV' +
+      '__FP_TactLineupUpdate;LinupLiveUpate$$</OnNumberMove>$$<AfterNum' +
+      'berMove>$$Raise=0$$Wait=0$$Script=$$</AfterNumberMove>$$<Setting' +
+      's>$$PlayerIndexByTeam=0$$PlayerIndexByAnimationPosition=0$$</Set' +
+      'tings>$$</EventData>$$ActiveLineupSet=1$$<LineupSet>$$LineupSetN' +
+      'ame=Standard$$ActiveLineup=2$$<Lineup>$$<LineupSettings>$$Name=T' +
+      'eam A$$UseNumbers=1$$UseAnimation=1$$NameFormat=2$$ForceUniqueNa' +
+      'mes=0$$ForceUniqueForBoth=0$$FixedSizeByDefault=0$$DefaultNameWi' +
+      'dth=900$$DefaultNameHeight=300$$DefaultNumberWidth=300$$DefaultN' +
+      'umberHeight=300$$</LineupSettings>$$<GuideSettings>$$ShowVertica' +
+      'lGuide=0$$ShowHorizontalGuide=1$$VerticalGuidePos=5520$$Horizont' +
+      'alGuidePos=3630$$SnapToGuidesBelow=20$$AlignNumbersCentered=0$$<' +
+      '/GuideSettings>$$<FieldSettings>$$TVFormat=2$$Type=3$$Picture=Da' +
+      'ta\UEFA_EL_2015_LINEUP.bmp$$PicturePathIsRelative=1$$Width=960$$' +
+      'Height=576$$Left=0$$Top=0$$</FieldSettings>$$<NameFont>$$Font=Ar' +
+      'ial$$Size=11$$Width=100$$Bold=1$$Italic=0$$UCase=0$$</NameFont>$' +
+      '$<NumberFont>$$Font=Arial$$Size=11$$Width=100$$Bold=1$$Italic=0$' +
+      '$LikeName=0$$</NumberFont>$$<NumberSettings>$$TwoObjects=1$$Sepa' +
+      'rate=1$$AlignmentType=1$$Distance=2$$</NumberSettings>$$<PlayerL' +
+      'ist>$$<LineupPlayer>$$FirstName=$$LastName=MADL$$DisplayName=MAD' +
+      'L$$DisplayNameChanged=0$$Team=1$$TeamName=$$Number=0$$DisplayNum' +
+      'ber=0$$DisplayNumberChanged=0$$Color=$$AnimOrderPosition=0$$User' +
+      'Data=$$NameXPos=5715$$NameYPos=3477$$NumberXPos=5902$$NumberYPos' +
+      '=3257$$FixedSize=0$$NameWidth=616$$NameHeight=264$$NumberWidth=1' +
+      '17$$NumberHeight=264$$</LineupPlayer>$$<LineupPlayer>$$FirstName' +
+      '=$$LastName=ALMER$$DisplayName=ALMER$$DisplayNameChanged=0$$Team' +
+      '=1$$TeamName=$$Number=1$$DisplayNumber=1$$DisplayNumberChanged=0' +
+      '$$Color=$$AnimOrderPosition=1$$UserData=$$NameXPos=4470$$NameYPo' +
+      's=5108$$NumberXPos=4712$$NumberYPos=4888$$FixedSize=0$$NameWidth' +
+      '=763$$NameHeight=264$$NumberWidth=117$$NumberHeight=264$$</Lineu' +
+      'pPlayer>$$<LineupPlayer>$$FirstName=$$LastName=GLUHAKOVIC$$Displ' +
+      'ayName=GLUHAKOVIC$$DisplayNameChanged=0$$Team=1$$TeamName=$$Numb' +
+      'er=2$$DisplayNumber=2$$DisplayNumberChanged=0$$Color=$$AnimOrder' +
+      'Position=2$$UserData=$$NameXPos=4335$$NameYPos=5787$$NumberXPos=' +
+      '4836$$NumberYPos=5567$$FixedSize=0$$NameWidth=1452$$NameHeight=2' +
+      '64$$NumberWidth=117$$NumberHeight=264$$</LineupPlayer>$$<LineupP' +
+      'layer>$$FirstName=$$LastName=STARK$$DisplayName=STARK$$DisplayNa' +
+      'meChanged=0$$Team=1$$TeamName=$$Number=3$$DisplayNumber=3$$Displ' +
+      'ayNumberChanged=0$$Color=$$AnimOrderPosition=3$$UserData=$$NameX' +
+      'Pos=3000$$NameYPos=4430$$NumberXPos=3231$$NumberYPos=4210$$Fixed' +
+      'Size=0$$NameWidth=733$$NameHeight=264$$NumberWidth=117$$NumberHe' +
+      'ight=264$$</LineupPlayer>$$<LineupPlayer>$$FirstName=$$LastName=' +
+      'BONIFÁCIO AUGUSTO$$DisplayName=BONIFÁCIO AUGUSTO$$DisplayNameCha' +
+      'nged=0$$Team=1$$TeamName=$$Number=4$$DisplayNumber=4$$DisplayNum' +
+      'berChanged=0$$Color=$$AnimOrderPosition=4$$UserData=$$NameXPos=3' +
+      '450$$NameYPos=3477$$NumberXPos=4291$$NumberYPos=3257$$FixedSize=' +
+      '0$$NameWidth=2361$$NameHeight=264$$NumberWidth=117$$NumberHeight' +
+      '=264$$</LineupPlayer>$$<LineupPlayer>$$FirstName=$$LastName=DEMA' +
+      'KU$$DisplayName=DEMAKU$$DisplayNameChanged=0$$Team=1$$TeamName=$' +
+      '$Number=5$$DisplayNumber=5$$DisplayNumberChanged=0$$Color=$$Anim' +
+      'OrderPosition=5$$UserData=$$NameXPos=5280$$NameYPos=2462$$Number' +
+      'XPos=5593$$NumberYPos=2242$$FixedSize=0$$NameWidth=953$$NameHeig' +
+      'ht=264$$NumberWidth=117$$NumberHeight=264$$</LineupPlayer>$$<Lin' +
+      'eupPlayer>$$FirstName=$$LastName=MOHAMMED$$DisplayName=MOHAMMED$' +
+      '$DisplayNameChanged=0$$Team=1$$TeamName=$$Number=6$$DisplayNumbe' +
+      'r=6$$DisplayNumberChanged=0$$Color=$$AnimOrderPosition=6$$UserDa' +
+      'ta=$$NameXPos=7020$$NameYPos=3477$$NumberXPos=7482$$NumberYPos=3' +
+      '257$$FixedSize=0$$NameWidth=1349$$NameHeight=264$$NumberWidth=11' +
+      '7$$NumberHeight=264$$</LineupPlayer>$$<LineupPlayer>$$FirstName=' +
+      '$$LastName=ALHASSAN$$DisplayName=ALHASSAN$$DisplayNameChanged=0$' +
+      '$Team=1$$TeamName=$$Number=8$$DisplayNumber=8$$DisplayNumberChan' +
+      'ged=0$$Color=$$AnimOrderPosition=7$$UserData=$$NameXPos=6480$$Na' +
+      'meYPos=4589$$NumberXPos=6865$$NumberYPos=4369$$FixedSize=0$$Name' +
+      'Width=1144$$NameHeight=264$$NumberWidth=117$$NumberHeight=264$$<' +
+      '/LineupPlayer>$$<LineupPlayer>$$FirstName=$$LastName=FRIESENBICH' +
+      'LER$$DisplayName=FRIESENBICHLER$$DisplayNameChanged=0$$Team=1$$T' +
+      'eamName=$$Number=9$$DisplayNumber=9$$DisplayNumberChanged=0$$Col' +
+      'or=$$AnimOrderPosition=8$$UserData=$$NameXPos=5490$$NameYPos=584' +
+      '8$$NumberXPos=6172$$NumberYPos=5628$$FixedSize=0$$NameWidth=1936' +
+      '$$NameHeight=264$$NumberWidth=117$$NumberHeight=264$$</LineupPla' +
+      'yer>$$<LineupPlayer>$$FirstName=$$LastName=GRÜNWALD$$DisplayName' +
+      '=GRÜNWALD$$DisplayNameChanged=0$$Team=1$$TeamName=$$Number=10$$D' +
+      'isplayNumber=10$$DisplayNumberChanged=0$$Color=$$AnimOrderPositi' +
+      'on=9$$UserData=$$NameXPos=1740$$NameYPos=4511$$NumberXPos=2125$$' +
+      'NumberYPos=4291$$FixedSize=0$$NameWidth=1261$$NameHeight=264$$Nu' +
+      'mberWidth=235$$NumberHeight=264$$</LineupPlayer>$$<LineupPlayer>' +
+      '$$FirstName=$$LastName=VENUTO$$DisplayName=VENUTO$$DisplayNameCh' +
+      'anged=0$$Team=1$$TeamName=$$Number=11$$DisplayNumber=11$$Display' +
+      'NumberChanged=0$$Color=$$AnimOrderPosition=10$$UserData=$$NameXP' +
+      'os=9210$$NameYPos=5800$$NumberXPos=9474$$NumberYPos=5580$$FixedS' +
+      'ize=0$$NameWidth=924$$NameHeight=264$$NumberWidth=220$$NumberHei' +
+      'ght=264$$</LineupPlayer>$$</PlayerList>$$</Lineup>$$<Lineup>$$<L' +
+      'ineupSettings>$$Name=Team B$$UseNumbers=1$$UseAnimation=1$$NameF' +
+      'ormat=2$$ForceUniqueNames=0$$ForceUniqueForBoth=0$$FixedSizeByDe' +
+      'fault=0$$DefaultNameWidth=900$$DefaultNameHeight=300$$DefaultNum' +
+      'berWidth=300$$DefaultNumberHeight=300$$</LineupSettings>$$<Guide' +
+      'Settings>$$ShowVerticalGuide=0$$ShowHorizontalGuide=1$$VerticalG' +
+      'uidePos=11040$$HorizontalGuidePos=3600$$SnapToGuidesBelow=20$$Al' +
+      'ignNumbersCentered=0$$</GuideSettings>$$<FieldSettings>$$TVForma' +
+      't=2$$Type=3$$Picture=Data\UEFA_EL_2015_LINEUP.bmp$$PicturePathIs' +
+      'Relative=1$$Width=960$$Height=576$$Left=0$$Top=0$$</FieldSetting' +
+      's>$$<NameFont>$$Font=@Arial Unicode MS$$Size=11$$Width=100$$Bold' +
+      '=0$$Italic=0$$UCase=0$$</NameFont>$$<NumberFont>$$Font=@Arial Un' +
+      'icode MS$$Size=11$$Width=100$$Bold=0$$Italic=0$$LikeName=1$$</Nu' +
+      'mberFont>$$<NumberSettings>$$TwoObjects=1$$Separate=1$$Alignment' +
+      'Type=1$$Distance=2$$</NumberSettings>$$<PlayerList>$$<LineupPlay' +
+      'er>$$FirstName=$$LastName=VASCONCELLOS FERREIRA$$DisplayName=VAS' +
+      'CONCELLOS FERREIRA$$DisplayNameChanged=0$$Team=2$$TeamName=$$Num' +
+      'ber=1$$DisplayNumber=1$$DisplayNumberChanged=0$$Color=$$AnimOrde' +
+      'rPosition=0$$UserData=$$NameXPos=5188$$NameYPos=2552$$NumberXPos' +
+      '=6255$$NumberYPos=2310$$FixedSize=0$$NameWidth=2963$$NameHeight=' +
+      '293$$NumberWidth=117$$NumberHeight=293$$</LineupPlayer>$$<Lineup' +
+      'Player>$$FirstName=$$LastName=CALABRIA$$DisplayName=CALABRIA$$Di' +
+      'splayNameChanged=0$$Team=2$$TeamName=$$Number=2$$DisplayNumber=2' +
+      '$$DisplayNumberChanged=0$$Color=$$AnimOrderPosition=1$$UserData=' +
+      '$$NameXPos=4522$$NameYPos=3425$$NumberXPos=4880$$NumberYPos=3183' +
+      '$$FixedSize=0$$NameWidth=1071$$NameHeight=293$$NumberWidth=117$$' +
+      'NumberHeight=293$$</LineupPlayer>$$<LineupPlayer>$$FirstName=$$L' +
+      'astName=MAURI$$DisplayName=MAURI$$DisplayNameChanged=0$$Team=2$$' +
+      'TeamName=$$Number=4$$DisplayNumber=4$$DisplayNumberChanged=0$$Co' +
+      'lor=$$AnimOrderPosition=2$$UserData=$$NameXPos=6732$$NameYPos=41' +
+      '06$$NumberXPos=6952$$NumberYPos=3864$$FixedSize=0$$NameWidth=704' +
+      '$$NameHeight=293$$NumberWidth=117$$NumberHeight=293$$</LineupPla' +
+      'yer>$$<LineupPlayer>$$FirstName=$$LastName=BONAVENTURA$$DisplayN' +
+      'ame=BONAVENTURA$$DisplayNameChanged=0$$Team=2$$TeamName=$$Number' +
+      '=5$$DisplayNumber=5$$DisplayNumberChanged=0$$Color=$$AnimOrderPo' +
+      'sition=3$$UserData=$$NameXPos=3610$$NameYPos=5798$$NumberXPos=41' +
+      '99$$NumberYPos=5556$$FixedSize=0$$NameWidth=1687$$NameHeight=293' +
+      '$$NumberWidth=117$$NumberHeight=293$$</LineupPlayer>$$<LineupPla' +
+      'yer>$$FirstName=$$LastName=KALINIC$$DisplayName=KALINIC$$Display' +
+      'NameChanged=0$$Team=2$$TeamName=$$Number=7$$DisplayNumber=7$$Dis' +
+      'playNumberChanged=0$$Color=$$AnimOrderPosition=4$$UserData=$$Nam' +
+      'eXPos=8819$$NameYPos=3095$$NumberXPos=9083$$NumberYPos=2853$$Fix' +
+      'edSize=0$$NameWidth=821$$NameHeight=293$$NumberWidth=117$$Number' +
+      'Height=293$$</LineupPlayer>$$<LineupPlayer>$$FirstName=$$LastNam' +
+      'e=FERNÁNDEZ SAEZ$$DisplayName=FERNÁNDEZ SAEZ$$DisplayNameChanged' +
+      '=0$$Team=2$$TeamName=$$Number=8$$DisplayNumber=8$$DisplayNumberC' +
+      'hanged=0$$Color=$$AnimOrderPosition=5$$UserData=$$NameXPos=2265$' +
+      '$NameYPos=4472$$NumberXPos=2964$$NumberYPos=4230$$FixedSize=0$$N' +
+      'ameWidth=1980$$NameHeight=293$$NumberWidth=117$$NumberHeight=293' +
+      '$$</LineupPlayer>$$<LineupPlayer>$$FirstName=$$LastName=VALENTE ' +
+      'SILVA$$DisplayName=VALENTE SILVA$$DisplayNameChanged=0$$Team=2$$' +
+      'TeamName=$$Number=9$$DisplayNumber=9$$DisplayNumberChanged=0$$Co' +
+      'lor=$$AnimOrderPosition=6$$UserData=$$NameXPos=6842$$NameYPos=56' +
+      '39$$NumberXPos=7419$$NumberYPos=5397$$FixedSize=0$$NameWidth=165' +
+      '7$$NameHeight=293$$NumberWidth=117$$NumberHeight=293$$</LineupPl' +
+      'ayer>$$<LineupPlayer>$$FirstName=$$LastName=CALHANOGLU$$DisplayN' +
+      'ame=CALHANOGLU$$DisplayNameChanged=0$$Team=2$$TeamName=$$Number=' +
+      '10$$DisplayNumber=10$$DisplayNumberChanged=0$$Color=$$AnimOrderP' +
+      'osition=7$$UserData=$$NameXPos=8786$$NameYPos=4901$$NumberXPos=9' +
+      '270$$NumberYPos=4659$$FixedSize=0$$NameWidth=1525$$NameHeight=29' +
+      '3$$NumberWidth=235$$NumberHeight=293$$</LineupPlayer>$$<LineupPl' +
+      'ayer>$$FirstName=$$LastName=BORINI$$DisplayName=BORINI$$DisplayN' +
+      'ameChanged=0$$Team=2$$TeamName=$$Number=11$$DisplayNumber=11$$Di' +
+      'splayNumberChanged=0$$Color=$$AnimOrderPosition=8$$UserData=$$Na' +
+      'meXPos=1400$$NameYPos=5708$$NumberXPos=1587$$NumberYPos=5466$$Fi' +
+      'xedSize=0$$NameWidth=733$$NameHeight=293$$NumberWidth=235$$Numbe' +
+      'rHeight=293$$</LineupPlayer>$$<LineupPlayer>$$FirstName=$$LastNa' +
+      'me=CONTI$$DisplayName=CONTI$$DisplayNameChanged=0$$Team=2$$TeamN' +
+      'ame=$$Number=12$$DisplayNumber=12$$DisplayNumberChanged=0$$Color' +
+      '=$$AnimOrderPosition=9$$UserData=$$NameXPos=8209$$NameYPos=1745$' +
+      '$NumberXPos=8374$$NumberYPos=1503$$FixedSize=0$$NameWidth=675$$N' +
+      'ameHeight=293$$NumberWidth=235$$NumberHeight=293$$</LineupPlayer' +
+      '>$$<LineupPlayer>$$FirstName=$$LastName=ROMAGNOLI$$DisplayName=R' +
+      'OMAGNOLI$$DisplayNameChanged=0$$Team=2$$TeamName=$$Number=13$$Di' +
+      'splayNumber=13$$DisplayNumberChanged=0$$Color=$$AnimOrderPositio' +
+      'n=10$$UserData=$$NameXPos=3563$$NameYPos=1922$$NumberXPos=3981$$' +
+      'NumberYPos=1680$$FixedSize=0$$NameWidth=1349$$NameHeight=293$$Nu' +
+      'mberWidth=235$$NumberHeight=293$$</LineupPlayer>$$</PlayerList>$' +
+      '$</Lineup>$$<Lineup>$$<LineupSettings>$$Name=Both Teams$$UseNumb' +
+      'ers=1$$UseAnimation=1$$NameFormat=2$$ForceUniqueNames=0$$ForceUn' +
+      'iqueForBoth=0$$FixedSizeByDefault=0$$DefaultNameWidth=900$$Defau' +
+      'ltNameHeight=300$$DefaultNumberWidth=300$$DefaultNumberHeight=30' +
+      '0$$</LineupSettings>$$<GuideSettings>$$ShowVerticalGuide=0$$Show' +
+      'HorizontalGuide=0$$VerticalGuidePos=11040$$HorizontalGuidePos=95' +
+      '70$$SnapToGuidesBelow=20$$AlignNumbersCentered=0$$</GuideSetting' +
+      's>$$<FieldSettings>$$TVFormat=2$$Type=3$$Picture=Data\UEFA_EL_20' +
+      '15_LINEUP.bmp$$PicturePathIsRelative=1$$Width=960$$Height=576$$L' +
+      'eft=0$$Top=0$$</FieldSettings>$$<NameFont>$$Font=Arial$$Size=11$' +
+      '$Width=100$$Bold=1$$Italic=0$$UCase=0$$</NameFont>$$<NumberFont>' +
+      '$$Font=Arial$$Size=11$$Width=100$$Bold=1$$Italic=0$$LikeName=1$$' +
+      '</NumberFont>$$<NumberSettings>$$TwoObjects=1$$Separate=1$$Align' +
+      'mentType=1$$Distance=2$$</NumberSettings>$$</Lineup>$$</LineupSe' +
+      't>$$'
+    OleClassName = 'ccLineup.ctlLineup'
+    OleControlName = 'ccLineup.ctlLineup'
+  end
+  object chb_MoveOnAir: TptCheckBox
+    Left = 780
+    Top = 5
+    Width = 146
+    Height = 17
+    Caption = '"im ON schieben"'
+    Checked = True
+    Color = clBtnFace
+    ParentColor = False
+    State = cbChecked
+    TabOrder = 6
+    Locked = False
+    ColorFocused = clBtnFace
+    ColorMouseOver = clBtnFace
+  end
+  object ButtonLoad: TptButton
+    Left = 765
+    Top = 285
+    Width = 140
+    Height = 25
+    Caption = 'ButtonLoad'
+    ModalResult = mrNone
+    TabOrder = 7
+    ParentColor = False
+    Color = clBtnFace
+    ColorMouseOver = clBtnFace
+    ColorFocused = clBtnFace
+    DrawFocusRect = False
+    MultiLineCaption = False
+    Alignment = alMiddleCenter
+    FontFocused.Charset = DEFAULT_CHARSET
+    FontFocused.Color = clWindowText
+    FontFocused.Height = -11
+    FontFocused.Name = 'MS Sans Serif'
+    FontFocused.Style = []
+    FontMouseOver.Charset = DEFAULT_CHARSET
+    FontMouseOver.Color = clWindowText
+    FontMouseOver.Height = -11
+    FontMouseOver.Name = 'MS Sans Serif'
+    FontMouseOver.Style = []
+    PreferFocused = False
+    FrameSize = 1
+    BackgroundTransparent = False
+    BackgroundStretch = True
+    BackgroundTransparentColor = clBlack
+    Down = False
+    DrawFocusBorder = True
+    Checkable = False
+    RightPressDown = False
+    StoreBackground = True
+    Hotkey.Shift = []
+    Hotkey.IsLong = False
+    Hotkey.Enabled = True
+    Locked = False
+    EventDataNames = 'OnClick=pgLineup_ButtonLoadClick'
+  end
+  object BoxTeamA: TptImageListBox
+    Left = 1000
+    Top = 155
+    Width = 121
+    Height = 156
+    ItemHeight = 16
+    Style = lbOwnerDrawVariable
+    TabOrder = 8
+    BorderSize = 5
+    UseFixedHeight = True
+    ShowTitles = True
+    FixedHeight = 60
+    HighlightSelected = False
+    HighlightColor = clHighlight
+    HighlightTextColor = clHighlightText
+    DrawFocusRect = True
+    ItemIndex = -1
+    Data = '-1'
+    Locked = False
+    EventDataNames = 'OnDblClick=pgLineup_BoxDSSBDblClick'
+  end
+  object BoxTeamB: TptImageListBox
+    Left = 1140
+    Top = 155
+    Width = 121
+    Height = 156
+    ItemHeight = 16
+    Style = lbOwnerDrawVariable
+    TabOrder = 9
+    BorderSize = 5
+    UseFixedHeight = True
+    ShowTitles = True
+    FixedHeight = 60
+    HighlightSelected = False
+    HighlightColor = clHighlight
+    HighlightTextColor = clHighlightText
+    DrawFocusRect = True
+    ItemIndex = -1
+    Data = '-1'
+    Locked = False
+    EventDataNames = 'OnDblClick=pgLineup_BoxDSSBDblClick'
+  end
+  object BoxDSSA: TptImageListBox
+    Left = 1000
+    Top = 75
+    Width = 121
+    Height = 66
+    ItemHeight = 16
+    Style = lbOwnerDrawVariable
+    TabOrder = 10
+    BorderSize = 5
+    UseFixedHeight = True
+    ShowTitles = True
+    FixedHeight = 40
+    HighlightSelected = False
+    HighlightColor = clHighlight
+    HighlightTextColor = clHighlightText
+    DrawFocusRect = True
+    ItemIndex = -1
+    Data = '-1'
+    Locked = False
+    EventDataNames = 'OnDblClick=pgLineup_BoxDSSBDblClick'
+  end
+  object BoxDSSB: TptImageListBox
+    Left = 1140
+    Top = 75
+    Width = 121
+    Height = 66
+    ItemHeight = 16
+    Style = lbOwnerDrawVariable
+    TabOrder = 11
+    BorderSize = 5
+    UseFixedHeight = True
+    ShowTitles = True
+    FixedHeight = 40
+    HighlightSelected = False
+    HighlightColor = clHighlight
+    HighlightTextColor = clHighlightText
+    DrawFocusRect = True
+    ItemIndex = -1
+    Data = '-1'
+    Locked = False
+    EventDataNames = 'OnDblClick=pgLineup_BoxDSSBDblClick'
+  end
+  object edtGKA: TptEdit
+    Left = 1000
+    Top = 0
+    Width = 121
+    Height = 21
+    MaxLength = 0
+    TabOrder = 12
+    Text = 'GK02'
+    Numeric = False
+    InputType = itAnything
+    Locked = False
+  end
+  object edtPLA: TptEdit
+    Left = 1000
+    Top = 25
+    Width = 121
+    Height = 21
+    MaxLength = 0
+    TabOrder = 13
+    Text = 'PL02'
+    Numeric = False
+    InputType = itAnything
+    Locked = False
+  end
+  object edtDSSA: TptEdit
+    Left = 1000
+    Top = 50
+    Width = 121
+    Height = 21
+    MaxLength = 0
+    TabOrder = 14
+    Text = 'DSS02'
+    Numeric = False
+    InputType = itAnything
+    Locked = False
+  end
+  object edtGKB: TptEdit
+    Left = 1140
+    Top = 0
+    Width = 121
+    Height = 21
+    MaxLength = 0
+    TabOrder = 15
+    Text = 'GK01'
+    Numeric = False
+    InputType = itAnything
+    Locked = False
+  end
+  object edtPLB: TptEdit
+    Left = 1140
+    Top = 25
+    Width = 121
+    Height = 21
+    MaxLength = 0
+    TabOrder = 16
+    Text = 'PL01'
+    Numeric = False
+    InputType = itAnything
+    Locked = False
+  end
+  object edtDSSB: TptEdit
+    Left = 1140
+    Top = 50
+    Width = 121
+    Height = 21
+    MaxLength = 0
+    TabOrder = 17
+    Text = 'DSS01'
+    Numeric = False
+    InputType = itAnything
+    Locked = False
+  end
+  object Panel1: TptPanel
+    Left = 765
+    Top = 320
+    Width = 496
+    Height = 336
+    Caption = 'Panel1'
+    Locked = False
+    TabOrder = 18
+    object lbOffset: TptLabel
+      Left = 6
+      Top = 295
+      Width = 40
+      Height = 13
+      Caption = 'Offset In'
+      Locked = False
+    end
+    object lbOffset1: TptLabel
+      Left = 131
+      Top = 295
+      Width = 13
+      Height = 13
+      Caption = 'ms'
+      Locked = False
+    end
+    object lbOffset2: TptLabel
+      Left = 131
+      Top = 315
+      Width = 13
+      Height = 13
+      Caption = 'ms'
+      Locked = False
+    end
+    object lbOffset3: TptLabel
+      Left = 6
+      Top = 315
+      Width = 71
+      Height = 13
+      Caption = 'Offset Rotation'
+      Locked = False
+    end
+    object GridTeams: TptGrid
+      Left = 5
+      Top = 40
+      Width = 486
+      Height = 246
+      ColCount = 6
+      DefaultRowHeight = 17
+      FixedCols = 0
+      RowCount = 12
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goAlwaysShowEditor]
+      TabOrder = 0
+      SelectedFont.Charset = DEFAULT_CHARSET
+      SelectedFont.Color = clWhite
+      SelectedFont.Height = -11
+      SelectedFont.Name = 'MS Sans Serif'
+      SelectedFont.Style = []
+      ColumnHeaders.WideStrings = (
+        'NR'
+        'NAME'
+        'GROUP'
+        'NR'
+        'NAME'
+        'GROUP')
+      RowHeaders.WideStrings = (
+        'NR'
+        '33'
+        '3'
+        '4'
+        '10'
+        '15'
+        '19'
+        '20'
+        '21'
+        '32'
+        '44'
+        '66')
+      FixedColWidth = -1
+      FixedRowHeight = 17
+      FixedFont.Charset = DEFAULT_CHARSET
+      FixedFont.Color = clWindowText
+      FixedFont.Height = -11
+      FixedFont.Name = 'MS Sans Serif'
+      FixedFont.Style = []
+      VAlignment = vtaCenter
+      HAlignment = taLeftJustify
+      HintShowCells = False
+      MultilineCells = False
+      SortFixedCols = False
+      AllowManualSort = False
+      ProtectFixedRows = False
+      ProtectFixedCols = False
+      DrawSortingArrow = True
+      DataString = 
+        'NR,NAME,GROUP,NR,NAME,GROUP;33,"Kampl (G)",1,25,"Starkl (G)",1;3' +
+        ',Nielsen,4,10,Lazaro,2;4,,4,11,Dibon,3;10,,2,13,Trimmel,2;15,"Bo' +
+        'rges de Carvalho",5,20,Randak,4;19,,4,24,Ulmer,4;20,Edomwonyi,4,' +
+        '31,Gustafsson,4;21,,2,33,Savic,3;32,,2,52,Vorsah,2;44,,2,70,Dähn' +
+        'e,3;66,,3,77,Ilsanker,2;'
+      RowSizing = False
+      RowMoving = False
+      ColSizing = True
+      ColMoving = False
+      ReadOnly = False
+      DataSaveOption = dsoDataOnly
+      Locked = False
+      SuppressBuildInMenu = False
+      ColWidths = (
+        25
+        94
+        55
+        22
+        79
+        71)
+      RowHeights = (
+        17
+        17
+        17
+        17
+        17
+        17
+        17
+        17
+        17
+        17
+        17
+        17)
+      DataString_UTF7 = 
+        'NR,NAME,GROUP,NR,NAME,GROUP;33,"Kampl (G)",1,25,"Starkl (G)",1;3' +
+        ',Nielsen,4,10,Lazaro,2;4,,4,11,Dibon,3;10,,2,13,Trimmel,2;15,"Bo' +
+        'rges de Carvalho",5,20,Randak,4;19,,4,24,Ulmer,4;20,Edomwonyi,4,' +
+        '31,Gustafsson,4;21,,2,33,Savic,3;32,,2,52,Vorsah,2;44,,2,70,D+AO' +
+        'Q-hne,3;66,,3,77,Ilsanker,2;'
+    end
+    object DataBar1: TptDataBar
+      Left = 1
+      Top = 1
+      Width = 494
+      Height = 35
+      Align = alTop
+      Color = 13816530
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Arial'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 1
+      DataGroupName = 'pgLineup_Panel1'
+      DataGroupStyle = dsLocal
+      DataComboBoxWidth = 250
+      ButtonStyle = bsImageOnly
+      BorderWidth = 4
+      VisibleDataCbx = True
+      VisibleSaveBtn = True
+      VisibleRefreshBtn = True
+      VisibleDeleteBtn = True
+      VisibleNextBtn = True
+      VisiblePreviousBtn = True
+      DataVisibility = kfNone
+      Locked = False
+    end
+    object edtOffset: TptEdit
+      Left = 80
+      Top = 290
+      Width = 46
+      Height = 21
+      MaxLength = 0
+      TabOrder = 2
+      Text = '1150'
+      Numeric = True
+      InputType = itInteger
+      Locked = False
+    end
+    object edtOffsetRot: TptEdit
+      Left = 80
+      Top = 310
+      Width = 46
+      Height = 21
+      MaxLength = 0
+      TabOrder = 3
+      Text = '1750'
+      Numeric = True
+      InputType = itInteger
+      Locked = False
+    end
+  end
+  object Btn_ClearLineup1: TptButton
+    Left = 765
+    Top = 65
+    Width = 140
+    Height = 35
+    Caption = 'Lineup löschen (A+B)'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clRed
+    Font.Height = -13
+    Font.Name = 'Trebuchet MS'
+    Font.Style = []
+    ModalResult = mrNone
+    ParentFont = False
+    TabOrder = 19
+    ParentColor = False
+    Color = clBtnFace
+    ColorMouseOver = clBtnFace
+    ColorFocused = clBtnFace
+    DrawFocusRect = False
+    MultiLineCaption = False
+    Alignment = alMiddleCenter
+    FontFocused.Charset = DEFAULT_CHARSET
+    FontFocused.Color = clRed
+    FontFocused.Height = -11
+    FontFocused.Name = 'MS Sans Serif'
+    FontFocused.Style = []
+    FontMouseOver.Charset = DEFAULT_CHARSET
+    FontMouseOver.Color = clRed
+    FontMouseOver.Height = -11
+    FontMouseOver.Name = 'MS Sans Serif'
+    FontMouseOver.Style = []
+    PreferFocused = False
+    FrameSize = 1
+    BackgroundTransparent = False
+    BackgroundStretch = True
+    BackgroundTransparentColor = clBlack
+    Down = False
+    DrawFocusBorder = True
+    Checkable = False
+    RightPressDown = False
+    StoreBackground = True
+    Hotkey.Shift = []
+    Hotkey.IsLong = False
+    Hotkey.Enabled = True
+    Locked = False
+    Caption_UTF7 = 'Lineup l+APY-schen (A+-B)'
+    EventDataNames = 'OnClick=pgLineup_Btn_ClearLineup1Click'
+  end
+end

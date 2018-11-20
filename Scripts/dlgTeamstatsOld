@@ -1,0 +1,102 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+Sub dlgTeamstats_Btn_ShowClick (Sender)
+    'hide_ADD_AGG
+    AllTV.TV__Hide_DSS_Zusatz
+    sParam = Trim(dlgTeamstats.ed_Param.Text)
+    sValue1 = Trim(dlgTeamstats.ed_Value1.Text)
+    sValue2 = Trim(dlgTeamstats.ed_Value2.Text)
+
+    oData.Item("DSS_ZUSATZ") = "TEAMSTATS"
+
+    oData.Item("DSS_TEAMSTATS_PARAM") = sParam
+    oData.Item("DSS_TEAMSTATS_VAL1") = sValue1
+    oData.Item("DSS_TEAMSTATS_VAL2") = sValue2
+
+    ALLTV.TV__Show_DSS_ZUSATZ oData
+End Sub
+
+Sub dlgTeamstats_opt_ParamClick (Sender)
+    dlgTeamstats.ed_Param.Text = GetItemText
+    dlgTeamstats_Btn_ReloadClick(Sender)
+End Sub
+
+Sub dlgTeamstats_Btn_ReloadClick (Sender)
+    if not pgMain.chbDataFeedEnabled.Checked then exit sub
+    'Call GetDeltaTreTeamStats
+    bAddPerc = False
+
+    sItem = dlgTeamstats.opt_Param.Items.Strings(dlgTeamstats.opt_Param.ItemIndex)
+    sText = GetItemText
+
+
+    ValA = FormatNumber(GetDynTeamData2016(dlgTeamstats.opt_Param.ItemIndex, 2), 0)
+    ValB = FormatNumber(GetDynTeamData2016(dlgTeamstats.opt_Param.ItemIndex, 3), 0)
+    If bAddPerc Then ValA = ValA & " %"
+    If bAddPerc Then ValB = ValB & " %"
+
+    dlgTeamstats.ed_Param.Text = sText
+
+    dlgTeamstats.ed_Value1.Text = ValA
+    dlgTeamstats.ed_Value2.Text = ValB
+end sub
+
+FUNCTION GetItemText
+    sItem = dlgTeamstats.opt_Param.Items.Strings(dlgTeamstats.opt_Param.ItemIndex)
+    sText = ""
+    Select Case sItem
+       Case "ATTEMPTS"
+          sText = "ATTEMPTS"
+       Case "ATTEMPTS ON TARGET"
+          sText = "ATTEMPTS ON TARGET"
+       Case "CORNERS"
+          sText = "CORNERS"
+       Case "POSSESSION"
+          sText = "POSSESSION (%)"
+          bAddPerc = True
+       Case "FOULS COMMITTED"
+          sText = "FOULS COMMITTED"
+       Case "FOULS SUFFERED"
+          sText = "FOULS SUFFERED"
+       Case "OFFSIDES"
+          sText = "OFFSIDES"
+       Case "PASSES COMPLETED"
+          sText = "PASSES COMPLETED"
+       CASE Else
+          sText = ""
+        
+    End Select
+    GetItemText = sText
+END FUNCTION
+
+Function GetDynTeamData2016(byval selindex, byval teamIndex)
+    'cc.sf.DebugText  selindex & " - " & teamIndex
+    dim row : row = -1
+    SELECT CASE selindex
+        CASE  0
+            row = GetIdRow (tsData2016.grdTeamStats, 3)
+        CASE  1
+            row = GetIdRow (tsData2016.grdTeamStats, 4)
+        CASE  2
+            row = GetIdRow (tsData2016.grdTeamStats, 12)
+        CASE  3
+            row = GetIdRow (tsData2016.grdTeamStats, 2)
+        CASE  4
+            row = GetIdRow (tsData2016.grdTeamStats, 20)
+        CASE  5
+            row = GetIdRow (tsData2016.grdTeamStats, 168)
+        CASE  6
+            row = GetIdRow (tsData2016.grdTeamStats, 13)
+        CASE  7
+            row = GetIdRow (tsData2016.grdTeamStats, 23)
+    END SELECT
+    'cc.sf.DebugText row
+    If row > 0 then
+        GetDynTeamData2016 = tsData2016.grdTeamStats.Cells(row,teamIndex)
+    end if
+end function
+
+</script_body>
+</script>

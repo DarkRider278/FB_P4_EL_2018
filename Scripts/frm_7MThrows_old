@@ -1,0 +1,232 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+Dim lngPShotOff, lngPShotSucc, lngPShotFail
+
+Sub frm_7MThrows_OnDisplayDialog (Sender)
+    lngPShotOff  = RGB(128, 128, 128) ' Farbe für "Noch nicht geworfen"
+    lngPShotSucc = RGB(125, 255, 0)   ' Farbe für "Treffer"
+    lngPShotFail = RGB(255, 128, 128) ' Farbe für "Kein Treffer"
+End Sub
+
+' Fensterdaten zurücksetzen
+Sub frm_7MThrows_Reset (Sender)
+    Dim strTemp, i
+
+    strTemp = "Hiermit werden die Daten in diesem Fenster zurückgesetzt." & vbCrlf & vbCrLf
+    strTemp = strTemp & "Sollen neben den einzelnen Würfen auch die Punkte zurückgesetzt werden?" & vbCrLf
+
+    Select Case Msgbox(strTemp, vbQuestion Or vbYesNoCancel, AppName)
+        Case vbCancel
+            Exit Sub ' Abbruch, gar nichts ändern
+        Case vbYes
+            frm_7MThrows.ed_ScoreA.Text = "0"
+            frm_7MThrows.ed_ScoreB.Text = "0"
+    End Select
+
+    For i = 1 To 5
+        frm_7MThrows.ComponentByName("Img_WurfA" & CStr(i)).BrushColor = lngPShotOff
+        frm_7MThrows.ComponentByName("Img_WurfB" & CStr(i)).BrushColor = lngPShotOff
+    Next
+    frm_7MThrows.edtShift.Text = 1
+End Sub
+
+' Punkt bei A hinzuaddieren
+Sub frm_7MThrows_Btn_PlusAClick (Sender)
+    frm_7MThrows.ed_ScoreA.Text = CStr(frm_7MThrows_GetScore("A") + 1)
+End Sub
+
+' Punkt bei A abziehen
+Sub frm_7MThrows_Btn_MinusAClick (Sender)
+    frm_7MThrows.ed_ScoreA.Text = CStr(MakeNumber(frm_7MThrows_GetScore("A") - 1, 1, 0, "", 0))
+End Sub
+
+' Punkt bei B hinzuaddieren
+Sub frm_7MThrows_Btn_PlusBClick (Sender)
+    frm_7MThrows.ed_ScoreB.Text = CStr(frm_7MThrows_GetScore("B") + 1)
+End Sub
+
+' Punkt bei B abziehen
+Sub frm_7MThrows_Btn_MinusBClick (Sender)
+    frm_7MThrows.ed_ScoreB.Text = CStr(MakeNumber(frm_7MThrows_GetScore("B") - 1, 1, 0, "", 0))
+End Sub
+
+' Bild eines Wurfs angeklickt (Umschalten Treffer/kein Treffer)
+Sub frm_7MThrows_ClickThrowImage (Sender)
+    ID = Mid(Sender.Name, 9, 1)
+    Score = frm_7MThrows_GetScore(ID)
+
+    If CLng(Sender.BrushColor) = lngPShotSucc Then
+        Score = Score - 1
+        If Score < 0 Then Score = 0
+        frm_7MThrows.ComponentByName("ed_Score" & ID).Text = Score
+        Sender.BrushColor = RGB(255, 128, 128)
+    Else
+        Score = Score + 1
+        frm_7MThrows.ComponentByName("ed_Score" & ID).Text = Score
+        Sender.BrushColor = lngPShotSucc
+    End If
+End Sub
+
+' Bild eines Wurfs mit rechts angeklickt (Zurücksetzen auf "Noch nicht geworfen")
+Sub frm_7MThrows_RightClickThrowImage (Sender, Button, Shift, X, Y)
+    If Button = 1 Then
+        ID = Mid(Sender.Name, 9, 1)
+        Score = frm_7MThrows_GetScore(ID)
+
+        If CLng(Sender.BrushColor) = lngPShotSucc Then
+            Score = Score - 1
+            If Score < 0 Then Score = 0
+            frm_7MThrows.ComponentByName("ed_Score" & ID).Text = Score
+        End If
+
+        Sender.BrushColor = lngPShotOff
+    End If
+End Sub
+
+
+Sub frm_7MThrows_Close (Sender)
+    frm_7MThrows.Hide
+End Sub
+
+Function frm_7MThrows_GetScore(ByVal strTeam)
+    If UCase(strTeam) = "A" Then
+        frm_7MThrows_GetScore = MakeNumber(frm_7MThrows.ed_ScoreA.Text, 1, 0, "", 0)
+    Else
+        frm_7MThrows_GetScore = MakeNumber(frm_7MThrows.ed_ScoreB.Text, 1, 0, "", 0)
+    End If
+End Function
+
+' Wandelt einen Zahlenstring fehlertolerant in den gewünschten Typ und überprüft den zulässigen Wertebereich
+' Formate: 1 - Integer, 2 - Long, 3 - Single, 4 - Byte, 5 - Double (Default, da größter Wertebereich)
+' für MinVal und/oder MaxVal Leerstring übergeben, um Ober-/Untergrenze zu deaktivieren
+Function MakeNumber(ByVal strWert, ByVal NrFormat, ByVal MinVal, ByVal MaxVal, ByVal DefVal)
+    Dim sep
+
+    ' Dezimaltrennzeichen ermitteln
+    sep = Chr(CC.SF.DecimalSeparator)
+
+    On Error Resume Next
+    Err.Clear ' Fehler löschen, um  neue Fehler erkennen zu können
+
+    ' Vorgabewert in richtigen Typ umwandeln (bei Single/Double-Werte Dezimaltrennzeichen überprüfen)
+    Select Case NrFormat
+        Case 1 ' Integer
+            DefVal = CInt(DefVal)
+        Case 2 ' Long
+            DefVal = CLng(DefVal)
+        Case 3 ' Single
+            DefVal = CStr(DefVal)
+            DefVal = Replace(DefVal, ",", sep)
+            DefVal = Replace(DefVal, ".", sep)
+            DefVal = CSng(DefVal)
+        Case 4 ' Byte
+            DefVal = CByte(DefVal)
+        Case Else ' Double als Standard - größter Wertebereich
+            DefVal = CStr(DefVal)
+            DefVal = Replace(DefVal, ",", sep)
+            DefVal = Replace(DefVal, ".", sep)
+            DefVal = CDbl(DefVal)
+    End Select
+
+    ' wenn Fehler bei Umwandlung, Vorgabewert auf 0 setzen
+    If Err.Number > 0 Then
+        DefVal = 0
+        Err.Clear
+    End If
+
+    ' gesuchten Wert in gewünschten Typ umwandeln (bei Single/Double-Werte Dezimaltrennzeichen überprüfen)
+    Select Case NrFormat
+        Case 1 ' Integer
+            DefVal = CInt(DefVal)
+            MakeNumber = CInt(strWert)
+        Case 2 ' Long
+            DefVal = CLng(DefVal)
+            MakeNumber = CLng(strWert)
+        Case 3 ' Single
+            DefVal = CSng(DefVal)
+
+            strWert = Replace(strWert, ",", sep)
+            strWert = Replace(strWert, ".", sep)
+            MakeNumber = CSng(strWert)
+        Case 4 ' Byte
+            DefVal = CByte(DefVal)
+            MakeNumber = CByte(strWert)
+        Case Else ' Double als Standard - größter Wertebereich
+            DefVal = CDbl(DefVal)
+
+            strWert = Replace(strWert, ",", sep)
+            strWert = Replace(strWert, ".", sep)
+            MakeNumber = CDbl(strWert)
+    End Select
+
+    ' wenn Fehler bei Umwandlung, dann Vorgabewert einsetzen
+    If Err.Number > 0 Then MakeNumber = DefVal
+    Err.Clear
+
+    ' Überprüfen, ob gesetzte Grenzen für Wertebereich eingehalten sind (bei min und max schaltet "" die Überprüfung ab)
+    If IsNumeric(MinVal) Then
+        If MakeNumber < MinVal Then MakeNumber = DefVal
+    End If
+    If IsNumeric(MaxVal) Then
+        If MakeNumber > MaxVal Then MakeNumber = DefVal
+    End If
+End Function
+
+sub frm_7MThrows_Btn_HideDSSPenaltiesClick (Sender)
+    oData.Item("PENALTIES_TYPE") = "HIDE"
+    ALLTV.TV__Hide_Penalties oData
+end sub
+
+sub frm_7MThrows_Btn_ShowPenaltiesClick (Sender)
+    DIM strTmID
+    GetTeamData
+    SELECT CASE Sender.Name
+        CASE "Btn_PenaltiesShow"
+            oData.Item("PENALTIES_TYPE") = "SHOW"
+        CASE ELSE
+            oData.Item("PENALTIES_TYPE") = "UPDATE"
+    END SELECT
+    
+    oData.Item("Score_A") = frm_7MThrows_GetScore("A")
+    oData.Item("Score_B") = frm_7MThrows_GetScore("B")
+    
+    For i = 1 To 2
+        If i = 1 Then strTmID = "A" Else strTmID = "B"
+        For k = 1 To 5
+            Select Case CLng(frm_7MThrows.ComponentByName("Img_Wurf" & strTmID & CStr(k)).BrushColor)
+                Case lngPShotSucc
+                    oData.Item("ShootType_" & strTmID & "_" & CStr(k)) = 1
+                Case lngPShotFail
+                    oData.Item("ShootType_" & strTmID & "_" & CStr(k)) = 2
+                Case Else ' deaktiviert
+                    oData.Item("ShootType_" & strTmID & "_" & CStr(k)) = 0
+            End Select
+        Next
+    Next
+    oData.Item("Score_Shift") = CNumType(frm_7MThrows.edtShift.Text, vbInteger, 1, null, 1)
+    ALLTV.TV__Show_Penalties oData
+
+end sub
+
+sub frm_7MThrows_chb_AutoPenAddClick (Sender)
+    frm_7MThrows.Btn_PenaltiesShow.Visible  = NOT frm_7MThrows.chb_AutoPenAdd.Checked
+    frm_7MThrows.Btn_ClearGrafik.Visible    = NOT frm_7MThrows.chb_AutoPenAdd.Checked
+end sub
+
+sub frm_7MThrows_btn_Reset1Click (Sender)
+    if msgbox("No Undo available. Really?", vbYesNo) <> vbYes then exit sub
+
+    for i = 1 to 4
+        frm_7MThrows.ComponentByName("Img_WurfA" & CStr(i)).BrushColor = frm_7MThrows.ComponentByName("Img_WurfA" & CStr(i+1)).BrushColor
+        frm_7MThrows.ComponentByName("Img_WurfB" & CStr(i)).BrushColor = frm_7MThrows.ComponentByName("Img_WurfB" & CStr(i+1)).BrushColor
+    next
+    frm_7MThrows.ComponentByName("Img_WurfA5").BrushColor = lngPShotOff
+    frm_7MThrows.ComponentByName("Img_WurfB5").BrushColor = lngPShotOff
+    
+    frm_7MThrows.edtShift.Text = CNumType(frm_7MThrows.edtShift.Text, vbInteger, 1, null, 1)+1
+end sub
+
+</script_body>
+</script>

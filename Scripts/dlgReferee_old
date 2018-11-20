@@ -1,0 +1,51 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+Sub TV__ShowReferee (Sender)
+
+    If Sender.Name = "Btn_ShowReferee" Then
+       bShowAll = False
+       
+    Else
+       bShowAll = True
+
+    End If
+
+    oData.Item("REFNAME11") = dlgReferee.ed_Name1.Text
+    oData.Item("REFNAME12") = dlgReferee.ed_Name2.Text
+    sNoc = Trim(dlgReferee.ed_IOC.Text)
+    if sNOC <> "" Then sNOC = "(" & sNOC & ")"
+    oData.Item("REFNOC") = sNOC
+
+    oData.Item("REFNAME21") = dlgReferee.ed_Name3.Text
+    oData.Item("REFNAME22") = dlgReferee.ed_Name4.Text
+    oData.Item("REFNAME31") = dlgReferee.ed_Name5.Text
+    oData.Item("REFNAME32") = dlgReferee.ed_Name6.Text
+
+    oData.Item("REFNAME41") = dlgReferee.ed_Name7.Text
+    oData.Item("REFNAME42") = dlgReferee.ed_Name8.Text
+    oData.Item("REFNAME51") = dlgReferee.ed_Name9.Text
+    oData.Item("REFNAME52") = dlgReferee.ed_Name10.Text
+
+
+    oData.Item("REF_SHOWALL") = bShowAll
+
+    Titel1 = dlgReferee.ed_Titel.Text
+    Titel2 = dlgReferee.ed_Zusatz1.Text
+    Titel3 = dlgReferee.ed_Zusatz2.Text
+
+
+    If dlgReferee.opt_Show4Names.Checked AND bShowAll Then
+       oData.Item("REF_COUNT") = 4
+       Titel2 = Titel2 & ":"
+    Else
+       oData.Item("REF_COUNT") = 2
+    End If
+
+
+    AllTV.TV__Referees oData, Titel1, Titel2, Titel3
+End Sub
+
+</script_body>
+</script>

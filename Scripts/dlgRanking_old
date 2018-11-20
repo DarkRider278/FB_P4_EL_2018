@@ -1,0 +1,50 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+Sub frm_Tabelle_LoadData (Sender)
+    Tsp.SetRankPos TSP_First
+
+    frm_Tabelle_ClearGrid Sender
+
+    For k = 1 To TSP.GetRecordCount(TSP_Rank)
+
+        strTmName =  GetNameTranslation("T",  TSP.GetRank(TSP_team_id), TSP_short_name)
+        
+        dlgRanking.Grid_Tabelle1.Cells(k, 0) = EmptyToZero(TSP.GetRank(TSP_rank))
+        dlgRanking.Grid_Tabelle1.Cells(k, 1) = TSP.GetRank(TSP_TEAMInfo, "Logo")
+        dlgRanking.Grid_Tabelle1.Cells(k, 2) = TSP.GetRank(TSP_team_name)
+        
+        dlgRanking.ComponentByName("edt_Team_" & k ).Text = strTmName' TSP.GetRank(TSP_team_id)
+
+        iTore1 = EmptyToZero(TSP.GetRank(TSP_score_a))
+        iTore2 = EmptyToZero(TSP.GetRank(TSP_score_b))
+
+        dlgRanking.Grid_Tabelle1.Cells(k, 3) = TSP.GetRank(TSP_games)
+        dlgRanking.Grid_Tabelle1.Cells(k, 4) = TSP.GetRank(TSP_won)
+        dlgRanking.Grid_Tabelle1.Cells(k, 5) = TSP.GetRank(TSP_draw)
+        dlgRanking.Grid_Tabelle1.Cells(k, 6) = TSP.GetRank(TSP_lost)
+        dlgRanking.Grid_Tabelle1.Cells(k, 7) = iTore1
+        dlgRanking.Grid_Tabelle1.Cells(k, 8) = iTore2
+        dlgRanking.Grid_Tabelle1.Cells(k, 9) = iTore1 & ":" & iTore2
+        dlgRanking.Grid_Tabelle1.Cells(k, 10) = EmptyToZero(TSP.GetRank(TSP_points_plus))
+
+        TSP.SetRankPos TSP_Next
+    Next
+end sub
+
+Sub frm_Tabelle_ClearGrid (Sender)
+    For k = 1 To 8
+        For l = 0 to 11
+            dlgRanking.Grid_Tabelle1.Cells(k, l) = ""
+        Next
+    Next
+End Sub
+
+Sub dlgRanking_Btn_Show1Click (Sender)
+    AllTV.TV__FP_Ranking
+End Sub
+
+
+</script_body>
+</script>

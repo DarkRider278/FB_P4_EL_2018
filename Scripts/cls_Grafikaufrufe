@@ -1,0 +1,896 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+Class cls_Grafikaufrufe
+ Dim obj_TVList()
+ Public int_TVCount
+ 
+
+    Private Sub Class_Initialize
+       TV_InitConnections
+    End Sub
+
+    Private Sub Class_Terminate
+
+    End Sub
+
+    Public Sub TV__ShowDSS()
+
+    End Sub
+    
+    public sub TV__Kill_Bill
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If obj_TVList(i).TVContent > 0 Then
+                 obj_TVList(i).Kill_Bill
+              End If
+           End If
+       Next
+    end sub
+
+    'Globale Clearroutine
+    Public Sub TV__ClearAll
+       bConnFound = False
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If obj_TVList(i).TVContent > 0 Then
+                 bConnFound = True
+                 obj_TVList(i).ClearAll
+              End If
+           End If
+       Next
+
+       If bConnFound Then
+'           CC.SF.Wait 1000
+'           For i = 0 to int_TVCount
+'               If not obj_TVList(i) is Nothing Then
+'                  If obj_TVList(i).TVContent > 0 Then
+'                     bConnFound = True
+'                     obj_TVList(i).ClearPreview
+'                  End If
+'               End If
+'           Next
+       End If
+    End Sub
+
+    Public Sub TV__PostMatch()
+
+       GetTeamData
+       Place = pgMain.ed_Place.Text
+
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+                 If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                     bConnFound = True
+                     oData.item("TEXT") = dlg_PostMatch.Memo1.Lines.Text
+                     obj_TVList(i).FP_PreMatch oData
+                 End if
+
+           End If
+       Next
+
+       If bConnFound Then AllTV.TV__Anzeigen True
+    End Sub
+
+    Public Sub TV__Anzeigen(ByVal InMessage)
+       If InMessage Then
+          strMsg = Msgbox("Grafik anzeigen?", vbOkCancel, AppName)
+       Else
+          strMsg = vbOk
+       End If
+
+       If strMsg = vbOk Then
+          bConnFound = False
+          For i = 0 to int_TVCount
+            If not obj_TVList(i) is Nothing Then
+               bConnFound = True
+               obj_TVList(i).Anzeigen
+            End If
+          Next
+
+          If bConnFound Then
+             CC.SF.ShowSplashForm "Animation läuft .... ", clYellow
+             CC.SF.WaitAsyn 500
+             cc.SF.HideSplashForm
+
+             bContinue = True
+          End If
+       Else
+          For i = 0 to int_TVCount
+            If not obj_TVList(i) is Nothing Then
+               obj_TVList(i).ClearPreview
+            End If
+          Next
+          bContinue = False
+       End If
+    End Sub
+
+    Public Function TV_InitConnections()
+        dim i
+        ReDim obj_TVList(3)
+        int_TVCount = -1
+        
+        For i = 1 to 4
+            Set obj_TVList(i-1) = Nothing
+            intConnIdx = pnConnections.ComponentByName("cmb_Conn_" & i).ItemIndex      'ausgewählte Maschine
+            If intConnIdx <> - 1 Then
+              If CC.TVConnections.Connections(intConnIdx).Active Then             'Verbindung Activ?
+                  If pnConnections.ComponentByName("opt_Use" & CStr(i)).Checked Then   'Verbindung verwenden?
+                     int_TVCount = int_TVCount + 1
+                     Set obj_TVList(int_TVCount)        = New cls__TV_VIZ_EuroLeague_2018_2019
+                     Set obj_TVList(int_TVCount).TVObj  = CC.TVConnections.Connections(intConnIdx).ScriptInterface
+                     obj_TVList(int_TVCount).TVContent  = pnConnections.ComponentByName("cmb_ConnType_" & CStr(i)).ItemIndex
+                     obj_TVList(int_TVCount).TVLanguage = pnConnections.ComponentByName("cmb_Lang_" & CStr(i)).ItemIndex
+                  End If
+              End If
+            End If
+        Next
+
+        If int_TVCount < 0 Then
+            DbgErr "No proper and connected Viz provider found."
+            TV_InitConnections = False
+        else
+            TV_InitConnections = True
+        End If
+    End Function
+
+    Public Sub TV__InitLayouts()
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              bConnFound = True
+              obj_TVList(i).Init_Layouts
+           End If
+       Next
+    End Sub
+    
+    Public Sub TV__HideAggScore()
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 1 Then  'Nicht Grafikfeed allein
+                 bConnFound = True
+                 obj_TVList(i).Hide_AggScore
+              End If
+           End If
+       Next
+    End Sub
+
+    Public Sub TV__ShowAggScore(ByRef Data)
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 1 Then  'Nicht Grafikfeed allein
+                 bConnFound = True
+                 obj_TVList(i).Show_AggScore Data
+              End If
+           End If
+       Next
+    End Sub
+
+    Public Sub TV__HidePermScore()
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 1 Then  'Nicht Grafikfeed allein
+                 bConnFound = True
+                 obj_TVList(i).Hide_PermScore
+              End If
+           End If
+       Next
+    End Sub
+
+    Public Sub TV__ShowPermScore(ByRef Data)
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 1 Then  'Nicht Grafikfeed allein
+                 bConnFound = True
+                 obj_TVList(i).Show_PermScore Data
+              End If
+           End If
+       Next
+    End Sub
+
+    Public Sub TV__Update_MainScore()
+       GetTeamData
+       
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 1 Then  'Nicht Grafikfeed allein
+                 bConnFound = True
+                 obj_TVList(i).Update_MainScore oData
+              End If
+           End If
+       Next
+    End Sub
+
+
+    Public Sub TV__Start_MainClock(Data)
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              'If not obj_TVList(i).TVContent = 1 Then  'Nicht Grafikfeed allein
+                 bConnFound = True
+                 obj_TVList(i).Start_MainClock Data
+              'End If
+           End If
+       Next
+    End Sub
+
+    Public Sub TV__Stop_MainClock(Data)
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              'If not obj_TVList(i).TVContent = 1 Then  'Nicht Grafikfeed allein
+                 bConnFound = True
+                 obj_TVList(i).Stop_MainClock Data
+              'End If
+           End If
+       Next
+    End Sub
+
+    Public Sub TV__OnAdditionalTime()
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 1 Then  'Nicht Grafikfeed allein
+                 bConnFound = True
+                 obj_TVList(i).OnAdditionalTime
+              End If
+           End If
+       Next
+    End Sub
+
+
+    Public Sub TV__Show_DSS_Zusatz(Data)
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 1 Then  'Nicht Grafikfeed allein
+                 bConnFound = True
+                 Data.item("COACH_FUNCTION") = GetString(oData.Item("COACH_DB_FUNCTION"), obj_TVList(i).TVLanguage)
+                 obj_TVList(i).Show_Dss_Zusatz Data
+              End If
+           End If
+       Next
+    End Sub
+
+    Public Sub TV__Hide_DSS_Zusatz()
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 1 Then  'Nicht Grafikfeed allein
+                 bConnFound = True
+                 obj_TVList(i).Hide_DSS_Zusatz
+              End If
+           End If
+       Next
+    End Sub
+    
+
+    Public Sub TV__Referees(ByRef oData, ByVal Titel1, ByVal Titel2, ByVal Titel3)
+
+       GetTeamData
+       Place = pgMain.ed_Place.Text
+
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                 bConnFound = True
+                 oData.item("REF_TITLE1") = GetLangTxt(Titel1, obj_TVList(i).TVLanguage)
+                 oData.item("REF_TITLE2") = GetLangTxt(Titel2, obj_TVList(i).TVLanguage)
+                 oData.item("REF_TITLE3") = GetLangTxt(Titel3, obj_TVList(i).TVLanguage)
+
+                 obj_TVList(i).LT_Referees oData
+
+              End If
+           End If
+       Next
+
+       If bConnFound Then AllTV.TV__Anzeigen True
+    End Sub
+
+
+    Public Sub TV__FP_Ranking()
+       bConnFound = False
+
+       For i = 1 to dlgRanking.Grid_Tabelle1.RowCount - 1
+           oData.Item("RANKING_RANK" & i)  = dlgRanking.Grid_Tabelle1.Cells(i, 0)
+           oData.Item("RANKING_LOGO" & i)  = dlgRanking.Grid_Tabelle1.Cells(i, 1)
+           oData.Item("RANKING_TNAME" & i) = trim(dlgRanking.ComponentByName("edt_Team_" & i ).Text)
+           IF oData.Item("RANKING_TNAME" & i) = "" THEN oData.Item("RANKING_TNAME" & i) = dlgRanking.Grid_Tabelle1.Cells(i, 2) ' falls Übersetzung nicht vorhanden, dann regulären Namen aus Grid verwenden
+           oData.Item("RANKING_GAMES" & i) = dlgRanking.Grid_Tabelle1.Cells(i, 3)
+           oData.Item("RANKING_WON" & i)   = dlgRanking.Grid_Tabelle1.Cells(i, 4)
+           oData.Item("RANKING_DRAW" & i)  = dlgRanking.Grid_Tabelle1.Cells(i, 5)
+           oData.Item("RANKING_LOST" & i)  = dlgRanking.Grid_Tabelle1.Cells(i, 6)
+           oData.Item("RANKING_GOALSFOR" & i) = dlgRanking.Grid_Tabelle1.Cells(i, 7)
+           oData.Item("RANKING_GOALSAGAINST" & i) = dlgRanking.Grid_Tabelle1.Cells(i, 8)
+           oData.Item("RANKING_DIFF" & i) = dlgRanking.Grid_Tabelle1.Cells(i, 9)
+           oData.Item("RANKING_PTS" & i)  = dlgRanking.Grid_Tabelle1.Cells(i, 10)
+           oData.Item("RANKING_HL" & i)   = dlgRanking.Grid_Tabelle1.Cells(i, 11)
+       Next
+       oData.Item("RANKING_LINES") = 4
+
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                 bConnFound = True
+
+                 strTitle = dlgRanking.ed_Titel1.Text
+                 oData.item("RANKING_TITLE") = GetLangTxt(strTitle, obj_TVList(i).TVLanguage)
+
+                 For k = 1 to 7
+                     oData.item("RANKING_TITLE_" & k) = GetString("TABTITLE_COL" & k, obj_TVList(i).TVLanguage)
+                 Next
+
+                 obj_TVList(i).FP_Ranking oData
+
+              End If
+           End If
+       Next
+
+       If bConnFound Then AllTV.TV__Anzeigen True
+    End Sub
+
+
+    Public Sub TV__ReservePlayer(ByRef oData)
+
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                 bConnFound = True
+                 oData.item("RESERVE_TITEL1") = GetString("TITEL_RESERVE_SPIELER", obj_TVList(i).TVLanguage)
+                 oData.item("RESERVE_TITEL2") = GetString("TITEL_RESERVE_TRAINER", obj_TVList(i).TVLanguage)
+                 oData.item("COACH1_FUNCTION") = GetString(oData.Item("COACH_DB1_FUNCTION"), obj_TVList(i).TVLanguage)
+                 oData.item("COACH2_FUNCTION") = GetString(oData.Item("COACH_DB2_FUNCTION"), obj_TVList(i).TVLanguage)
+                 obj_TVList(i).FP_ReservePlayer oData
+
+              End If
+           End If
+       Next
+
+       If bConnFound Then AllTV.TV__Anzeigen True
+    End Sub
+
+
+    Public Sub TV__NumericLineup(ByRef oData)
+
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                 bConnFound = True
+                 oData.item("COACH1_FUNCTION") = GetString(oData.Item("COACH_DB1_FUNCTION"), obj_TVList(i).TVLanguage)
+                 oData.item("COACH2_FUNCTION") = GetString(oData.Item("COACH_DB2_FUNCTION"), obj_TVList(i).TVLanguage)
+
+                 'GetString(oData.Item("LT_COACH_FUNCTION"), obj_TVList(i).TVLanguage)
+                 obj_TVList(i).FP_NumericLineup oData
+              End If
+           End If
+       Next
+
+       If bConnFound Then AllTV.TV__Anzeigen True
+    End Sub
+
+    Public Sub TV__FP_NUM_TAC_LINEUP(ByRef oData)
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                 bConnFound = True
+                 oData.item("COACH1_FUNCTION") = GetString(oData.Item("COACH_DB1_FUNCTION"), obj_TVList(i).TVLanguage)
+                 oData.item("COACH2_FUNCTION") = GetString(oData.Item("COACH_DB2_FUNCTION"), obj_TVList(i).TVLanguage)
+                 obj_TVList(i).FP_NUM_TAC_LINEUP oData
+              End If
+           End If
+       Next
+
+       If bConnFound Then
+            AllTV.TV__Anzeigen True
+            cc.sf.wait 1500
+            bConnFound = false
+            For i = 0 to int_TVCount
+               If not obj_TVList(i) is Nothing Then
+                  If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                     bConnFound = True
+                     obj_TVList(i).FP_TactLineupChange oData
+                  End If
+               End If
+           Next
+           IF bConnFound THEN
+               IF msgBox("Rotation ?", vbOkCancel, "QUESTION") = vbOK THEN
+                    AllTV.TV__Anzeigen False
+               END IF
+           END IF
+        END IF
+    End Sub
+
+
+    Public Sub TV__ShowStudioBG()
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                 bConnFound = True
+                 obj_TVList(i).Show_StudioBG
+              End If
+           End If
+       Next
+
+       If bConnFound Then AllTV.TV__Anzeigen True
+    End Sub
+
+    Public Sub TV__ReplayReverse(Sender)
+       bConnFound = False
+
+       If Sender.Name = "Btn_Replay" Then
+          Tmp = "REPLAY"
+       Elseif Sender.Name = "Btn_Reverse" Then
+          Tmp = "REVERSE"
+       End If
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                 bConnFound = True
+                 obj_TVList(i).Show_ReplayReverse Tmp
+              End If
+           End If
+       Next
+
+       If bConnFound Then AllTV.TV__Anzeigen True
+    End Sub
+
+    Public Sub TV__Title()
+
+       GetTeamData
+       Place = pgMain.ed_Place.Text
+       
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                 bConnFound = True
+                 oData.item("GAME_PLACE") = GetLangTxt(Place, obj_TVList(i).TVLanguage)
+                 obj_TVList(i).FP_Title oData
+              End If
+           End If
+       Next
+
+       If bConnFound Then AllTV.TV__Anzeigen True
+    End Sub
+    
+    PUBLIC SUB TV__VTStatistics (Data)
+        bConnFound = False
+
+        For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                 bConnFound = True
+                 obj_TVList(i).VT_Statistics Data
+              End If
+           End If
+        Next
+
+        If bConnFound Then AllTV.TV__Anzeigen True
+    END SUB
+    
+    PUBLIC SUB TV__VTKnockOutTree (Data)
+        bConnFound = False
+
+        For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                 bConnFound = True
+                 obj_TVList(i).VT_KnockOutTree Data
+              End If
+           End If
+        Next
+
+        If bConnFound Then AllTV.TV__Anzeigen True
+    END SUB
+    
+    Public Sub TV__LT_Substitution(Data)
+
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                 bConnFound = True
+                 obj_TVList(i).LT_Substitution Data
+              End If
+           End If
+       Next
+
+        If bConnFound Then
+            AllTV.TV__Anzeigen True
+            bConnFound = false
+          '  For i = 0 to int_TVCount
+'               If not obj_TVList(i) is Nothing Then
+'                  If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+'                     bConnFound = True
+'                     obj_TVList(i).LT_SubstitutionChange Data
+'                  End If
+'               End If
+'           Next
+           'IF bConnFound THEN
+'               IF msgBox("Change?", vbOkCancel, "QUESTION") = vbOK THEN
+'                    AllTV.TV__Anzeigen False
+'               END IF
+'           END IF
+        END IF
+       
+    End Sub
+
+
+    Public Sub TV__LT_KickOff()
+       GetTeamData
+       iPeriod = TSP.GetTime(TSP_HalfTime)
+       oData.Item("MAINTIME") = TSP.GetTime(TSP_Time, 0)
+       cc.sf.debugtext oData.Item("MAINTIME")
+       If iPeriod = 1 Then
+          iLimit = 2700
+       Elseif iPeriod = 3 Then
+          iLimit = 5400
+       Elseif iPeriod = 4 Then
+          iLimit = 6300
+       Elseif iPeriod = 5 Then
+          iLimit = 7200
+       End If
+
+       oData.Item("MAINTIME_LIMIT") = iLimit
+       oData.Item("PERIOD") = iPeriod
+
+
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                 bConnFound = True
+
+                 obj_TVList(i).LT_Kickoff oData
+              End If
+           End If
+       Next
+
+       If bConnFound Then AllTV.TV__Anzeigen True
+    End Sub
+
+    Public Sub TV__LT_Score_Scorer()
+
+       GetTeamData
+       iPeriod = TSP.GetTime(TSP_HalfTime)
+       oData.Item("MAINTIME") = TSP.GetTime(TSP_Time, 0)
+
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                 bConnFound = True
+                 oData.Item("TXT_PERIOD") = GetString("ABSCHNITT_" & iPeriod, obj_TVList(i).TVLanguage)
+                 oData.Item("INT_PERIOD") = iPeriod
+                 obj_TVList(i).LT_Score_Scorer oData
+              End If
+           End If
+       Next
+
+       If bConnFound Then AllTV.TV__Anzeigen True
+    End Sub
+    
+    Public Sub TV__LT_Score()
+
+       GetTeamData
+       iPeriod = TSP.GetTime(TSP_HalfTime)
+       oData.Item("MAINTIME") = TSP.GetTime(TSP_Time, 0)
+       oData.Item("INFO") = AutoText(oData, oData.Item("INFO"))
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                 bConnFound = True
+                 oData.Item("TXT_PERIOD") = GetString("ABSCHNITT_" & iPeriod, obj_TVList(i).TVLanguage)
+                 oData.Item("INT_PERIOD") = iPeriod
+                 obj_TVList(i).LT_Score oData
+              End If
+           End If
+       Next
+
+       If bConnFound Then AllTV.TV__Anzeigen True
+    End Sub
+
+
+    Public Sub TV__FP_TactLineup()
+       GetTeamData
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                 bConnFound = True
+                 obj_TVList(i).FP_TactLineup oData
+              End If
+           End If
+       Next
+
+
+       If bConnFound Then
+            AllTV.TV__Anzeigen True
+            cc.sf.wait 1500
+            bConnFound = false
+            For i = 0 to int_TVCount
+               If not obj_TVList(i) is Nothing Then
+                  If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                     bConnFound = True
+                     obj_TVList(i).FP_TactLineupChange oData
+                  End If
+               End If
+           Next
+           'IF bConnFound THEN
+'               IF msgBox("Rotation ?", vbOkCancel, "QUESTION") = vbOK THEN
+'                    AllTV.TV__Anzeigen False
+'               END IF
+'           END IF
+        END IF
+        
+        
+        
+    End Sub
+    
+    Public Sub TV__FP_TactLineupUpdate()
+       Team = UCASE(split(Lineup.ActiveLineup)(1))
+       if Team = "A" then
+            LineupID = Lineup_A
+
+       else
+        LineupID = Lineup_B
+
+       end if
+       'Lineup_ACT
+       bConnFound = False
+       oData.Item("Curr") = Lineup.GetLastChangedPlayer
+       oData.Item("myX")  = MakeNumber(Lineup.GetPlayer(Lineup_Name_X, oData.Item("Curr"),LineupID , "True"),1,0,"",-1)
+       oData.Item("myY")  = MakeNumber(Lineup.GetPlayer(Lineup_Name_Y, oData.Item("Curr"), LineupID, "True"),1,0,"",-1)
+       
+       
+       IF oData.Item("myX") < 0 OR oData.Item("myY") <0 THEN
+            cc.SF.DebugText "Koordinaten für Spieler "& oData.Item("Curr") &" konnten nicht ermittelt (" & Lineup.GetPlayer(Lineup_Name_X, oData.Item("Curr"), Lineup_ACT, "True")&"/"&Lineup.GetPlayer(Lineup_Name_Y, oData.Item("Curr"), Lineup_ACT, "True") & ")werden. Bitte Linup aktualisieren und neu versuchen!"
+            EXIT SUB
+        ELSE
+            cc.SF.DebugText oData.Item("Curr") &": " & oData.Item("myX") & "/" & oData.Item("myY")
+        END IF
+    
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                 bConnFound = True
+                 obj_TVList(i).FP_TactLineupLiveUpdate oData
+              End If
+           End If
+       Next
+   END SUB
+
+
+    Public Sub TV__PreMatch()
+
+       GetTeamData
+
+       Title1 = dlg_Prematch.ed_Titel.Text
+       Title2 = dlg_Prematch.ed_Titel1.Text
+       Title3 = dlg_Prematch.ed_Titel2.Text
+       bCountdown = dlg_Prematch.chk_ShowCountdownClock.Checked
+
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                 bConnFound = True
+                 oData.item("PREMATCH_1") = GetLangTxt(Title1, obj_TVList(i).TVLanguage)
+                 oData.item("PREMATCH_2") = trim(GetLangTxt(Title2, obj_TVList(i).TVLanguage))
+                 oData.item("PREMATCH_3") = trim(GetLangTxt(Title3, obj_TVList(i).TVLanguage))
+                 oData.item("PREMATCH_COUNTDOWN") = bCountdown
+                 oData.item("PRETIME") = TSP.GetTime(TSP_Time, 0)
+                 oData.item("SETTIME") = false
+                 obj_TVList(i).LT_PreMatch oData
+              End If
+           End If
+       Next
+
+       If bConnFound Then AllTV.TV__Anzeigen True
+    End Sub
+    
+    Public Sub TV__PreMatchSet()
+       bConnFound = False
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                 bConnFound = True
+                 'oData.item("PREMATCH_1") = GetLangTxt(Title1, obj_TVList(i).TVLanguage)
+                 'oData.item("PREMATCH_2") = trim(GetLangTxt(Title2, obj_TVList(i).TVLanguage))
+                 'oData.item("PREMATCH_3") = trim(GetLangTxt(Title3, obj_TVList(i).TVLanguage))
+                 'oData.item("PREMATCH_COUNTDOWN") = bCountdown
+                 'oData.item("PRETIME") = TSP.GetTime(TSP_Time, 0)
+                 oData.item("SETTIME") = true
+                 oData.item("SETTIMERUNNING") =  dlg_Prematch.clkCD.ClockEnabled
+                 oData.item("SETTIMEVALUEMS") = dlg_Prematch.clkCD.Miliseconds / 1000
+                 oData.item("SETTIMEVALUE") = Replace(dlg_Prematch.clkCD.Seconds + (dlg_Prematch.clkCD.Minutes * 60) + (dlg_Prematch.clkCD.Hours * 3600) + oData.item("SETTIMEVALUEMS"),",",".")
+
+                 obj_TVList(i).LT_PreMatch oData
+              End If
+           End If
+       Next
+    End Sub
+
+
+    Public Sub TV__LowerThird(ByRef oData)
+       bConnFound = False
+       
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+              
+                 bConnFound = True
+
+                 Select Case oData.Item("LT_TYPE")
+                     Case "LT_COACH"
+                         oData.item("LT_INFO1") = GetString(oData.Item("LT_COACH_FUNCTION"), obj_TVList(i).TVLanguage)
+
+                     Case "LT_3_LINE"
+                         oData.item("LT_INFO1") = GetLangTxt(oData.item("LT_LINE1"), obj_TVList(i).TVLanguage)
+                         oData.item("LT_INFO2") = GetLangTxt(oData.item("LT_LINE2"), obj_TVList(i).TVLanguage)
+                         oData.item("LT_INFO3") = GetLangTxt(oData.item("LT_LINE3"), obj_TVList(i).TVLanguage)
+
+                     Case "LT_2_LINE"
+                         oData.item("LT_INFO1") = GetLangTxt(oData.item("LT_LINE1"), obj_TVList(i).TVLanguage)
+                         oData.item("LT_INFO2") = GetLangTxt(oData.item("LT_LINE2"), obj_TVList(i).TVLanguage)
+
+                     Case "LT_1_LINE"
+                         oData.item("LT_INFO1") = GetLangTxt(oData.item("LT_LINE1"), obj_TVList(i).TVLanguage)
+
+                 End Select
+
+                 obj_TVList(i).LowerThird oData
+              End If
+           End If
+       Next
+
+       If bConnFound Then AllTV.TV__Anzeigen True
+    End Sub
+
+    Public Sub TV__E2E()
+
+       GetTeamData
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                 bConnFound = True
+                 oData.item("VENUE") = twE2ETest.edt_Venue.Text
+                 oData.item("INFO") = twE2ETest.edt_Info.Text
+                 oData.item("CLOCKADD") = twE2ETest.edt_ClockAdd.Text
+                 obj_TVList(i).BX_E2E oData
+              End If
+           End If
+       Next
+
+       If bConnFound Then AllTV.TV__Anzeigen True
+    End Sub
+    
+    Public sub TV__FreeBB()
+        GetTeamData
+        bConnFound = False
+
+        For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                 bConnFound = True
+
+                 oData.item("INFO") = twFreeBB.edtText.Text
+                 obj_TVList(i).BB_FREE oData
+              End If
+           End If
+        Next
+
+        If bConnFound Then AllTV.TV__Anzeigen True
+    end sub
+
+    Public Sub TV__Weather(ispc)
+       cc.sf.DebugText ispc
+       GetTeamData
+       bConnFound = False
+       Place = pgMain.ed_Place.Text
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 0 Then  'Nicht Uhrfeed allein
+                 bConnFound = True
+                 oData.item("TEMP") = twWeather.edt_Temp.Text
+                 oData.item("HUM") =  twWeather.edt_Hum.Text
+                 oData.item("WIND") = twWeather.edt_WindWpeed.Text
+                 oData.item("ICON") = twWeather.cmb_Icon.Text
+                 oData.item("GAME_PLACE") = GetLangTxt(Place, obj_TVList(i).TVLanguage)
+                 oData.item("GAME_PC") = GetString("PITCHCONDITION", obj_TVList(i).TVLanguage)
+                 oData.item("ISPC") =ispc
+                 obj_TVList(i).LT_Weather oData
+              End If
+           End If
+       Next
+
+       If bConnFound Then AllTV.TV__Anzeigen True
+    End Sub
+
+
+    Public Sub TV__Show_Penalties(Data)
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 1 Then  'Nicht Grafikfeed allein
+                 bConnFound = True
+                 obj_TVList(i).Show_Penalties Data
+              End If
+           End If
+       Next
+
+    End Sub
+
+    Public Sub TV__Hide_Penalties(Data)
+       bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 1 Then  'Nicht Grafikfeed allein
+                 bConnFound = True
+                 obj_TVList(i).Show_Penalties Data
+              End If
+           End If
+       Next
+    End Sub
+
+    public Sub TV__DSS_Red_Card(r1,r2)
+    
+        bConnFound = False
+
+       For i = 0 to int_TVCount
+           If not obj_TVList(i) is Nothing Then
+              If not obj_TVList(i).TVContent = 1 Then  'Nicht Grafikfeed allein
+                 bConnFound = True
+                 obj_TVList(i).DSS_Red_Card r1,r2
+              End If
+           End If
+       Next
+    end sub
+
+End Class
+
+</script_body>
+</script>

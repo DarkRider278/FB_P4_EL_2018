@@ -1,0 +1,77 @@
+<script>
+<script_header>
+</script_header>
+<script_body>
+Sub dlg_Interview_Btn_ShowClick (Sender)
+
+    Name1 = dlg_Interview.ed_Name1.Text
+    Name2 = dlg_Interview.ed_Name2.Text
+    DressNR = dlg_Interview.ed_Nr.Text
+
+    bName = dlg_Interview.opt_ShowName.Checked
+
+    Info1 = dlg_Interview.ed_Zusatz.Text
+    bInfo1 = dlg_Interview.opt_ShowLine1.Checked
+
+    Info2 = dlg_Interview.ed_UTitel.Text
+    bInfo2 = dlg_Interview.opt_ShowLine2.Checked
+
+    Info3 = dlg_Interview.ed_UTitel1.Text
+    bInfo3 = dlg_Interview.opt_ShowLine3.Checked
+
+    Logo  = dlg_Interview.ed_logo.Text
+    bLogo = dlg_Interview.opt_ShowLogo.Checked
+
+    oData.Item("LT_NAME_1") = Name1
+    oData.Item("LT_NAME_2") = Name2
+    oData.Item("DRESSNR")   = DressNr
+
+    oData.Item("LT_LOGO") = Logo
+
+    If bInfo1 and bInfo2 and bInfo3 and (not bName) Then
+       oData.Item("LT_TYPE") = "LT_3_LINE"
+
+       oData.Item("LT_LINE1") = Info1
+       oData.Item("LT_LINE2") = Info2
+       oData.Item("LT_LINE3") = Info3
+
+    ElseIf bInfo1 and bInfo2 and (not bInfo3) and (not bName) Then
+       oData.Item("LT_TYPE") = "LT_2_LINE"
+
+       oData.Item("LT_LINE1") = Info1
+       oData.Item("LT_LINE2") = Info2
+
+    ElseIf bInfo1 and (not bInfo2) and (not bInfo3) and (not bName) Then
+       oData.Item("LT_TYPE") = "LT_1_LINE"
+       oData.Item("LT_LINE1") = Info1
+
+    ElseIf bInfo2 and (not bInfo1) and (not bInfo3) and (not bName) Then
+       oData.Item("LT_TYPE") = "LT_1_LINE"
+       oData.Item("LT_LINE1") = Info2
+
+    ElseIf bName And (not bInfo2) and (not bInfo1) and (not bInfo3) Then
+       oData.Item("LT_TYPE") = "LT_PLAYER_1_LINE"
+
+    ElseIf bName And bInfo1 and (not bInfo2) and (not bInfo3) Then
+       oData.Item("LT_TYPE") = "LT_PLAYER_2_LINE"
+       oData.Item("LT_LINE1") = Info1
+
+    ElseIf bName And bInfo1 and bInfo2 and (not bInfo3) Then
+       oData.Item("LT_TYPE") = "LT_PLAYER_3_LINE"
+       oData.Item("LT_LINE1") = Info1
+       oData.Item("LT_LINE2") = Info2
+    End If
+
+
+    AllTV.TV__LowerThird oData
+End Sub
+
+Sub dlg_Interview_Btn_LoadPlayerClick (Sender)
+    dlg_Interview.ed_Name1.Text = GetNameTranslation("P", TSP.GetTPlayer(TSP_player_id), TSP_first_name ) ' TSP.GetHPlayer(TSP_first_name)
+    dlg_Interview.ed_Name2.Text = GetNameTranslation("P", TSP.GetTPlayer(TSP_player_id), TSP_second_name ) ' TSP.GetHPlayer(TSP_second_name)
+    dlg_Interview.ed_logo.Text  = TSP.GetSTeam(TSP_logo)
+    dlg_Interview.ed_Nr.Text    = TSP.GetTPlayer(TSP_dress_nr)
+End Sub
+
+</script_body>
+</script>
