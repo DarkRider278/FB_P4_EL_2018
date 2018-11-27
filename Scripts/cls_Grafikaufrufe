@@ -420,11 +420,11 @@ Class cls_Grafikaufrufe
                   End If
                End If
            Next
-           IF bConnFound THEN
-               IF msgBox("Rotation ?", vbOkCancel, "QUESTION") = vbOK THEN
-                    AllTV.TV__Anzeigen False
-               END IF
-           END IF
+           'IF bConnFound THEN
+'               IF msgBox("Rotation ?", vbOkCancel, "QUESTION") = vbOK THEN
+'                    AllTV.TV__Anzeigen False
+'               END IF
+'           END IF
         END IF
     End Sub
 

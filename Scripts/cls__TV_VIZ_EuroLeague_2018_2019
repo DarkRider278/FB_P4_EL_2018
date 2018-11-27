@@ -352,29 +352,29 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
 
             CASE "FREETEXT2", "PLAYER_STAT"
                 If CBool(Data.Item("DSS_SHOWBALL")) Then
-                   GetPreview sDirector, "1.8", "BX_STAND"
+                   GetPreview sDirector, "0.98", "BX_STAND"
                 Else
-                   GetPreview sDirector, "1.8", "BX_STAND"
+                   GetPreview sDirector, "0.98", "BX_STAND"
                 End if
             CASE "CARD"
                 IF bCardChange then
-                    GetPreview Array("KARTE 1.8", "WECHSEL_KARTE 0.8", "ADDTIME 0.0"), "", "BX_STAND"
+                    GetPreview Array("KARTE 0.98", "WECHSEL_KARTE 1.66", "ADDTIME 0.0"), "", "BX_STAND"
                 else
-                    GetPreview Array("KARTE 1.8", "ADDTIME 0.0"), "", "BX_STAND"
+                    GetPreview Array("KARTE 0.98", "ADDTIME 0.0"), "", "BX_STAND"
                 end if
             CASE "GOAL", "COACH", "REFEREE"
-                GetPreview Array("INFO 1.8","ADDTIME 0.0"), "", "BX_STAND"
+                GetPreview Array("INFO 0.98","ADDTIME 0.0"), "", "BX_STAND"
             CASE "TEAMSTATS"
-                GetPreview Array("TEAMSTAT 1.8","ADDTIME 0.0"), "", "BX_STAND"
+                GetPreview Array("TEAMSTAT 0.98","ADDTIME 0.0"), "", "BX_STAND"
             CASE "P_CHANGE"
-                GetPreview Array("WECHSEL 1.8","ADDTIME 0.0"), "", "BX_STAND"
+                GetPreview Array("WECHSEL 0.98","ADDTIME 0.0"), "", "BX_STAND"
             CASE "TEAMSTATS"
-                GetPreview Array("TEAM_STAT 1.8","ADDTIME 0.0"), "", "BX_STAND"
+                GetPreview Array("TEAM_STAT 0.98","ADDTIME 0.0"), "", "BX_STAND"
             CASE "COOLING"
-                GetPreview Array("COOLING 1.8"), "", "BX_STAND"
+                GetPreview Array("COOLING 0.18"), "", "BX_STAND"
 
             CASE ELSE
-                GetPreview Array(sDirector & " 1.8","ADDTIME 0.0"),"", "BX_STAND"
+                GetPreview Array(sDirector & " 0.98","ADDTIME 0.0"),"", "BX_STAND"
         END SELECT
 
         If Msgbox("DSS Zusatz anzeigen", vbYesNo, AppName) = vbYes Then
@@ -614,7 +614,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
         Next
 
 
-        GetPreview sDirector, "1.8", sScene
+        GetPreview sDirector, "1.3", sScene
 
         Redim ActionList(2, 1)
         ActionList(1, 0) = sDirector
@@ -801,7 +801,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
         obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_1*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_1")
         obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_2*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_2")
 
-        GetPreview sDirector, "1.8", sScene
+        GetPreview sDirector, "1.0", sScene
 
         Redim ActionList(2, 1)
         ActionList(1, 0) = sDirector
@@ -821,7 +821,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
         'obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_1*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_1")
         'obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_2*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_2")
 
-        GetPreview sDirector, "1.8", sScene
+        GetPreview sDirector, "1.04", sScene
 
         Redim ActionList(2, 1)
         ActionList(1, 0) = sDirector
@@ -859,8 +859,11 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
         obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_1*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_1")
         obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_2*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_2")
 
-        GetPreview sDirector, "1.8", sScene
-
+        if Data.Item("ISPC") =true then
+            GetPreview sDirector, "0.68", sScene
+        else
+            GetPreview sDirector, "1.0", sScene
+        end if
         Redim ActionList(2, 1)
         ActionList(1, 0) = sDirector
         ActionList(1, 1) = sDirector
@@ -922,7 +925,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
             obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_2*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_2")
 
 
-            GetPreview sDirector, "1.8", sScene
+            GetPreview sDirector, "1.0", sScene
 
             Redim ActionList(2, 1)
             ActionList(1, 0) = sDirector
@@ -984,7 +987,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
 
         IF bInfo THEN SetText "DATA$txt_summary", UCase(strINFO)
 
-        GetPreview sDirector, "1.8", sScene
+        GetPreview sDirector, "1.04", sScene
 
         Redim ActionList(2, 1)
         ActionList(1, 0) = sDirector
@@ -1163,7 +1166,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
 
         'ShowDataObject Data
 
-        GetPreview sDirector, "1.8", sScene
+        GetPreview sDirector, "1.0", sScene
 
         Redim ActionList(2, 1)
         ActionList(1, 0) = sDirector
@@ -1772,7 +1775,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
            Next
         End If
 
-        GetPreview sDirector, "1.8", sScene
+        GetPreview sDirector, "1.3", sScene
 
         Redim ActionList(2, 1)
         ActionList(1, 0) = sDirector
@@ -1847,7 +1850,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
             END SELECT
         Next
 
-        GetPreview sDirector, "1.8", sScene
+        GetPreview sDirector, "1.3", sScene
 
         Redim ActionList(2, 1)
         ActionList(1, 0) = sDirector
@@ -2033,7 +2036,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
         'End Tactical Lineup
 
 
-        GetPreview sDirector, "1.8", sScene
+        GetPreview sDirector, "1.3", sScene
 
         Redim ActionList(2, 1)
         ActionList(0, 0) = "NUM_TAC_LINEUP"
@@ -2082,7 +2085,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
         '"SCENE*UEFA_EL_2012/scene/" & sScene &"*TREE*$clip_in*FUNCTION*imageClip*animPos SET 24"
         '"SCENE*UEFA_EL_2012/scene/" & sScene &"*TREE*$clip_out*FUNCTION*imageClip*animPos SET 0"
 
-        GetPreview sDirector, "1.8", sScene
+        GetPreview sDirector, "1.1", sScene
 
         Redim ActionList(2, 1)
         ActionList(1, 0) = sDirector
@@ -2106,7 +2109,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
         obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_1*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_1")
         obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo_2*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO_2")
 
-        GetPreview sDirector, "1.0", sScene
+        GetPreview sDirector, "1.3", sScene
 
         Redim ActionList(2, 1)
         ActionList(1, 0) = sDirector
@@ -2144,7 +2147,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
         SetText SubCont & "$txt_score_2", UCase(oData.Item("T_SCORE_2"))
         SetText SubCont & "$txt_summary", UCase(oData.Item("FREETEXT_FOOTER"))
 
-        GetPreview sDirector, "1.8", sScene
+        GetPreview sDirector, "1.1", sScene
 
         Redim ActionList(2, 1)
         ActionList(1, 0) = sDirector
@@ -2274,7 +2277,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
 
 
 
-        GetPreview sDirector, "1.0", sScene
+        GetPreview sDirector, "1.1", sScene
 
         Redim ActionList(2, 1)
         ActionList(1, 0) = sDirector
@@ -2336,7 +2339,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
         'SetImg "DATA$img_logo", s__LogoPath & "SMALL\" &
         obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO")
         
-        GetPreview sDirector, "1.8", sScene
+        GetPreview sDirector, "1.0", sScene
 
         Redim ActionList(2, 1)
         ActionList(1, 0) = sDirector
@@ -2603,7 +2606,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
         Next
         'obj__TV.SendCommand "RENDERER*MAIN_LAYER*STAGE*DIRECTOR*CHANGE*OFFSET SET 0.0"' & Replace(CNumType(pgLineUp.edtOffsetRot.Text, vbInteger, 0, null, 0)/1000,",",".")
 
-        GetPreview Array(sDirector & " 1.80", "TAC_SP_1 2.0", "TAC_SP_2 2.0", "TAC_SP_3 2.0", "TAC_SP_4 2.0", "TAC_SP_5 2.0", "TAC_SP_6 2.0", "TAC_SP_7 2.0", "TAC_SP_8 2.0", "TAC_SP_9 2.0", "TAC_SP_10 2.0", "TAC_SP_11 2.0"), "", sScene
+        GetPreview Array(sDirector & " 1.3", "TAC_SP_1 0.4", "TAC_SP_2 0.4", "TAC_SP_3 0.4", "TAC_SP_4 0.4", "TAC_SP_5 0.4", "TAC_SP_6 0.4", "TAC_SP_7 0.4", "TAC_SP_8 0.4", "TAC_SP_9 0.4", "TAC_SP_10 0.4", "TAC_SP_11 0.4"), "", sScene
 
         Redim ActionList(2, 1)
         ActionList(1, 0) = sDirector
