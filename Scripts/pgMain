@@ -23,8 +23,8 @@ Sub pgMain_Btn_ShowDSSClick (Sender)
         select case iPeriod
           case 1    iLimit = 2700
           case 3    iLimit = 5400
-          case 4    iLimit = 6300
-          case 5    iLimit = 7200
+          case 5    iLimit = 6300
+          case 7    iLimit = 7200
         end select
 
        ' IF TSP.GetTime(TSP_HalfTime) >= 6 THEN
@@ -513,9 +513,9 @@ Sub On_AdditionalTime()
        Tmp = True
     ElseIf iPeriod = 3 and iTime = 5400000 Then
        Tmp = True
-    ElseIf iPeriod = 4 and iTime = 6300000 Then
+    ElseIf iPeriod = 5 and iTime = 6300000 Then
        Tmp = True
-    ElseIf iPeriod = 5 and iTime = 7200000 Then
+    ElseIf iPeriod = 7 and iTime = 7200000 Then
        Tmp = True
     End If
 
@@ -722,6 +722,7 @@ Sub pgMain_Btn_FP_TabelleClick (Sender)
 end sub
 
 sub pgMain_Btn_PenaltiesClick (Sender)
+    frm_7MThrows_OnDisplayDialog 0
     frm_7MThrows.Visible= true
     frm_7MThrows.BringToFront
 end sub

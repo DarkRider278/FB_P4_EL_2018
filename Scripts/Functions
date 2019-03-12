@@ -204,10 +204,8 @@ Sub OnMainClockStartStop()
        iLimit = 2700
     Elseif iPeriod = 3 Then
        iLimit = 5400
-    Elseif iPeriod = 4 Then
-       iLimit = 6300
     Elseif iPeriod = 5 Then
-       iLimit = 7200
+       iLimit = 6300
     Elseif iPeriod = 7 Then
        iLimit = 7200
     Elseif iPeriod = 9 Then
@@ -244,12 +242,12 @@ Function GetAddTime(ByVal iTime, ByVal iPeriod)
           GetAddTime = iTime - 5400000
        End If
 
-    Elseif iPeriod = 4 Then
+    Elseif iPeriod = 5 Then
        If iTime >= 6300000 Then
           GetAddTime = iTime - 6300000
        End If
 
-    Elseif iPeriod = 5 Then
+    Elseif iPeriod = 7 Then
        If iTime >= 7200000 Then
           GetAddTime = iTime - 7200000
        End If
@@ -272,12 +270,12 @@ Function Check4InJury(ByVal iTime, ByVal iPeriod)
           Check4InJury = 5400000
        End If
 
-    Elseif iPeriod = 4 Then
+    Elseif iPeriod = 5 Then
        If iTime >= 6300000 Then
           Check4InJury = 6300000
        End If
 
-    Elseif iPeriod = 5 Then
+    Elseif iPeriod = 7 Then
        If iTime >= 7200000 Then
           Check4InJury = 7200000
        End If

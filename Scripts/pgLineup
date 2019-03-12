@@ -212,7 +212,8 @@ Sub PG3_Btn_ShowLineupClick (Sender, Button, Shift, X, Y)
     TSP.RestoreSelection
 
     oData.Item("CURR_TEAM") = UCase(TEAM)
-    
+    cc.sf.DebugText Team
+    cc.sf.DebugText TEAM
     AllTV.TV__FP_TactLineup
 end sub
 
