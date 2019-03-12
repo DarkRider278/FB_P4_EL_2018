@@ -558,9 +558,9 @@ Class cls_Grafikaufrufe
           iLimit = 2700
        Elseif iPeriod = 3 Then
           iLimit = 5400
-       Elseif iPeriod = 4 Then
-          iLimit = 6300
        Elseif iPeriod = 5 Then
+          iLimit = 6300
+       Elseif iPeriod = 7 Then
           iLimit = 7200
        End If
 

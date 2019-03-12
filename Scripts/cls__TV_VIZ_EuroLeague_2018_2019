@@ -277,7 +277,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
 
                obj__TV.SendCommand "RENDERER*FRONT_LAYER*TREE*$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("TEAMLOGO")
                obj__TV.ShowObject SubCont & "$ONOFF_LOGO"
-               
+               obj__TV.HideObject SubCont &  "$txt_name_1_1"
                SetText SubCont & "$txt_name_1_1",""' UCASE(Data.Item("FNAME"))
                SetText SubCont & "$txt_name_1_2", UCASE(Data.Item("NAME"))
                SetText SubCont & "$txt_bib",  Data.Item("NR") ' NEU
@@ -290,6 +290,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
                obj__TV.ShowObject SubCont & "$ONOFF_BALL"
                obj__TV.ShowObject SubCont & "$ONOFF_TITLE"
                SetText SubCont & "$txt_bib", Data.Item("NR")
+               obj__TV.HideObject SubCont &  "$txt_name_1_1"
                SetText SubCont & "$txt_name_1_1", ""
                SetText SubCont & "$txt_name_1_2", UCASE(Data.Item("NAME"))
                SetText SubCont & "$txt_titel",    UCase(Data.Item("INFO"))
@@ -302,6 +303,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
               obj__TV.HideObject SubCont & "$ONOFF_BALL"
               obj__TV.ShowObject SubCont & "$ONOFF_TITLE"
               SetText SubCont & "$txt_bib", Data.Item("NR")
+              obj__TV.HideObject SubCont &  "$txt_name_1_1"
               SetText SubCont & "$txt_name_1_1", ""
               SetText SubCont & "$txt_name_1_2", UCASE(Data.Item("NAME"))
               SetText SubCont & "$txt_titel", oData.Item("INFO")
@@ -314,7 +316,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
 
                obj__TV.SendCommand "RENDERER*FRONT_LAYER*TREE*$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("TEAMLOGO")
                obj__TV.ShowObject SubCont & "$ONOFF_LOGO"
-               
+               obj__TV.ShowObject SubCont &  "$txt_name_1_1"
                SetText SubCont & "$txt_name_1_1", UCASE(Data.Item("FNAME"))
                SetText SubCont & "$txt_name_1_2", UCASE(Data.Item("LNAME"))
                SetText SubCont & "$txt_team",  "" ' NEU
@@ -326,6 +328,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
                SubCont = "INFO"
                sDirector = "INFO"
                obj__TV.HideObject SubCont & "$ONOFF_BALL"
+               obj__TV.ShowObject SubCont &  "$txt_name_1_1"
                SetText SubCont & "$txt_name_1_1", UCASE(Data.Item("FNAME"))
                SetText SubCont & "$txt_name_1_2", UCASE(Data.Item("LNAME"))
                SetText SubCont & "$txt_team",  "" ' NEU
@@ -1080,15 +1083,22 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
         Next
 
        SELECT CASE Data.Item("INT_PERIOD")
-            CASE 2, 4, 6, 8, 10
+            case 4,6,8,9 ' lang
                 obj__TV.HideObject "ONOFF_HEADER$ONOFF_CLOCK"
-                obj__TV.ShowObject "ONOFF_HEADER$ONOFF_TEXT"
-            CASE ELSE
+                obj__TV.HideObject "ONOFF_HEADER$ONOFF_TEXT$SHORT"
+                obj__TV.ShowObject "ONOFF_HEADER$ONOFF_TEXT$LONG"
+            CASE 2, 10 'Kurz
+                obj__TV.HideObject "ONOFF_HEADER$ONOFF_CLOCK"
+                obj__TV.ShowObject "ONOFF_HEADER$ONOFF_TEXT$SHORT"
+                obj__TV.HideObject "ONOFF_HEADER$ONOFF_TEXT$LONG"
+            CASE ELSE  ' Uhr
                 obj__TV.ShowObject "ONOFF_HEADER$ONOFF_CLOCK"
-                obj__TV.HideObject "ONOFF_HEADER$ONOFF_TEXT"
+                obj__TV.HideObject "ONOFF_HEADER$ONOFF_TEXT$SHORT"
+                obj__TV.HideObject "ONOFF_HEADER$ONOFF_TEXT$LONG"
         END SELECT
 
-        SetText "ONOFF_HEADER$ONOFF_TEXT$txt_titel", UCase(Data.Item("TXT_PERIOD"))
+        SetText "ONOFF_HEADER$ONOFF_TEXT$SHORT$txt_titel", UCase(Data.Item("TXT_PERIOD"))
+        SetText "ONOFF_HEADER$ONOFF_TEXT$LONG$txt_titel", UCase(Data.Item("TXT_PERIOD"))
 
         'SetText "DATA$txt_score", Data.Item("T_SCORE_1") & " - " & Data.Item("T_SCORE_2")
         SetText "SCORE$txt_score_team1", Data.Item("T_SCORE_1")
@@ -1268,6 +1278,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
              else
                 SetText "DATA$txt_coach_" & k&"_1", UCase(Data.Item("COACH" & k & "_FNAME"))
                 eve.SendCommandEx("RENDERER*TREE*$"&"DATA$txt_coach_" & k&"_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 4.5")
+                if  UCase(Data.Item("COACH" & k & "_FNAME"))="" then  eve.SendCommandEx("RENDERER*TREE*$"&"DATA$txt_coach_" & k&"_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 0.0")
              end if
              SetText "DATA$txt_coach_" & k&"_2", UCase(Data.Item("COACH" & k & "_LNAME"))
              SetText "DATA$txt_sub_" & k, UCase( oData.item("COACH" & k & "_FUNCTION"))
@@ -1307,6 +1318,10 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
                                     eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 4.5")
                                     obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
                                     SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                    if  FName="" then
+                                        obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                        eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 0.0")
+                                    end if
                                 end if
                                  SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
                                  SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos", POS
@@ -1350,6 +1365,10 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
                                     eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 4.5")
                                     obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
                                     SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                    if  FName="" then
+                                        obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                        eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 0.0")
+                                    end if
                                 end if
                                  SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
                                  SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos", POS
@@ -1388,6 +1407,10 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
                                     eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 4.5")
                                     obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
                                     SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                    if  FName="" then
+                                        obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                        eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 0.0")
+                                    end if
                                 end if
                                  SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
                                  SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos", POS
@@ -1436,6 +1459,10 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
                                     eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 4.5")
                                     obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
                                     SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                    if  FName="" then
+                                        obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                        eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 0.0")
+                                    end if
                                 end if
                                  SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
                                  SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos", POS
@@ -1470,6 +1497,10 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
                                     eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 4.5")
                                     obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
                                     SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                    if  FName="" then
+                                        obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                        eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 0.0")
+                                    end if
                                 end if
                             SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
                              SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos", POS
@@ -1499,6 +1530,10 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
                                     eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 4.5")
                                     obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
                                     SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                    if  FName="" then
+                                        obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                        eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 0.0")
+                                    end if
                                 end if
                                  SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
                                  SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos", POS
@@ -1535,6 +1570,10 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
                                     eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 4.5")
                                     obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
                                     SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                    if  FName="" then
+                                        obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                        eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 0.0")
+                                    end if
                                 end if
                             SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
                              SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos", POS
@@ -1564,6 +1603,10 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
                                     eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 4.5")
                                     obj__TV.ShowObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
                                     SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1", FName
+                                    if  FName="" then
+                                        obj__TV.HideObject "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_1"
+                                        eve.SendCommandEx("RENDERER*TREE*$"&"DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2*FUNCTION*Autofollow*DEFAULT_DISTANCE SET 0.0")
+                                    end if
                                 end if
                                  SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_name_2", LName
                                  SetText "DATA$TEAM_" & k & "$ANI_ZEILE_" & intIndex & "$txt_pos", POS
@@ -2339,7 +2382,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
         'SetImg "DATA$img_logo", s__LogoPath & "SMALL\" &
         obj__TV.SendCommand "RENDERER*MAIN_LAYER*TREE*$img_logo*SCRIPT*INSTANCE*noc SET " & Data.Item("T_LOGO")
         
-        GetPreview sDirector, "1.0", sScene
+        GetPreview sDirector, "1.06", sScene
 
         Redim ActionList(2, 1)
         ActionList(1, 0) = sDirector
@@ -2854,12 +2897,13 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
                strPrevCmd = strPrevCmd & PrevData(i) & " "
            Next
            strPrevCmd = Trim(strPrevCmd)
-           obj__TV.SendCommand "RENDERER PREVIEW SCENE*" & s__VizPath & "/" & sScene & " VIDEO " & strPrevCmd
+           'obj__TV.SendCommand "RENDERER PREVIEW SCENE*" & s__VizPath & "/" & sScene & " VIDEO " & strPrevCmd
         Else
-            obj__TV.SendCommand "RENDERER PREVIEW SCENE*" & s__VizPath & "/" & sScene & " VIDEO " & PrevData & " " & intFrame
-
+            'obj__TV.SendCommand "RENDERER PREVIEW SCENE*" & s__VizPath & "/" & sScene & " VIDEO " & PrevData & " " & intFrame
+            strPrevCmd= PrevData & " " & intFrame
         End If
-
+           obj__TV.SendCommand "RENDERER PREVIEW SCENE*" & s__VizPath & "/" & sScene & " VIDEO " & strPrevCmd
+           'obj__TV.SendCommand "RENDERER PREVIEW SCENE*" & s__VizPath & "/" & sScene & " VIDEO " & strPrevCmd
     End Sub
 
     ' Löscht den Preview

@@ -48,7 +48,7 @@ FUNCTION GetItemText
     sText = ""
     Select Case sItem
        Case "ATTEMPTS"
-          sText = "ATTEMPTS"
+          sText = "TOTAL ATTEMPTS"
        Case "ATTEMPTS ON TARGET"
           sText = "ATTEMPTS ON TARGET"
        Case "CORNERS"
