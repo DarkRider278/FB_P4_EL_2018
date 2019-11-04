@@ -172,6 +172,9 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
            Case "COOLING"
 
                 sDirector = "COOLING"
+            Case "DRINKING"
+
+                sDirector = "DRINKING"
            Case "CARD"
               bCardChange = False
 
@@ -183,12 +186,14 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
 
               Nr      = oData.Item("CURR_P_NR")
               Name    = UCASE(oData.Item("CURR_P_LNAME"))
+              FName    = UCASE(oData.Item("CURR_P_FNAME"))
               L_TName = UCASE(oData.Item("CURR_T_LNAME"))
               S_TName = UCASE(" (" &oData.Item("CURR_T_SNAME")&")")
               sCardInfo = Data.Item("CARD_INFO")
 
                 SetText SubCont & "$txt_bib", Nr
                 SetText SubCont & "$txt_name", Name
+                SetText SubCont & "$txt_name_1_1", FName
                 bCardChange = False
                 SELECT CASE Data.Item("CARD_TYPE")
                     CASE 1 ' gelb
@@ -322,6 +327,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
                SetText SubCont & "$txt_team",  "" ' NEU
                SetText SubCont & "$txt_bib",  "" ' NEU
                SetText SubCont & "$txt_titel", UCase(Data.Item("COACH_FUNCTION"))
+
                'oData.Item("COACH_DB_FUNCTION") = TSP.GetOfficialById(TSP.GetSTeam("coach_" & j & "_id"), TSP_text_1)
 
             CASE "REFEREE"
@@ -1081,7 +1087,8 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
            SetText "DATA$ANI_LINE_" & i & "$txt_name_1_2", UCase(PNameB)
            SetText "DATA$ANI_LINE_" & i & "$txt_min_1_2", MinB  'UCase weg
         Next
-
+             obj__TV.ShowObject "ONOFF_HEADER$ONOFF_TEXT"
+             
        SELECT CASE Data.Item("INT_PERIOD")
             case 4,6,8,9 ' lang
                 obj__TV.HideObject "ONOFF_HEADER$ONOFF_CLOCK"

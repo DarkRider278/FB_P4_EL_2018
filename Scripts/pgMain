@@ -302,7 +302,8 @@ Sub TV__PlayerCard (Sender)
        sCardInfo = "INFO_SENT_OFF"
     End If
     
-    P_FName  = GetNameTranslation("P", TSP.GetHPlayer(TSP_db_id), TSP_second_name )
+
+    P_FName  = GetNameTranslation("P", TSP.GetHPlayer(TSP_db_id), TSP_first_name )
     P_Name  = GetNameTranslation("P", TSP.GetHPlayer(TSP_db_id), TSP_second_name )' TSP.GetHPlayer(TSP_second_name)
     T_LName = GetNameTranslation("T", TSP.GetSTeam(TSP_db_id), TSP_long_name) 'TSP.GetSTeam(TSP_long_name)
     T_SName = GetNameTranslation("T", TSP.GetSTeam(TSP_db_id), TSP_short_name) 'TSP.GetSTeam(TSP_short_name)
@@ -312,8 +313,10 @@ Sub TV__PlayerCard (Sender)
     oData.Item("CARD_INFO") = sCardInfo
 
     oData.Item("CURR_P_NR")    = P_Dress
+    if P_Dress>99 then     oData.Item("CURR_P_NR")=""
     oData.Item("CURR_P_LNAME") = P_Name
     oData.Item("CURR_P_FNAME") = P_FName
+    if P_Dress<100 then     oData.Item("CURR_P_FNAME")=""
     oData.Item("CURR_T_LNAME")  = T_LName
     oData.Item("CURR_T_SNAME")  = T_SName
     oData.Item("TEAMLOGO")  = TSP.GetSTeam(TSP_logo)
@@ -933,18 +936,18 @@ sub pgMain_Btn_PlayerTSStatsClick (Sender)
     'If Not DataFeedEnabled then
     P_Dress = TSP.GetTPlayer(TSP_dress_nr)
     P_Name = GetNameTranslation("P", TSP.GetTPlayer(TSP_player_id), TSP_second_name )
-    'cc.sf.DebugText P_Name
+    cc.sf.DebugText P_Name
     id=TSP.GetTPlayer(TSP_player_id)
-    'cc.sf.DebugText id
+    cc.sf.DebugText id
     s=TSP_get_info_from_db("PLAYERS_2","GOALS","PLAYER_ID",id)
     'TSP.LoadSQLData("SELECT * FROM players_2 WHERE player_id='"&id&"'")
     
     's=TSP.GetSQLData("opta_id")
-    'cc.sf.DebugText  s
+    cc.sf.DebugText  s
     intGoals = CNumType(s, vbInteger, 0, null, 0)
     s=TSP_get_info_from_db("PLAYERS_2","PLAYED_GAMES","PLAYER_ID",id)
     's=TSP.GetSQLData("played_games")
-    'cc.sf.DebugText  s
+    cc.sf.DebugText  s
     intMatches  = CNumType(s, vbInteger, 0, null, 0)
         'dlgDSS_FreeText.Visible=true
         'dlgDSS_Freetext.BringToFront
@@ -1023,6 +1026,12 @@ sub pgMain_tb_rc_1KeyDown (Sender, Key, Shift)
   ' Key as Integer
   ' Shift as TOleEnum
   if Key = 13 then AllTV.TV__DSS_Red_Card pgMain.tb_rc_1.Text,pgMain.tb_rc_2.Text
+end sub
+
+sub pgMain_Btn_drinking_breakClick (Sender)
+    AllTV.TV__Hide_DSS_Zusatz
+    oData.Item("DSS_ZUSATZ") = "DRINKING"
+    ALLTV.TV__Show_DSS_ZUSATZ oData
 end sub
 
 </script_body>

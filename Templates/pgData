@@ -1243,7 +1243,7 @@ object pgData: TccTabSheet
     Cursor = crHandPoint
     MaxLength = 0
     TabOrder = 12
-    Text = 'D:\TSP_UEFA_EL_20180129'
+    Text = 'D:\TSP_UEFA_EL_20191029'
     Numeric = False
     InputType = itAnything
     Locked = False
