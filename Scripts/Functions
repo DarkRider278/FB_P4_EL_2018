@@ -24,7 +24,10 @@ Function GetData(PlayerIdent)
             'PName = TSP.GetPlayerByNR(TSP_HPlayer, DressNr, TeamCode, TSP_second_name)
             PNameID = TSP.GetPlayerByNR(TSP_TPlayer, DressNr, TeamCode, TSP_player_id)
             'cc.SF.DebugText "PNameID: " & PNameID
-            PName = GetNameTranslation("P", PNameID, TSP_second_name )
+            PName = GetNameTranslation("P", PNameID, TSP_tv_name )
+            if Trim(PName) ="" then
+                PName = GetNameTranslation("P", PNameID, TSP_second_name )
+            end if
 
          End if
 

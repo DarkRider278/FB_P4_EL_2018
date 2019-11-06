@@ -14,7 +14,6 @@ object tw_NameTranslation: TccToolWindow
   ParentFont = False
   Resizable = False
   TabOrder = 0
-  Visible = False
   Floating = True
   ParentColor = False
   Float = True
@@ -100,15 +99,31 @@ object tw_NameTranslation: TccToolWindow
     ParentFont = False
     Locked = False
   end
+  object Label6: TptLabel
+    Left = 435
+    Top = 450
+    Width = 71
+    Height = 21
+    AutoSize = False
+    Caption = 'TV Name'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWhite
+    Font.Height = -13
+    Font.Name = 'Trebuchet MS'
+    Font.Style = [fsBold]
+    ParentFont = False
+    Layout = tlCenter
+    Locked = False
+  end
   object grdTrans: TptGrid
     Left = 10
     Top = 30
     Width = 636
     Height = 411
-    ColCount = 4
+    ColCount = 5
     DefaultRowHeight = 17
     FixedCols = 0
-    RowCount = 136
+    RowCount = 63
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
     Font.Height = -12
@@ -126,144 +141,72 @@ object tw_NameTranslation: TccToolWindow
       'ID'
       'First Name'
       'Last Name'
+      'TV Name'
       'Team')
     RowHeaders.WideStrings = (
       'ID'
-      'T_19'
-      'C_19'
-      'P_570'
-      'P_583'
-      'P_571'
-      'P_584'
-      'P_585'
-      'P_572'
-      'P_573'
-      'P_574'
-      'P_559'
-      'P_560'
-      'P_586'
-      'P_589'
-      'P_575'
-      'P_590'
-      'P_561'
-      'P_562'
-      'P_558'
-      'P_563'
-      'P_564'
-      'P_565'
-      'P_576'
-      'P_566'
-      'P_577'
-      'P_587'
-      'P_578'
-      'P_579'
-      'P_580'
-      'P_581'
-      'P_567'
-      'P_568'
-      'P_569'
-      'P_582'
-      'P_588'
-      'T_32'
-      'C_32'
-      'P_971'
-      'P_954'
-      'P_941'
-      'P_955'
-      'P_942'
-      'P_963'
-      'P_964'
-      'P_956'
-      'P_972'
-      'P_957'
-      'P_965'
-      'P_943'
-      'P_966'
-      'P_944'
-      'P_945'
-      'P_940'
-      'P_946'
-      'P_958'
-      'P_959'
-      'P_967'
-      'P_968'
-      'P_969'
-      'P_960'
-      'P_970'
-      'P_947'
-      'P_948'
-      'P_950'
-      'P_961'
-      'P_951'
-      'P_952'
-      'P_962'
-      'P_953'
-      'P_949'
-      'T_11'
-      'C_11'
-      'P_339'
-      'P_317'
-      'P_313'
-      'P_327'
-      'P_328'
-      'P_318'
-      'P_329'
-      'P_330'
-      'P_331'
-      'P_332'
-      'P_333'
-      'P_340'
-      'P_319'
-      'P_334'
-      'P_335'
-      'P_336'
-      'P_320'
-      'P_321'
-      'P_314'
-      'P_341'
-      'P_322'
-      'P_323'
-      'P_315'
-      'P_324'
-      'P_342'
-      'P_325'
-      'P_343'
-      'P_344'
-      'P_345'
-      'P_337'
-      'P_316'
-      'P_346'
-      'P_326'
-      'P_338'
-      'P_347'
-      'T_8'
-      'C_8'
-      'P_229'
-      'P_236'
-      'P_230'
-      'P_237'
-      'P_238'
-      'P_247'
-      'P_239'
-      'P_248'
-      'P_231'
-      'P_232'
-      'P_225'
-      'P_240'
-      'P_233'
-      'P_249'
-      'P_241'
-      'P_242'
-      'P_243'
-      'P_244'
-      'P_234'
-      'P_226'
-      'P_227'
-      'P_235'
-      'P_228'
-      'P_250'
-      'P_245'
-      'P_246')
+      'T_37'
+      'C_37'
+      'P_1087'
+      'P_1088'
+      'P_1089'
+      'P_1078'
+      'P_1104'
+      'P_1079'
+      'P_1080'
+      'P_1100'
+      'P_1090'
+      'P_1081'
+      'P_1077'
+      'P_1082'
+      'P_1083'
+      'P_1084'
+      'P_1091'
+      'P_1101'
+      'P_1092'
+      'P_1093'
+      'P_1102'
+      'P_1085'
+      'P_1094'
+      'P_1096'
+      'P_1097'
+      'P_1103'
+      'P_1086'
+      'P_1098'
+      'P_1099'
+      'P_1095'
+      'T_22'
+      'C_22'
+      'P_639'
+      'P_634'
+      'P_637'
+      'P_646'
+      'P_655'
+      'P_656'
+      'P_638'
+      'P_647'
+      'P_663'
+      'P_648'
+      'P_657'
+      'P_658'
+      'P_635'
+      'P_649'
+      'P_641'
+      'P_650'
+      'P_659'
+      'P_651'
+      'P_660'
+      'P_636'
+      'P_652'
+      'P_661'
+      'P_653'
+      'P_640'
+      'P_642'
+      'P_643'
+      'P_644'
+      'P_662'
+      'P_654'
+      'P_645')
     FixedColWidth = -1
     FixedRowHeight = 17
     FixedFont.Charset = ANSI_CHARSET
@@ -281,79 +224,47 @@ object tw_NameTranslation: TccToolWindow
     ProtectFixedCols = False
     DrawSortingArrow = True
     DataString = 
-      'ID,"First Name","Last Name",Team;T_19,"FK Austria Wien",Austria,' +
-      'Austria;C_19,Thorsten,Fink,Austria;P_570,Patrizio,Stronati,Austr' +
-      'ia;P_583,David,"De Paula",Austria;P_571,Alexandar,Borkovic,Austr' +
-      'ia;P_584,Thomas,Salamon,Austria;P_585,Raphael,Holzhauser,Austria' +
-      ';P_572,Christoph,Martschinko,Austria;P_573,Marko,Pejic,Austria;P' +
-      '_574,Stefan,Jonovic,Austria;P_559,Osman,Hadzikic,Austria;P_560,P' +
-      'atrick,Pentz,Austria;P_586,Manprit,Sarkaria,Austria;P_589,Toni,V' +
-      'astic,Austria;P_575,Stefan,Stangl,Austria;P_590,Felipe,Pires,Aus' +
-      'tria;P_561,Mirko,Kos,Austria;P_562,Michael,Madl,Austria;P_558,Ro' +
-      'bert,Almer,Austria;P_563,Petar,Gluhakovic,Austria;P_564,Marco,St' +
-      'ark,Austria;P_565,"Ruan Renato","Bonifácio Augusto",Austria;P_57' +
-      '6,Vesel,Demaku,Austria;P_566,Abdul,Mohammed,Austria;P_577,"Abdul' +
-      'lahi Ibrahim",Alhassan,Austria;P_587,Kevin,Friesenbichler,Austri' +
-      'a;P_578,Alexander,Grünwald,Austria;P_579,Lucas,Venuto,Austria;P_' +
-      '580,Tarkan,Serbest,Austria;P_581,Dominik,Prokop,Austria;P_567,Fl' +
-      'orian,Klein,Austria;P_568,Heiko,Westermann,Austria;P_569,Michael' +
-      ',Blauensteiner,Austria;P_582,Jinhyun,Lee,Austria;P_588,Christoph' +
-      ',Monschein,Austria;T_32,Milan,Milan,Milan;C_32,Gennaro,Gattuso,M' +
-      'ilan;P_971,Riccardo,Forte,Milan;P_954,Gabriel,Paletta,Milan;P_94' +
-      '1,Marco,Storari,Milan;P_955,Luca,Antonelli,Milan;P_942,Matteo,So' +
-      'ncin,Milan;P_963,Niccolò,Zanellato,Milan;P_964,Matteo,Gabbia,Mil' +
-      'an;P_956,Raoul,Bellanova,Milan;P_972,Patrick,Cutrone,Milan;P_957' +
-      ',Ricardo,Rodríguez,Milan;P_965,Manuel,Locatelli,Milan;P_943,Ales' +
-      'sandro,Guarnone,Milan;P_966,Franck,Kessié,Milan;P_944,Antonio,Do' +
-      'nnarumma,Milan;P_945,Gianluigi,Donnarumma,Milan;P_940,Gabriel,"V' +
-      'asconcellos Ferreira",Milan;P_946,Davide,Calabria,Milan;P_958,Jo' +
-      'sé,Mauri,Milan;P_959,Giacomo,Bonaventura,Milan;P_967,Nikola,Kali' +
-      'nic,Milan;P_968,Jesús,"Fernández Saez",Milan;P_969,"André Miguel' +
-      '","Valente Silva",Milan;P_960,Hakan,Calhanoglu,Milan;P_970,Fabio' +
-      ',Borini,Milan;P_947,Andrea,Conti,Milan;P_948,Alessio,Romagnoli,M' +
-      'ilan;P_950,Cristian,Zapata,Milan;P_961,Riccardo,Montolivo,Milan;' +
-      'P_951,Leonardo,Bonucci,Milan;P_952,Ignazio,Abate,Milan;P_962,Luc' +
-      'as,Biglia,Milan;P_953,Mateo,Musacchio,Milan;P_949,Gustavo,Gómez,' +
-      'Milan;T_11,"Crvena Zvezda","Crvena Zvezda","Crvena Zvezda";C_11,' +
-      'Vladan,Milojevic,"Crvena Zvezda";P_339,Milan,Senic,"Crvena Zvezd' +
-      'a";P_317,Aleksa,Terzi&#263{57F29D43-2918-44B5-AFA7-BF7CB1A56586}' +
-      ',"Crvena Zvezda";P_313,Damir,Kahriman,"Crvena Zvezda";P_327,Bran' +
-      'ko,Jovicic,"Crvena Zvezda";P_328,Damien,"Le Tallec","Crvena Zvez' +
-      'da";P_318,Abraham,Frimpong,"Crvena Zvezda";P_329,Uros,Racic,"Crv' +
-      'ena Zvezda";P_330,Nenad,Krsticic,"Crvena Zvezda";P_331,Guélor,Ka' +
-      'nga,"Crvena Zvezda";P_332,Nenad,Milijas,"Crvena Zvezda";P_333,Lu' +
-      'ka,Adzic,"Crvena Zvezda";P_340,Richmond,Boakye,"Crvena Zvezda";P' +
-      '_319,Srdjan,Babic,"Crvena Zvezda";P_334,Nemanja,Milic,"Crvena Zv' +
-      'ezda";P_335,Veljko,Nikoli&#263{57F29D43-2918-44B5-AFA7-BF7CB1A56' +
-      '586},"Crvena Zvezda";P_336,Mitchell,Donald,"Crvena Zvezda";P_320' +
-      ',Stefan,Milosevic,"Crvena Zvezda";P_321,Milan,Rodic,"Crvena Zvez' +
-      'da";P_314,Nemanja,Supic,"Crvena Zvezda";P_341,Dejan,Joveljic,"Cr' +
-      'vena Zvezda";P_322,Matheus,"Viveiros Andrade","Crvena Zvezda";P_' +
-      '323,Filip,Stojkovic,"Crvena Zvezda";P_315,Aleksandar,Stankovic,"' +
-      'Crvena Zvezda";P_324,Dusan,Andjelkovic,"Crvena Zvezda";P_342,Luk' +
-      'a,Ilic,"Crvena Zvezda";P_325,"José Marcos","Alves Luis","Crvena ' +
-      'Zvezda";P_343,Aleksandar,Pesic,"Crvena Zvezda";P_344,Nemanja,Rad' +
-      'onjic,"Crvena Zvezda";P_345,Slavoljub,Srnic,"Crvena Zvezda";P_33' +
-      '7,Marko,Gobeljic,"Crvena Zvezda";P_316,Milan,Borjan,"Crvena Zvez' +
-      'da";P_346,Ricardo,"Cavalcante Mendes","Crvena Zvezda";P_326,Vuja' +
-      'din,Savic,"Crvena Zvezda";P_338,Ivan,Ilic,"Crvena Zvezda";P_347,' +
-      'Vanja,Vucicevic,"Crvena Zvezda";T_8,"BATE Borisov","BATE Borisov' +
-      '","BATE Borisov";C_8,Aleksandr,Yermakovich,"BATE Borisov";P_229,' +
-      'Vitali,Gayduchik,"BATE Borisov";P_236,Evgeni,Yablonski,"BATE Bor' +
-      'isov";P_230,Jurica,Buljat,"BATE Borisov";P_237,Evgeni,Berezkin,"' +
-      'BATE Borisov";P_238,Aleksandr,Volodko,"BATE Borisov";P_247,Anes,' +
-      'Rusevic,"BATE Borisov";P_239,Mirko,Ivanic,"BATE Borisov";P_248,N' +
-      'ikolai,Signevich,"BATE Borisov";P_231,Artur,Pikk,"BATE Borisov";' +
-      'P_232,Maksim,Zhavnerchik,"BATE Borisov";P_225,Sergei,Veremko,"BA' +
-      'TE Borisov";P_240,Aleksey,Rios,"BATE Borisov";P_233,Nemanja,Milu' +
-      'novic,"BATE Borisov";P_249,Vitali,Rodionov,"BATE Borisov";P_241,' +
-      'Stanislav,Dragun,"BATE Borisov";P_242,Igor,Stasevich,"BATE Boris' +
-      'ov";P_243,Jasse,Tuominen,"BATE Borisov";P_244,Dmitri,Baga,"BATE ' +
-      'Borisov";P_234,Denis,Polyakov,"BATE Borisov";P_226,Artem,Soroko,' +
-      '"BATE Borisov";P_227,Anton,Chichkan,"BATE Borisov";P_235,Maksim,' +
-      'Volodko,"BATE Borisov";P_228,Denis,Scherbitski,"BATE Borisov";P_' +
-      '250,Mikhail,Gordeychuk,"BATE Borisov";P_245,Yuri,Kendysh,"BATE B' +
-      'orisov";P_246,Valerian,Gvilia,"BATE Borisov";'
+      'ID,"First Name","Last Name","TV Name",Team;T_37,"WOLFSBERGER AC"' +
+      ',WOLFSBERG,,WOLFSBERG;C_37,Gerhard,Struber,,WOLFSBERG;P_1087,Fab' +
+      'ian,Tauchhammer,,WOLFSBERG;P_1088,Michael,Sollbauer,,WOLFSBERG;P' +
+      '_1089,Michael,Novak,,WOLFSBERG;P_1078,Manuel,Kuttin,,WOLFSBERG;P' +
+      '_1104,Amar,Hodzic,,WOLFSBERG;P_1079,Alexander,Kofler,,WOLFSBERG;' +
+      'P_1080,Marko,Soldo,,WOLFSBERG;P_1100,"Marc Andre",Schmerböck,,WO' +
+      'LFSBERG;P_1090,Stefan,Gölles,,WOLFSBERG;P_1081,Aric,Haimburger,,' +
+      'WOLFSBERG;P_1077,Christian,Dobnik,,WOLFSBERG;P_1082,Manfred,Goll' +
+      'ner,,WOLFSBERG;P_1083,Stefan,Peric,,WOLFSBERG;P_1084,Lukas,Schmi' +
+      'tz,,WOLFSBERG;P_1091,Marcel,Ritzmaier,,WOLFSBERG;P_1101,Shon,Wei' +
+      'ssman,,WOLFSBERG;P_1092,Michael,Liendl,,WOLFSBERG;P_1093,Romano,' +
+      'Schmid,,WOLFSBERG;P_1102,Alexander,Schmidt,,WOLFSBERG;P_1085,Nem' +
+      'anja,Rnic,,WOLFSBERG;P_1094,Mario,Leitgeb,,WOLFSBERG;P_1096,Sven' +
+      ',Sprangler,,WOLFSBERG;P_1097,Bajram,Syla,,WOLFSBERG;P_1103,Ander' +
+      'son,Niangbo,,WOLFSBERG;P_1086,Dominik,Baumgartner,,WOLFSBERG;P_1' +
+      '098,Lukas,Schöfl,,WOLFSBERG;P_1099,Christopher,Wernitznig,,WOLFS' +
+      'BERG;P_1095,Joshua,Steiger,,WOLFSBERG;T_22,"ISTANBUL BASAKSEHIR"' +
+      ',"ISTANBUL BASAKSEHIR",,"ISTANBUL BASAKSEHIR";C_22,Okan,Buruk,as' +
+      'dfasdf,"ISTANBUL BASAKSEHIR";P_639,"Muhammed Emin",Sarikaya,,"IS' +
+      'TANBUL BASAKSEHIR";P_634,Muhammed,Sengezer,,"ISTANBUL BASAKSEHIR' +
+      '";P_637,"Fehmi Mert",Günok,,"ISTANBUL BASAKSEHIR";P_646,Martin,S' +
+      'krtel,,"ISTANBUL BASAKSEHIR";P_655,Berkay,Özcan,,"ISTANBUL BASAK' +
+      'SEHIR";P_656,Azubuike,Okechukwu,,"ISTANBUL BASAKSEHIR";P_638,Onu' +
+      'r,Güney,,"ISTANBUL BASAKSEHIR";P_647,Mert,Celik,,"ISTANBUL BASAK' +
+      'SEHIR";P_663,Robson,"de Souza",Robinho,"ISTANBUL BASAKSEHIR";P_6' +
+      '48,Uilson,"de Souza Paula Júnior","Júnior Caiçara","ISTANBUL BAS' +
+      'AKSEHIR";P_657,Gökhan,Inler,,"ISTANBUL BASAKSEHIR";P_658,Danijel' +
+      ',Aleksic,,"ISTANBUL BASAKSEHIR";P_635,Volkan,Babacan,,"ISTANBUL ' +
+      'BASAKSEHIR";P_649,Mehmet,Topal,,"ISTANBUL BASAKSEHIR";P_641,Alex' +
+      'andru,Epureanu,,"ISTANBUL BASAKSEHIR";P_650,Edin,Visca,"HAllo TV' +
+      '","ISTANBUL BASAKSEHIR";P_659,,Gulbrandsen,,"ISTANBUL BASAKSEHIR' +
+      '";P_651,Arda,Turan,,"ISTANBUL BASAKSEHIR";P_660,Eljero,Elia,,"IS' +
+      'TANBUL BASAKSEHIR";P_636,"Ahmet Said",Kivanç,,"ISTANBUL BASAKSEH' +
+      'IR";P_652,"Irfan Can",Kahveci,,"ISTANBUL BASAKSEHIR";P_661,Demba' +
+      ',Ba,,"ISTANBUL BASAKSEHIR";P_653,Mahmut,Tekdemir,,"ISTANBUL BASA' +
+      'KSEHIR";P_640,Gaël,Clichy,,"ISTANBUL BASAKSEHIR";P_642,Aziz,Behi' +
+      'ch,,"ISTANBUL BASAKSEHIR";P_643,"Luis Miguel","Vieira Silva","Mi' +
+      'guel Vieira","ISTANBUL BASAKSEHIR";P_644,Carlos,"dos Santos Rodr' +
+      'igues","Carlos Ponck","ISTANBUL BASAKSEHIR";P_662,Enzo,Crivelli,' +
+      ',"ISTANBUL BASAKSEHIR";P_654,Kerim,Frei,,"ISTANBUL BASAKSEHIR";P' +
+      '_645,Ugur,Uçar,,"ISTANBUL BASAKSEHIR";'
     RowSizing = False
     RowMoving = False
     ColSizing = True
@@ -366,81 +277,9 @@ object tw_NameTranslation: TccToolWindow
       74
       159
       145
-      77)
+      77
+      60)
     RowHeights = (
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
-      17
       17
       17
       17
@@ -505,80 +344,48 @@ object tw_NameTranslation: TccToolWindow
       17
       17)
     DataString_UTF7 = 
-      'ID,"First Name","Last Name",Team;T_19,"FK Austria Wien",Austria,' +
-      'Austria;C_19,Thorsten,Fink,Austria;P_570,Patrizio,Stronati,Austr' +
-      'ia;P_583,David,"De Paula",Austria;P_571,Alexandar,Borkovic,Austr' +
-      'ia;P_584,Thomas,Salamon,Austria;P_585,Raphael,Holzhauser,Austria' +
-      ';P_572,Christoph,Martschinko,Austria;P_573,Marko,Pejic,Austria;P' +
-      '_574,Stefan,Jonovic,Austria;P_559,Osman,Hadzikic,Austria;P_560,P' +
-      'atrick,Pentz,Austria;P_586,Manprit,Sarkaria,Austria;P_589,Toni,V' +
-      'astic,Austria;P_575,Stefan,Stangl,Austria;P_590,Felipe,Pires,Aus' +
-      'tria;P_561,Mirko,Kos,Austria;P_562,Michael,Madl,Austria;P_558,Ro' +
-      'bert,Almer,Austria;P_563,Petar,Gluhakovic,Austria;P_564,Marco,St' +
-      'ark,Austria;P_565,"Ruan Renato","Bonif+AOE-cio Augusto",Austria;' +
-      'P_576,Vesel,Demaku,Austria;P_566,Abdul,Mohammed,Austria;P_577,"A' +
-      'bdullahi Ibrahim",Alhassan,Austria;P_587,Kevin,Friesenbichler,Au' +
-      'stria;P_578,Alexander,Gr+APw-nwald,Austria;P_579,Lucas,Venuto,Au' +
-      'stria;P_580,Tarkan,Serbest,Austria;P_581,Dominik,Prokop,Austria;' +
-      'P_567,Florian,Klein,Austria;P_568,Heiko,Westermann,Austria;P_569' +
-      ',Michael,Blauensteiner,Austria;P_582,Jinhyun,Lee,Austria;P_588,C' +
-      'hristoph,Monschein,Austria;T_32,Milan,Milan,Milan;C_32,Gennaro,G' +
-      'attuso,Milan;P_971,Riccardo,Forte,Milan;P_954,Gabriel,Paletta,Mi' +
-      'lan;P_941,Marco,Storari,Milan;P_955,Luca,Antonelli,Milan;P_942,M' +
-      'atteo,Soncin,Milan;P_963,Niccol+API,Zanellato,Milan;P_964,Matteo' +
-      ',Gabbia,Milan;P_956,Raoul,Bellanova,Milan;P_972,Patrick,Cutrone,' +
-      'Milan;P_957,Ricardo,Rodr+AO0-guez,Milan;P_965,Manuel,Locatelli,M' +
-      'ilan;P_943,Alessandro,Guarnone,Milan;P_966,Franck,Kessi+AOk,Mila' +
-      'n;P_944,Antonio,Donnarumma,Milan;P_945,Gianluigi,Donnarumma,Mila' +
-      'n;P_940,Gabriel,"Vasconcellos Ferreira",Milan;P_946,Davide,Calab' +
-      'ria,Milan;P_958,Jos+AOk,Mauri,Milan;P_959,Giacomo,Bonaventura,Mi' +
-      'lan;P_967,Nikola,Kalinic,Milan;P_968,Jes+APo-s,"Fern+AOE-ndez Sa' +
-      'ez",Milan;P_969,"Andr+AOk Miguel","Valente Silva",Milan;P_960,Ha' +
-      'kan,Calhanoglu,Milan;P_970,Fabio,Borini,Milan;P_947,Andrea,Conti' +
-      ',Milan;P_948,Alessio,Romagnoli,Milan;P_950,Cristian,Zapata,Milan' +
-      ';P_961,Riccardo,Montolivo,Milan;P_951,Leonardo,Bonucci,Milan;P_9' +
-      '52,Ignazio,Abate,Milan;P_962,Lucas,Biglia,Milan;P_953,Mateo,Musa' +
-      'cchio,Milan;P_949,Gustavo,G+APM-mez,Milan;T_11,"Crvena Zvezda","' +
-      'Crvena Zvezda","Crvena Zvezda";C_11,Vladan,Milojevic,"Crvena Zve' +
-      'zda";P_339,Milan,Senic,"Crvena Zvezda";P_317,Aleksa,Terzi&#263{5' +
-      '7F29D43-2918-44B5-AFA7-BF7CB1A56586},"Crvena Zvezda";P_313,Damir' +
-      ',Kahriman,"Crvena Zvezda";P_327,Branko,Jovicic,"Crvena Zvezda";P' +
-      '_328,Damien,"Le Tallec","Crvena Zvezda";P_318,Abraham,Frimpong,"' +
-      'Crvena Zvezda";P_329,Uros,Racic,"Crvena Zvezda";P_330,Nenad,Krst' +
-      'icic,"Crvena Zvezda";P_331,Gu+AOk-lor,Kanga,"Crvena Zvezda";P_33' +
-      '2,Nenad,Milijas,"Crvena Zvezda";P_333,Luka,Adzic,"Crvena Zvezda"' +
-      ';P_340,Richmond,Boakye,"Crvena Zvezda";P_319,Srdjan,Babic,"Crven' +
-      'a Zvezda";P_334,Nemanja,Milic,"Crvena Zvezda";P_335,Veljko,Nikol' +
-      'i&#263{57F29D43-2918-44B5-AFA7-BF7CB1A56586},"Crvena Zvezda";P_3' +
-      '36,Mitchell,Donald,"Crvena Zvezda";P_320,Stefan,Milosevic,"Crven' +
-      'a Zvezda";P_321,Milan,Rodic,"Crvena Zvezda";P_314,Nemanja,Supic,' +
-      '"Crvena Zvezda";P_341,Dejan,Joveljic,"Crvena Zvezda";P_322,Mathe' +
-      'us,"Viveiros Andrade","Crvena Zvezda";P_323,Filip,Stojkovic,"Crv' +
-      'ena Zvezda";P_315,Aleksandar,Stankovic,"Crvena Zvezda";P_324,Dus' +
-      'an,Andjelkovic,"Crvena Zvezda";P_342,Luka,Ilic,"Crvena Zvezda";P' +
-      '_325,"Jos+AOk Marcos","Alves Luis","Crvena Zvezda";P_343,Aleksan' +
-      'dar,Pesic,"Crvena Zvezda";P_344,Nemanja,Radonjic,"Crvena Zvezda"' +
-      ';P_345,Slavoljub,Srnic,"Crvena Zvezda";P_337,Marko,Gobeljic,"Crv' +
-      'ena Zvezda";P_316,Milan,Borjan,"Crvena Zvezda";P_346,Ricardo,"Ca' +
-      'valcante Mendes","Crvena Zvezda";P_326,Vujadin,Savic,"Crvena Zve' +
-      'zda";P_338,Ivan,Ilic,"Crvena Zvezda";P_347,Vanja,Vucicevic,"Crve' +
-      'na Zvezda";T_8,"BATE Borisov","BATE Borisov","BATE Borisov";C_8,' +
-      'Aleksandr,Yermakovich,"BATE Borisov";P_229,Vitali,Gayduchik,"BAT' +
-      'E Borisov";P_236,Evgeni,Yablonski,"BATE Borisov";P_230,Jurica,Bu' +
-      'ljat,"BATE Borisov";P_237,Evgeni,Berezkin,"BATE Borisov";P_238,A' +
-      'leksandr,Volodko,"BATE Borisov";P_247,Anes,Rusevic,"BATE Borisov' +
-      '";P_239,Mirko,Ivanic,"BATE Borisov";P_248,Nikolai,Signevich,"BAT' +
-      'E Borisov";P_231,Artur,Pikk,"BATE Borisov";P_232,Maksim,Zhavnerc' +
-      'hik,"BATE Borisov";P_225,Sergei,Veremko,"BATE Borisov";P_240,Ale' +
-      'ksey,Rios,"BATE Borisov";P_233,Nemanja,Milunovic,"BATE Borisov";' +
-      'P_249,Vitali,Rodionov,"BATE Borisov";P_241,Stanislav,Dragun,"BAT' +
-      'E Borisov";P_242,Igor,Stasevich,"BATE Borisov";P_243,Jasse,Tuomi' +
-      'nen,"BATE Borisov";P_244,Dmitri,Baga,"BATE Borisov";P_234,Denis,' +
-      'Polyakov,"BATE Borisov";P_226,Artem,Soroko,"BATE Borisov";P_227,' +
-      'Anton,Chichkan,"BATE Borisov";P_235,Maksim,Volodko,"BATE Borisov' +
-      '";P_228,Denis,Scherbitski,"BATE Borisov";P_250,Mikhail,Gordeychu' +
-      'k,"BATE Borisov";P_245,Yuri,Kendysh,"BATE Borisov";P_246,Valeria' +
-      'n,Gvilia,"BATE Borisov";'
+      'ID,"First Name","Last Name","TV Name",Team;T_37,"WOLFSBERGER AC"' +
+      ',WOLFSBERG,,WOLFSBERG;C_37,Gerhard,Struber,,WOLFSBERG;P_1087,Fab' +
+      'ian,Tauchhammer,,WOLFSBERG;P_1088,Michael,Sollbauer,,WOLFSBERG;P' +
+      '_1089,Michael,Novak,,WOLFSBERG;P_1078,Manuel,Kuttin,,WOLFSBERG;P' +
+      '_1104,Amar,Hodzic,,WOLFSBERG;P_1079,Alexander,Kofler,,WOLFSBERG;' +
+      'P_1080,Marko,Soldo,,WOLFSBERG;P_1100,"Marc Andre",Schmerb+APY-ck' +
+      ',,WOLFSBERG;P_1090,Stefan,G+APY-lles,,WOLFSBERG;P_1081,Aric,Haim' +
+      'burger,,WOLFSBERG;P_1077,Christian,Dobnik,,WOLFSBERG;P_1082,Manf' +
+      'red,Gollner,,WOLFSBERG;P_1083,Stefan,Peric,,WOLFSBERG;P_1084,Luk' +
+      'as,Schmitz,,WOLFSBERG;P_1091,Marcel,Ritzmaier,,WOLFSBERG;P_1101,' +
+      'Shon,Weissman,,WOLFSBERG;P_1092,Michael,Liendl,,WOLFSBERG;P_1093' +
+      ',Romano,Schmid,,WOLFSBERG;P_1102,Alexander,Schmidt,,WOLFSBERG;P_' +
+      '1085,Nemanja,Rnic,,WOLFSBERG;P_1094,Mario,Leitgeb,,WOLFSBERG;P_1' +
+      '096,Sven,Sprangler,,WOLFSBERG;P_1097,Bajram,Syla,,WOLFSBERG;P_11' +
+      '03,Anderson,Niangbo,,WOLFSBERG;P_1086,Dominik,Baumgartner,,WOLFS' +
+      'BERG;P_1098,Lukas,Sch+APY-fl,,WOLFSBERG;P_1099,Christopher,Werni' +
+      'tznig,,WOLFSBERG;P_1095,Joshua,Steiger,,WOLFSBERG;T_22,"ISTANBUL' +
+      ' BASAKSEHIR","ISTANBUL BASAKSEHIR",,"ISTANBUL BASAKSEHIR";C_22,O' +
+      'kan,Buruk,asdfasdf,"ISTANBUL BASAKSEHIR";P_639,"Muhammed Emin",S' +
+      'arikaya,,"ISTANBUL BASAKSEHIR";P_634,Muhammed,Sengezer,,"ISTANBU' +
+      'L BASAKSEHIR";P_637,"Fehmi Mert",G+APw-nok,,"ISTANBUL BASAKSEHIR' +
+      '";P_646,Martin,Skrtel,,"ISTANBUL BASAKSEHIR";P_655,Berkay,+ANY-z' +
+      'can,,"ISTANBUL BASAKSEHIR";P_656,Azubuike,Okechukwu,,"ISTANBUL B' +
+      'ASAKSEHIR";P_638,Onur,G+APw-ney,,"ISTANBUL BASAKSEHIR";P_647,Mer' +
+      't,Celik,,"ISTANBUL BASAKSEHIR";P_663,Robson,"de Souza",Robinho,"' +
+      'ISTANBUL BASAKSEHIR";P_648,Uilson,"de Souza Paula J+APo-nior","J' +
+      '+APo-nior Cai+AOc-ara","ISTANBUL BASAKSEHIR";P_657,G+APY-khan,In' +
+      'ler,,"ISTANBUL BASAKSEHIR";P_658,Danijel,Aleksic,,"ISTANBUL BASA' +
+      'KSEHIR";P_635,Volkan,Babacan,,"ISTANBUL BASAKSEHIR";P_649,Mehmet' +
+      ',Topal,,"ISTANBUL BASAKSEHIR";P_641,Alexandru,Epureanu,,"ISTANBU' +
+      'L BASAKSEHIR";P_650,Edin,Visca,"HAllo TV","ISTANBUL BASAKSEHIR";' +
+      'P_659,,Gulbrandsen,,"ISTANBUL BASAKSEHIR";P_651,Arda,Turan,,"IST' +
+      'ANBUL BASAKSEHIR";P_660,Eljero,Elia,,"ISTANBUL BASAKSEHIR";P_636' +
+      ',"Ahmet Said",Kivan+AOc,,"ISTANBUL BASAKSEHIR";P_652,"Irfan Can"' +
+      ',Kahveci,,"ISTANBUL BASAKSEHIR";P_661,Demba,Ba,,"ISTANBUL BASAKS' +
+      'EHIR";P_653,Mahmut,Tekdemir,,"ISTANBUL BASAKSEHIR";P_640,Ga+AOs-' +
+      'l,Clichy,,"ISTANBUL BASAKSEHIR";P_642,Aziz,Behich,,"ISTANBUL BAS' +
+      'AKSEHIR";P_643,"Luis Miguel","Vieira Silva","Miguel Vieira","IST' +
+      'ANBUL BASAKSEHIR";P_644,Carlos,"dos Santos Rodrigues","Carlos Po' +
+      'nck","ISTANBUL BASAKSEHIR";P_662,Enzo,Crivelli,,"ISTANBUL BASAKS' +
+      'EHIR";P_654,Kerim,Frei,,"ISTANBUL BASAKSEHIR";P_645,Ugur,U+AOc-a' +
+      'r,,"ISTANBUL BASAKSEHIR";'
     EventDataNames = 'OnClickCell=tw_NameTranslation_grdTransClickCell'
   end
   object btnLoadMatchDataAB: TptButton
@@ -1323,7 +1130,7 @@ object tw_NameTranslation: TccToolWindow
     MaxLength = 0
     ParentFont = False
     TabOrder = 4
-    Text = 'Marko'
+    Text = 'Mehmet'
     Numeric = False
     InputType = itAnything
     Locked = False
@@ -1342,7 +1149,7 @@ object tw_NameTranslation: TccToolWindow
     MaxLength = 0
     ParentFont = False
     TabOrder = 5
-    Text = 'Pejic'
+    Text = 'Topal'
     Numeric = False
     InputType = itAnything
     Locked = False
@@ -1361,7 +1168,7 @@ object tw_NameTranslation: TccToolWindow
     MaxLength = 0
     ParentFont = False
     TabOrder = 6
-    Text = 'Austria'
+    Text = 'ISTANBUL BASAKSEHIR'
     Numeric = False
     InputType = itAnything
     Locked = False
@@ -1381,7 +1188,7 @@ object tw_NameTranslation: TccToolWindow
     MaxLength = 0
     ParentFont = False
     TabOrder = 7
-    Text = 'P_573'
+    Text = 'P_649'
     Numeric = False
     InputType = itAnything
     Locked = False
@@ -1440,6 +1247,7 @@ object tw_NameTranslation: TccToolWindow
     MaxLength = 0
     ParentFont = False
     TabOrder = 9
+    Text = 'D:\1.csv'
     Numeric = False
     InputType = itAnything
     Locked = False
@@ -1930,5 +1738,23 @@ object tw_NameTranslation: TccToolWindow
     Hotkey.Enabled = True
     Locked = False
     EventDataNames = 'OnClick=tw_NameTranslation_btnLoadMatchDataClick'
+  end
+  object edt_TVNAME: TptEdit
+    Left = 435
+    Top = 475
+    Width = 206
+    Height = 23
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = 'Arial'
+    Font.Style = []
+    MaxLength = 0
+    ParentFont = False
+    TabOrder = 12
+    Numeric = False
+    InputType = itAnything
+    Locked = False
+    EventDataNames = 'OnKeyUp=tw_NameTranslation_edt_FNAMEKeyUp'
   end
 end

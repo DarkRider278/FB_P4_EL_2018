@@ -2361,7 +2361,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
         SetText SubCont & "$DATA$txt_name_1_1", UCase(GNameIn)
         SetText SubCont & "$DATA$txt_bib_1", UCase(NrIn)
 
-        IF GNameOut = "" THEN
+        IF GNameIn = "" THEN
             obj__TV.HideObject SubCont & "$DATA$txt_name_1_1"
             obj__TV.HideObject SubCont & "$DATA$txt_name_1_1_TL"
         ELSE
@@ -2374,7 +2374,7 @@ Class cls__TV_VIZ_EuroLeague_2018_2019
         SetText SubCont & "$DATA$txt_name_2_2", UCase(NameOut)
         SetText SubCont & "$DATA$txt_bib_2", UCase(NrOut)
 
-        IF GNameIn = "" THEN
+        IF GNameOut = "" THEN
             obj__TV.HideObject SubCont & "$DATA$txt_name_2_1"
             obj__TV.HideObject SubCont & "$DATA$txt_name_2_1_TL"
         ELSE

@@ -18,19 +18,19 @@ sub tw_NameTranslation_btnLoadMatchDataClick (Sender)
     FOR i = intStart TO intEnd
         IF i = 1 THEN TC = "A" ELSE TC = "B"
         TSP.SetTeamPos TC
-        CALL AddTranslation("T_" & TSP.GetSTeam(TSP_db_id), TSP.GetSTeam(TSP_long_name), TSP.GetSTeam(TSP_short_name), TSP.GetSTeam(TSP_short_name), TSP.GetSTeam(TSP_long_name), TSP.GetSTeam(TSP_short_name), TSP.GetSTeam(TSP_short_name), true)
+        CALL AddTranslation("T_" & TSP.GetSTeam(TSP_db_id), TSP.GetSTeam(TSP_long_name), TSP.GetSTeam(TSP_short_name), TSP.GetSTeam(TSP_short_name), TSP.GetSTeam(TSP_long_name), TSP.GetSTeam(TSP_short_name), TSP.GetSTeam(TSP_short_name), true,TSP.GetSTeam(TSP_tv_name),TSP.GetSTeam(TSP_tv_name))
         'cc.sf.debugtext TSP.GetSTeam("coach_1_id")
         'cc.sf.debugtext TSP.GetSTeam("coach_2_id")
         'cc.sf.debugtext TSP.GetSTeam("coach_3_id")
         'cc.sf.debugtext TSP.GetSTeam("coach_4_id")
         for j = 1 to 5
             IF CNumType( TSP.GetSTeam("coach_" & j & "_id"),vbInteger, 0, null, 0)>0 THEN
-                CALL AddTranslation("C_" & TSP.GetSTeam("coach_" & j & "_id"), TSP.GetOfficialById(TSP.GetSTeam("coach_" & j & "_id"),"First_name"), TSP.GetOfficialById(TSP.GetSTeam("coach_" & j & "_id"),"Last_name"), TSP.GetSTeam(TSP_short_name),  TSP.GetOfficialById(TSP.GetSTeam("coach_" & j & "_id"),"First_name"), TSP.GetOfficialById(TSP.GetSTeam("coach_" & j & "_id"),"Last_name"), TSP.GetSTeam(TSP_short_name), true)
+                CALL AddTranslation("C_" & TSP.GetSTeam("coach_" & j & "_id"), TSP.GetOfficialById(TSP.GetSTeam("coach_" & j & "_id"),"First_name"), TSP.GetOfficialById(TSP.GetSTeam("coach_" & j & "_id"),"Last_name"), TSP.GetSTeam(TSP_short_name),  TSP.GetOfficialById(TSP.GetSTeam("coach_" & j & "_id"),"First_name"), TSP.GetOfficialById(TSP.GetSTeam("coach_" & j & "_id"),"Last_name"), TSP.GetSTeam(TSP_short_name), true, TSP.GetOfficialById(TSP.GetSTeam("coach_" & j & "_id"),"tv_name"),TSP.GetOfficialById(TSP.GetSTeam("coach_" & j & "_id"),"tv_name"))
             END IF
         next
         TSP.SetPlayerPos TSP_First, TSP_ALL, TC
         DO
-          if AddTranslation("P_" & TSP.GetHPlayer(TSP_db_id), TSP.GetHPlayer(TSP_first_name), TSP.GetHPlayer(TSP_second_name), TSP.GetSTeam(TSP_short_name), TSP.GetHPlayer(TSP_first_name), TSP.GetHPlayer(TSP_second_name), TSP.GetSTeam(TSP_short_name), true) = vbCancel Then Exit for
+          if AddTranslation("P_" & TSP.GetHPlayer(TSP_db_id), TSP.GetHPlayer(TSP_first_name), TSP.GetHPlayer(TSP_second_name), TSP.GetSTeam(TSP_short_name), TSP.GetHPlayer(TSP_first_name), TSP.GetHPlayer(TSP_second_name), TSP.GetSTeam(TSP_short_name), true,TSP.GetHPlayer(TSP_tv_name),TSP.GetHPlayer(TSP_tv_name)) = vbCancel Then Exit for
         LOOP UNTIL TSP.SetPlayerPos(TSP_Next, TSP_ALL, TC) = False
     NEXT
     TSP.RestoreSelection
@@ -50,13 +50,15 @@ FUNCTION GetNameTranslation(ByVal strType, ByVal strID, ByVal strValue)
                 GetNameTranslation = objNameTrans.Item(myID).Item("LNAME")
             CASE TSP_player_name
                  GetNameTranslation = trim(objNameTrans.Item(myID).Item("FNAME") & " "  & objNameTrans.Item(myID).Item("LNAME"))
+            case TSP_tv_name
+                  GetNameTranslation = objNameTrans.Item(myID).Item("TVNAME")
             'CASE TSP_
             '     GetNameTranslation = trim(objNameTrans.Item(myID).Item("TEAM")
         END SELECT
      END IF
 END FUNCTION
 
-FUNCTION AddTranslation(ByVal myID, ByVal strOCX_FName, ByVal strOCX_LName, ByVal strOCX_TEAM, ByVal strFName, ByVal strLName, ByVal strTEAM, ByVal bAutoMode)
+FUNCTION AddTranslation(ByVal myID, ByVal strOCX_FName, ByVal strOCX_LName, ByVal strOCX_TEAM, ByVal strFName, ByVal strLName, ByVal strTEAM, ByVal bAutoMode,ByVal strOCX_TVName, ByVal strTVName)
     IF NOT objNameTrans.Exists(myID) THEN ' existiert noch nicht, dann anlegen
          SET objNameTrans.Item(myID) = CreateObject("Scripting.Dictionary")
     ELSE
@@ -69,9 +71,11 @@ FUNCTION AddTranslation(ByVal myID, ByVal strOCX_FName, ByVal strOCX_LName, ByVa
     objNameTrans.Item(myID).Item("OCX_FNAME") = strOCX_FName
     objNameTrans.Item(myID).Item("OCX_LNAME") = strOCX_LName
     objNameTrans.Item(myID).Item("OCX_TEAM") = strOCX_TEAM
+    objNameTrans.Item(myID).Item("OCX_TVNAME") = strOCX_TVName
     objNameTrans.Item(myID).Item("FNAME") = strFName
     objNameTrans.Item(myID).Item("LNAME") = strLName
     objNameTrans.Item(myID).Item("TEAM") = strTEAM
+    objNameTrans.Item(myID).Item("TVNAME") = strTVName
 END FUNCTION
 
 
@@ -91,7 +95,8 @@ FUNCTION LoadTranslation2Grid
         myGrid.Cells(i+1,0) = myKeys(i)
         myGrid.Cells(i+1,1) = objNameTrans.Item(myKeys(i)).Item("OCX_FNAME")
         myGrid.Cells(i+1,2) = objNameTrans.Item(myKeys(i)).Item("OCX_LNAME")
-        myGrid.Cells(i+1,3) = objNameTrans.Item(myKeys(i)).Item("OCX_TEAM")
+        myGrid.Cells(i+1,3) = objNameTrans.Item(myKeys(i)).Item("OCX_TVNAME")
+        myGrid.Cells(i+1,4) = objNameTrans.Item(myKeys(i)).Item("OCX_TEAM")
     NEXT
 END FUNCTION
 
@@ -122,14 +127,16 @@ FUNCTION GetTranslationCSVData
     DIM i, myText : myText = ""
     
     DIM myKeys : myKeys = objNameTrans.Keys
-    myText = "ID;OCX_FNAME;OCX_LNAME;OCX_TEAM;FNAME;LNAME;TEAM" & vbCrLf
+    myText = "ID;OCX_FNAME;OCX_LNAME;OCX_TVNAME;OCX_TEAM;FNAME;LNAME;TVNAME;TEAM" & vbCrLf
     FOR i = 0 TO objNameTrans.Count - 1
         myText = myText & myKeys(i) & ";"
         myText = myText & objNameTrans.Item(myKeys(i)).Item("OCX_FNAME") & ";"
         myText = myText & objNameTrans.Item(myKeys(i)).Item("OCX_LNAME") & ";"
+        myText = myText & objNameTrans.Item(myKeys(i)).Item("OCX_TVNAME") & ";"
         myText = myText & objNameTrans.Item(myKeys(i)).Item("OCX_TEAM")  & ";"
         myText = myText & objNameTrans.Item(myKeys(i)).Item("FNAME")     & ";"
         myText = myText & objNameTrans.Item(myKeys(i)).Item("LNAME")     & ";"
+        myText = myText & objNameTrans.Item(myKeys(i)).Item("TVNAME")     & ";"
         myText = myText & objNameTrans.Item(myKeys(i)).Item("TEAM")      & vbCrLf
     NEXT
     GetTranslationCSVData = myText
@@ -184,14 +191,14 @@ SUB LoadSelectedListItem(ByVal myRow)
     'cc.SF.DebugText myID
     IF objNameTrans.Exists(myID) THEN
         CALL SetEditForm(myID, objNameTrans.Item(myID).Item("FNAME") , objNameTrans.Item(myID).Item("LNAME"), objNameTrans.Item(myID).Item("TEAM"), _
-                               objNameTrans.Item(myID).Item("OCX_FNAME") , objNameTrans.Item(myID).Item("OCX_LNAME"), objNameTrans.Item(myID).Item("OCX_TEAM"))
+                               objNameTrans.Item(myID).Item("OCX_FNAME") , objNameTrans.Item(myID).Item("OCX_LNAME"), objNameTrans.Item(myID).Item("OCX_TEAM"),objNameTrans.Item(myID).Item("TVNAME"),objNameTrans.Item(myID).Item("OCX_TVNAME"))
     ELSE
-        CALL SetEditForm("", "", "", "", "", "", "")
+        CALL SetEditForm("", "", "", "", "", "", "","","")
     END IF
 
 END SUB
 
-SUB SetEditForm(ByVal myID, ByVal myFNAME, ByVal myLNAME, ByVal myTEAM, ByVal myOCX_FNAME, ByVal myOCX_LNAME, ByVal myOCX_TEAM)
+SUB SetEditForm(ByVal myID, ByVal myFNAME, ByVal myLNAME, ByVal myTEAM, ByVal myOCX_FNAME, ByVal myOCX_LNAME, ByVal myOCX_TEAM, ByVal myTVNAME, ByVal myOCX_TVNAME)
     tw_NameTranslation.edt_ID.Text = myID
     
     tw_NameTranslation.edt_FNAME.Text     = myFNAME
@@ -205,6 +212,10 @@ SUB SetEditForm(ByVal myID, ByVal myFNAME, ByVal myLNAME, ByVal myTEAM, ByVal my
     tw_NameTranslation.edt_TEAM.Text     = myTEAM
     tw_NameTranslation.edt_TEAM.UserData = myOCX_TEAM
     CALL CheckChanges (tw_NameTranslation.edt_TEAM)
+    
+    tw_NameTranslation.edt_TVNAME.Text     = myTVNAME
+    tw_NameTranslation.edt_TVNAME.UserData = myOCX_TVNAME
+    CALL CheckChanges (tw_NameTranslation.edt_TVNAME)
 END SUB
 
 sub tw_NameTranslation_btnLoadMatchData3Click (Sender)
@@ -213,6 +224,7 @@ sub tw_NameTranslation_btnLoadMatchData3Click (Sender)
         objNameTrans.Item(myID).Item("FNAME") = tw_NameTranslation.edt_FNAME.Text
         objNameTrans.Item(myID).Item("LNAME") = tw_NameTranslation.edt_LNAME.Text
         objNameTrans.Item(myID).Item("TEAM")  = tw_NameTranslation.edt_TEAM.Text
+        objNameTrans.Item(myID).Item("TVNAME")  = tw_NameTranslation.edt_TVNAME.Text
     END IF
 end sub
 
@@ -235,7 +247,6 @@ end sub
 sub tw_NameTranslation_edtFileNameClick (Sender)
 
 end sub
-
 
 </script_body>
 </script>
